@@ -2,6 +2,7 @@ import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'package:gpon_admin/clients.dart';
+import 'package:gpon_admin/calendar.dart';
 
 void main() {
   runApp(MyApp());
@@ -26,7 +27,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       // home: MyHomePage(title: 'Flutter Home Page'),
-      home: Clients(),
+      // home: Clients(),
+      home: CalendarPage(title: 'Flutter Calendar Carousel Example'),
     );
   }
 }
