@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -57,7 +58,14 @@ class _MyHomePageState extends State<CalendarPage>
         'Event C5'
       ],
       _selectedDay.subtract(Duration(days: 2)): ['Event A6', 'Event B6'],
-      _selectedDay: ['Event A7', 'Event B7', 'Event C7', 'Event D7'],
+      _selectedDay: [
+        'Event A7',
+        'Event B7',
+        'Event C7',
+        'Event D7',
+        'Event D7',
+        'Event D7'
+      ],
       _selectedDay.add(Duration(days: 1)): [
         'Event A8',
         'Event B8',
@@ -82,7 +90,8 @@ class _MyHomePageState extends State<CalendarPage>
       _selectedDay.add(Duration(days: 26)): [
         'Event A14',
         'Event B14',
-        'Event C14'
+        'Event C14',
+        'Event D14',
       ],
     };
 
@@ -126,18 +135,19 @@ class _MyHomePageState extends State<CalendarPage>
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        leading: Icon(Icons.add),
       ),
       body: Column(
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           // Switch out 2 lines below to play with TableCalendar's settings
           //-----------------------
-          _buildTableCalendar(),
-          // _buildTableCalendarWithBuilders(),
+          // _buildTableCalendar(),
+          _buildTableCalendarWithBuilders(),
           const SizedBox(height: 8.0),
           _buildButtons(),
           const SizedBox(height: 8.0),
-          Expanded(child: _buildEventList()),
+          Expanded(child: _buildEventList2()),
         ],
       ),
     );
@@ -149,7 +159,8 @@ class _MyHomePageState extends State<CalendarPage>
       calendarController: _calendarController,
       events: _events,
       holidays: _holidays,
-      startingDayOfWeek: StartingDayOfWeek.monday,
+      // locale: ,
+      startingDayOfWeek: StartingDayOfWeek.sunday,
       calendarStyle: CalendarStyle(
         selectedColor: Colors.deepOrange[400],
         todayColor: Colors.deepOrange[200],
@@ -158,7 +169,7 @@ class _MyHomePageState extends State<CalendarPage>
       ),
       headerStyle: HeaderStyle(
         formatButtonTextStyle:
-            TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
+            TextStyle().copyWith(color: Colors.white, fontSize: 12.0),
         formatButtonDecoration: BoxDecoration(
           color: Colors.deepOrange[400],
           borderRadius: BorderRadius.circular(16.0),
@@ -173,7 +184,7 @@ class _MyHomePageState extends State<CalendarPage>
   // More advanced TableCalendar configuration (using Builders & Styles)
   Widget _buildTableCalendarWithBuilders() {
     return TableCalendar(
-      locale: 'pl_PL',
+      // locale: 'pl_PL',
       calendarController: _calendarController,
       events: _events,
       holidays: _holidays,
@@ -229,12 +240,11 @@ class _MyHomePageState extends State<CalendarPage>
         },
         markersBuilder: (context, date, events, holidays) {
           final children = <Widget>[];
-
           if (events.isNotEmpty) {
             children.add(
               Positioned(
-                right: 1,
-                bottom: 1,
+                right: 2,
+                bottom: 2,
                 child: _buildEventsMarker(date, events),
               ),
             );
@@ -249,7 +259,6 @@ class _MyHomePageState extends State<CalendarPage>
               ),
             );
           }
-
           return children;
         },
       ),
@@ -266,15 +275,15 @@ class _MyHomePageState extends State<CalendarPage>
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       decoration: BoxDecoration(
-        shape: BoxShape.rectangle,
+        shape: BoxShape.circle,
         color: _calendarController.isSelected(date)
             ? Colors.brown[500]
             : _calendarController.isToday(date)
                 ? Colors.brown[300]
                 : Colors.blue[400],
       ),
-      width: 16.0,
-      height: 16.0,
+      width: 12.0,
+      height: 12.0,
       child: Center(
         child: Text(
           '${events.length}',
@@ -289,22 +298,22 @@ class _MyHomePageState extends State<CalendarPage>
 
   Widget _buildHolidaysMarker() {
     return Icon(
-      Icons.add_box,
+      Icons.star_border,
       size: 20.0,
       color: Colors.blueGrey[800],
     );
   }
 
   Widget _buildButtons() {
-    final dateTime = _events.keys.elementAt(_events.length - 2);
-
+    // final dateTime = _events.keys.elementAt(_events.length - 2);
+    final dateTime = DateTime.now();
     return Column(
       children: <Widget>[
         Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            RaisedButton(
+            ElevatedButton(
               child: Text('Month'),
               onPressed: () {
                 setState(() {
@@ -312,7 +321,7 @@ class _MyHomePageState extends State<CalendarPage>
                 });
               },
             ),
-            RaisedButton(
+            ElevatedButton(
               child: Text('2 weeks'),
               onPressed: () {
                 setState(() {
@@ -321,7 +330,7 @@ class _MyHomePageState extends State<CalendarPage>
                 });
               },
             ),
-            RaisedButton(
+            ElevatedButton(
               child: Text('Week'),
               onPressed: () {
                 setState(() {
@@ -332,9 +341,9 @@ class _MyHomePageState extends State<CalendarPage>
           ],
         ),
         const SizedBox(height: 8.0),
-        RaisedButton(
+        ElevatedButton(
           child: Text(
-              'Set day ${dateTime.day}-${dateTime.month}-${dateTime.year}'),
+              'Set Today ${dateTime.day}-${dateTime.month}-${dateTime.year}'),
           onPressed: () {
             _calendarController.setSelectedDay(
               DateTime(dateTime.year, dateTime.month, dateTime.day),
@@ -362,6 +371,72 @@ class _MyHomePageState extends State<CalendarPage>
                 ),
               ))
           .toList(),
+    );
+  }
+
+  Widget _buildEventList2() {
+    return DataTable(
+      columnSpacing: 30,
+      dataRowHeight: 20,
+      columns: <DataColumn>[
+        DataColumn(
+          label: Row(
+            children: [
+              Icon(Icons.report_sharp),
+            ],
+          ),
+        ),
+        DataColumn(
+          label: Icon(Icons.person),
+        ),
+        DataColumn(
+          label: Icon(Icons.smartphone),
+        ),
+        DataColumn(
+          label: Icon(Icons.chrome_reader_mode),
+        ),
+        DataColumn(
+          label: Icon(Icons.search),
+        ),
+      ],
+      rows: <DataRow>[
+        DataRow(
+          cells: <DataCell>[
+            DataCell(
+              DropdownButton<String>(
+                value: "One",
+                onChanged: (String newValue) {
+                  setState(() {
+                    // dropdownValue = newValue;
+                  });
+                },
+                items: <String>['One', 'Two', 'Free', 'Four']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ),
+            DataCell(TextField(
+              decoration:
+                  InputDecoration(hintText: "Marlon Gabriel Munaya Lurita"),
+            )),
+            DataCell(TextField(
+              keyboardType: TextInputType.name,
+              decoration: InputDecoration(hintText: "937535378"),
+            )),
+            DataCell(TextField(
+              decoration: InputDecoration(hintText: "70105063"),
+            )),
+            DataCell(IconButton(
+                padding: EdgeInsets.all(0),
+                icon: Icon(Icons.search),
+                onPressed: null)),
+          ],
+        ),
+      ],
     );
   }
 }

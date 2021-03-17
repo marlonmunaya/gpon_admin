@@ -30,6 +30,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   timelines: ^0.0.2+1
   table_calendar: ^2.3.3
+  provider: ^5.0.0
 
 dev_dependencies:
   flutter_test:
