@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "286689828550",
+    "firebase_url": "https://gpon-peru.firebaseio.com",
+    "project_id": "gpon-peru",
+    "storage_bucket": "gpon-peru.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:286689828550:android:9295fbcf36ef43a09841c7",
+        "android_client_info": {
+          "package_name": "com.example.gpon_admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "286689828550-emp8lrl1ds1s95pp0ejs52ttbkqjs32q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmHeZYzRkhLtiyWPDrPUOIDC1MuysDso0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "286689828550-emp8lrl1ds1s95pp0ejs52ttbkqjs32q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
