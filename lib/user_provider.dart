@@ -67,17 +67,29 @@ class UserProvider with ChangeNotifier {
     print('CALLBACK: _onCalendarCreated');
   }
 
-  void getcollectionmolycop(start, end) async {
-    print('obteniento datos');
-    final snapshot = await Firestore.instance
-        .collection('users')
-        .where('fecha', isGreaterThanOrEqualTo: start)
-        .where('fecha', isLessThanOrEqualTo: end)
-        .orderBy('fecha', descending: true)
-        .getDocuments();
-    _model =
-        snapshot.documents.map((e) => DevicesModel.fromSnapshot(e)).toList();
-    print(_model);
-    notifyListeners();
+  // void getcollectionmolycop(start, end) async {
+  //   print('obteniento datos');
+  //   final snapshot = await FirebaseFirestore.instance
+  //       .collection('users')
+  //       .where('fecha', isGreaterThanOrEqualTo: start)
+  //       .where('fecha', isLessThanOrEqualTo: end)
+  //       .orderBy('fecha', descending: true)
+  //       .getDocuments();
+  //   _model =
+  //       snapshot.documents.map((e) => DevicesModel.fromSnapshot(e)).toList();
+  //   print(_model);
+  //   notifyListeners();
+  // }
+
+  Future<void> addUser(fullName, company, age) {
+    CollectionReference users = FirebaseFirestore.instance.collection('user');
+    return users
+        .add({
+          'full_name': fullName, // John Doe
+          'company': company, // Stokes and Sons
+          'age': age
+        })
+        .then((value) => print("User Added"))
+        .catchError((error) => print("Failes to ass user: $error"));
   }
 }

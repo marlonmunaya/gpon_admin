@@ -66,7 +66,11 @@ class _MyHomePageState extends State<CalendarPage>
     return Scaffold(
       appBar: AppBar(
         title: Text("Calendar"),
-        leading: Icon(Icons.add),
+        leading: IconButton(
+            onPressed: () {
+              prov.addUser("fullName", "company", "age");
+            },
+            icon: Icon(Icons.add)),
       ),
       body: Column(
         // mainAxisSize: MainAxisSize.max,
