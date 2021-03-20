@@ -17,7 +17,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
       child: MaterialApp(
-        title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
+        title: 'Gpon-Clients',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),

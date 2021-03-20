@@ -4,15 +4,9 @@ import 'package:gpon_admin/user_provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:gpon_admin/src/model.dart';
 
 // Example holidays
-final Map<DateTime, List> _holidays = {
-  DateTime(2021, 1, 1): ['New Year\'s Day'],
-  DateTime(2021, 1, 6): ['Epiphany'],
-  DateTime(2021, 2, 14): ['Valentine\'s Day'],
-  DateTime(2021, 4, 21): ['Easter Sunday'],
-  DateTime(2021, 4, 22): ['Easter Monday'],
-};
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({Key key}) : super(key: key);
@@ -33,10 +27,10 @@ class _MyHomePageState extends State<CalendarPage>
     super.initState();
     final provider = Provider.of<UserProvider>(context, listen: false);
     provider.setdate();
+    provider.getcollectionmolycop();
     final _selectedDay = provider.selectedDay;
     _events = provider.eventos;
 
-    // _selectedEvents = _events[_selectedDay] ?? [];
     _calendarController = CalendarController();
     _animationController = AnimationController(
       vsync: this,
@@ -51,13 +45,6 @@ class _MyHomePageState extends State<CalendarPage>
     _calendarController.dispose();
     super.dispose();
   }
-
-  // void _onDaySelected(DateTime day, List events, List holidays) {
-  //   print('CALLBACK: _onDaySelected');
-  //   setState(() {
-  //     _selectedEvents = events;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -86,8 +73,14 @@ class _MyHomePageState extends State<CalendarPage>
           ),
           const SizedBox(height: 8.0),
           Expanded(child: _buildEventList2(prov)),
-          Expanded(child: _buildEventList(prov)),
+          // Expanded(child: _buildEventList(prov)),
+          Expanded(child: _buildEventListmodel(prov)),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          prov.getcollectionmolycop();
+        },
       ),
     );
   }
@@ -102,7 +95,7 @@ class _MyHomePageState extends State<CalendarPage>
           // locale: 'pl_PL',
           calendarController: _calendarController,
           events: prov.eventos,
-          holidays: _holidays,
+          holidays: prov.holidays,
           initialCalendarFormat: CalendarFormat.month,
           formatAnimation: FormatAnimation.slide,
           startingDayOfWeek: StartingDayOfWeek.sunday,
@@ -223,14 +216,12 @@ class _MyHomePageState extends State<CalendarPage>
   }
 
   Widget _buildButtons() {
-    // final dateTime = _events.keys.elementAt(_events.length - 2);
     final dateTime = DateTime.now();
-    return Column(
-      // mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.end,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         ElevatedButton(
-          child: Text('Month'),
+          child: Text('Mes'),
           onPressed: () {
             setState(() {
               _calendarController.setCalendarFormat(CalendarFormat.month);
@@ -238,15 +229,7 @@ class _MyHomePageState extends State<CalendarPage>
           },
         ),
         ElevatedButton(
-          child: Text('2 weeks'),
-          onPressed: () {
-            setState(() {
-              _calendarController.setCalendarFormat(CalendarFormat.twoWeeks);
-            });
-          },
-        ),
-        ElevatedButton(
-          child: Text('Week'),
+          child: Text('Semana'),
           onPressed: () {
             setState(() {
               _calendarController.setCalendarFormat(CalendarFormat.week);
@@ -289,6 +272,31 @@ class _MyHomePageState extends State<CalendarPage>
               ))
           .toList(),
     );
+  }
+
+  Widget _buildEventListmodel(prov) {
+    final List<DevicesModel> lista = prov.model;
+    if (lista == null) {
+      return CircularProgressIndicator();
+    } else {
+      return ListView(
+        children: lista
+            .map((event) => Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 0.8),
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: 8.0, vertical: 4.0),
+                  child: ListTile(
+                    title: Text("hola"),
+                    // title: Text(event.age),
+                    onTap: () => print('tapped!'),
+                  ),
+                ))
+            .toList(),
+      );
+    }
   }
 
   Widget _buildEventList2(context) {

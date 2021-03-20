@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class DevicesModel {
   final String fullname;
   final String company;
-  final double age;
+  final String age;
   // final double sales;
   // final double var2valor;
   // final String var1name;
