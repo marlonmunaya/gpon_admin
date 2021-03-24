@@ -5,6 +5,9 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:gpon_admin/src/model.dart';
+import 'package:gpon_admin/src/responsive.dart';
+import 'package:gpon_admin/src/popup/editclient.dart';
+import 'package:gpon_admin/src/popup/editclient2.dart';
 
 // Example holidays
 
@@ -49,48 +52,56 @@ class _MyHomePageState extends State<CalendarPage>
   @override
   Widget build(BuildContext context) {
     final prov = Provider.of<UserProvider>(context);
+    var screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Calendar"),
-        leading: IconButton(
-            onPressed: () {
-              prov.addUser("fullName", "company", "age");
-            },
-            icon: Icon(Icons.add)),
-      ),
-      body: Column(
-        // mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            // crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _buildTableCalendarWithBuilders(prov),
-              const SizedBox(width: 8.0),
-              _buildButtons(),
-            ],
+        appBar: AppBar(
+          title: Text("Calendar"),
+          // leading: IconButton(onPressed: () {}, icon: Icon(Icons.menu)),
+        ),
+        drawer: Drawer(
+          child: Container(
+            color: Colors.amber,
+            child: Column(),
           ),
-          const SizedBox(height: 8.0),
-          Expanded(child: _buildEventList2(prov)),
-          // Expanded(child: _buildEventList(prov)),
-          Expanded(child: _buildEventListmodel(prov)),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          prov.getcollectionmolycop();
-        },
-      ),
-    );
+        ),
+        body: ResponsiveWidget.isSmallScreen(context)
+            ? Column(
+                children: <Widget>[
+                  _buildTableCalendarWithBuilders(screenSize, prov),
+                  const SizedBox(width: 8.0),
+                  _buildButtons(),
+                  const SizedBox(height: 8.0),
+                  Expanded(child: _buildEventListmodel(screenSize, prov)),
+                ],
+              )
+            : Row(
+                children: <Widget>[
+                  Column(
+                    children: [
+                      _buildTableCalendarWithBuilders(screenSize, prov),
+                      const SizedBox(width: 8.0),
+                      _buildButtons(),
+                    ],
+                  ),
+                  SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        _buildEventListmodel(screenSize, prov),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+        floatingActionButton: _floatactionbutton(prov, context));
   }
 
   // More advanced TableCalendar configuration (using Builders & Styles)
-  Widget _buildTableCalendarWithBuilders(prov) {
+  Widget _buildTableCalendarWithBuilders(screenSize, prov) {
     return Card(
       child: Container(
-        height: 270,
-        width: 270,
+        // height: 270,
+        width: screenSize.width < 800 ? 270 : screenSize.width * 0.29,
         child: TableCalendar(
           // locale: 'pl_PL',
           calendarController: _calendarController,
@@ -218,7 +229,7 @@ class _MyHomePageState extends State<CalendarPage>
   Widget _buildButtons() {
     final dateTime = DateTime.now();
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         ElevatedButton(
           child: Text('Mes'),
@@ -228,6 +239,9 @@ class _MyHomePageState extends State<CalendarPage>
             });
           },
         ),
+        SizedBox(
+          width: 10,
+        ),
         ElevatedButton(
           child: Text('Semana'),
           onPressed: () {
@@ -235,6 +249,9 @@ class _MyHomePageState extends State<CalendarPage>
               _calendarController.setCalendarFormat(CalendarFormat.week);
             });
           },
+        ),
+        SizedBox(
+          width: 10,
         ),
         ElevatedButton(
           child: Column(
@@ -274,34 +291,54 @@ class _MyHomePageState extends State<CalendarPage>
     );
   }
 
-  Widget _buildEventListmodel(prov) {
+  Widget _buildEventListmodel(screensize, prov) {
     final List<DevicesModel> lista = prov.model;
-    if (lista == null) {
-      return CircularProgressIndicator();
-    } else {
-      return ListView(
-        children: lista
-            .map((event) => Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(width: 0.8),
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  margin: const EdgeInsets.symmetric(
-                      horizontal: 8.0, vertical: 4.0),
-                  child: ListTile(
-                    title: Text("hola"),
-                    // title: Text(event.age),
-                    onTap: () => print('tapped!'),
-                  ),
-                ))
-            .toList(),
-      );
-    }
+
+    return lista == null
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : Card(
+            child: Container(
+                width: 0.68 * screensize.width,
+                height: screensize.height,
+                child: ListView.builder(
+                  itemCount: lista.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text("${lista[index].fullname}"),
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.red,
+                        // child: Container(
+                        //   color: Colors.red,
+                        // ),
+                      ),
+                      trailing: Wrap(
+                        spacing: 5,
+                        children: [
+                          Text("${lista[index].fullname}"),
+                          Container(
+                              width: 50,
+                              child: TextField(
+                                maxLines: 2,
+                              ))
+                        ],
+                      ),
+                      subtitle: Row(
+                        children: [
+                          Text("${lista[index].age}"),
+                        ],
+                      ),
+                    );
+                    // return Text("data");
+                  },
+                )),
+          );
   }
 
   Widget _buildEventList2(context) {
     return DataTable(
-      columnSpacing: 20,
+      columnSpacing: 10,
       dataRowHeight: 20,
       headingRowHeight: 25,
       columns: <DataColumn>[
@@ -372,4 +409,16 @@ class _MyHomePageState extends State<CalendarPage>
       ],
     );
   }
+}
+
+Widget _floatactionbutton(prov, BuildContext context) {
+  return FloatingActionButton(
+    child: Icon(Icons.person_add),
+    onPressed: () {
+      // prov.getcollectionmolycop();
+      // prov.addUser("fullName", "company", "age");
+      showDialog(
+          context: context, builder: (BuildContext context) => EditClient());
+    },
+  );
 }

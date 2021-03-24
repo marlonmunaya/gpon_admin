@@ -46,15 +46,16 @@ class UserProvider with ChangeNotifier {
       ],
     };
     _selectedEventos = _eventos[_selectedDay] ?? [];
+    _holidays = {
+      DateTime(2021, 1, 1): ['New Year\'s Day'],
+      DateTime(2021, 1, 6): ['Epiphany'],
+      DateTime(2021, 2, 14): ['Valentine\'s Day'],
+      DateTime(2021, 4, 21): ['Easter Sunday'],
+      DateTime(2021, 4, 22): ['Easter Monday'],
+    };
+    getcollectionmolycop();
   }
 
-  final Map<DateTime, List> _holidays = {
-    DateTime(2021, 1, 1): ['New Year\'s Day'],
-    DateTime(2021, 1, 6): ['Epiphany'],
-    DateTime(2021, 2, 14): ['Valentine\'s Day'],
-    DateTime(2021, 4, 21): ['Easter Sunday'],
-    DateTime(2021, 4, 22): ['Easter Monday'],
-  };
   void increment() {
     _count++;
     print(_count);
