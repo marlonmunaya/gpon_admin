@@ -1,4 +1,9 @@
+import 'dart:js';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'client_provider.dart';
 
 class EditClient extends StatelessWidget {
   const EditClient({Key key}) : super(key: key);
@@ -17,13 +22,23 @@ class EditClient extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _crearDni(),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _crearDni(),
+                  SizedBox(width: 10.0),
+                  _crearPlataforma()
+                ],
+              ),
               SizedBox(height: 5.0),
               _crearNombre(context),
               SizedBox(height: 5.0),
-              _crearCelular(),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [_crearCelular(), SizedBox(width: 10.0), _crearplan()],
+              ),
               SizedBox(height: 5.0),
-              _crearplan()
+              _crearFecha(context)
             ],
           ),
         ),
@@ -39,42 +54,72 @@ class EditClient extends StatelessWidget {
 }
 
 Widget _crearCelular() {
-  return TextFormField(
-    scrollPadding: EdgeInsets.all(10),
-    keyboardType: TextInputType.number,
-    decoration: InputDecoration(
-      hintText: '912-345-678',
-      labelText: 'Ingresa un número',
+  return SizedBox(
+    width: 130,
+    child: TextFormField(
+      keyboardType: TextInputType.number,
+      decoration: InputDecoration(
+        labelText: 'Celular',
+        isDense: true,
+        prefixIcon: Icon(Icons.smartphone),
+        contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+      ),
+      onSaved: (value) {},
+      validator: (value) {
+        if (value.length < 9) {
+          return 'Ingrese el número válido';
+        } else {
+          return null;
+        }
+      },
     ),
-    onSaved: (value) {},
-    validator: (value) {
-      if (value.length < 9) {
-        return 'Ingrese el número válido';
-      } else {
-        return null;
-      }
-    },
+  );
+}
+
+Widget _crearFecha(BuildContext context) {
+  return SizedBox(
+    width: 100,
+    child: TextFormField(
+      readOnly: true,
+      decoration: InputDecoration(
+        labelText: 'Fecha',
+        isDense: true,
+        contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+        suffixIcon: IconButton(
+            tooltip: "Fecha",
+            iconSize: 20,
+            padding: EdgeInsets.all(0.0),
+            icon: Icon(Icons.calendar_today),
+            onPressed: () =>
+              context.read<ClientProvider>().pickDateDialog(context)
+            
+      ),
+      
+      // onSaved: (value) {},
+      // validator: (value) {
+      //   if (value.length < 9) {
+      //     return 'Ingrese el número válido';
+      //   } else {
+      //     return null;
+      //   }
+      // },
+    )),
   );
 }
 
 Widget _crearDni() {
-  return Container(
-    child: SizedBox(
-      width: 200,
-      child: TextFormField(
-        scrollPadding: EdgeInsets.all(0),
-        keyboardType: TextInputType.number,
-        decoration: InputDecoration(
-          isDense: true,
-          contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-          enabledBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            borderSide: const BorderSide(
-              color: Colors.grey,
-            ),
-          ),
-          prefixIcon: Icon(Icons.person),
-          suffixIcon: IconButton(
+  return SizedBox(
+    width: 150,
+    child: TextFormField(
+      keyboardType: TextInputType.number,
+      decoration: InputDecoration(
+        labelText: 'DNI',
+        prefixIcon: Icon(Icons.person),
+        isDense: true,
+        contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+        suffixIcon: Container(
+
+          child: IconButton(
               tooltip: "Buscar",
               iconSize: 20,
               padding: EdgeInsets.all(0.0),
@@ -82,18 +127,16 @@ Widget _crearDni() {
               onPressed: () {
                 print("tap search");
               }),
-          hintText: '12345678',
-          labelText: 'DNI',
         ),
-        onSaved: (value) {},
-        validator: (value) {
-          if (value.length < 8) {
-            return 'Ingrese el número válido';
-          } else {
-            return null;
-          }
-        },
       ),
+      onSaved: (value) {},
+      validator: (value) {
+        if (value.length < 8) {
+          return 'Ingrese el número válido';
+        } else {
+          return null;
+        }
+      },
     ),
   );
 }
@@ -112,12 +155,26 @@ Widget _crearplan() {
   );
 }
 
-_crearNombre(context) {
+Widget _crearPlataforma() {
+  return DropdownButton<String>(
+    value: "Fb",
+    onChanged: (String newValue) {},
+    items: <String>['Fb', 'Reco', 'Camp', 'Web']
+        .map<DropdownMenuItem<String>>((String value) {
+      return DropdownMenuItem<String>(
+        value: value,
+        child: Text(value),
+      );
+    }).toList(),
+  );
+}
+
+Widget _crearNombre(context) {
   return TextFormField(
-    scrollPadding: EdgeInsets.all(10),
     initialValue: "name",
     decoration: InputDecoration(
-      labelText: 'Ingresa un nombre',
+      labelText: 'Nombre completo',
+      contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 0),
     ),
     onSaved: (value) {},
     validator: (value) {
@@ -142,4 +199,13 @@ Widget _cancelar(context) {
       // textColor: Theme.of(context).primaryColor,
       child: Text('Cancelar'),
       onPressed: () => Navigator.of(context).pop());
+}
+
+OutlineInputBorder property() {
+  return OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+    borderSide: BorderSide(
+      color: Colors.grey,
+    ),
+  );
 }
