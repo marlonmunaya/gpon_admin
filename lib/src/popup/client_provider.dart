@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:gpon_admin/src/data.dart';
+import 'package:gpon_admin/src/model/utils_model.dart';
 class ClientProvider with ChangeNotifier {
   String _nombre = "";
   String _dni = "";
@@ -7,7 +8,6 @@ class ClientProvider with ChangeNotifier {
   String _fijo = "";
   String _direccion = "";
   String _email = "";
-  String _plan = "";
   String _fechainstalacion = "";
   String _fechacaptacion = "";
   String _observacion = "";
@@ -17,6 +17,14 @@ class ClientProvider with ChangeNotifier {
 
   DateTime _selectedDate;
   DateTime get selectedDate => _selectedDate;
+  UtilsModel _planes ;
+  UtilsModel get planes => _planes;
+  UtilsModel _plats ;
+  UtilsModel get plataformas => _plats;
+  String _planselected ;
+  String get planselected => _planselected;
+  String _platselected ;
+  String get platselected => _platselected;
 
   void guardar() {
     notifyListeners();
@@ -42,4 +50,38 @@ class ClientProvider with ChangeNotifier {
     notifyListeners();
   }
   
+  Future<void> addUser1(fullName, company, age) {
+    final users = Backend().users;
+    return users
+        .add({
+          'full_name': fullName, // John Doe
+          'company': company, // Stokes and Sons
+          'age': age
+        })
+        .then((value) => print("User Added"))
+        .catchError((error) => print("Failes to ass user: $error"));
+  }
+
+  void getplanes() async {
+    print('obteniento planes');
+    final snapplan = await Backend().utils.doc("plan").get();
+    _planes = UtilsModel.fromMapPlan(snapplan.data());
+    final snapplat = await Backend().utils.doc("plataforma").get();
+    _plats = UtilsModel.fromMapPlat(snapplat.data());
+    print(_planes.planes.toString());
+    print(_plats.plataforma.toString());
+    notifyListeners();
+  }
+
+  void setplanselected(String plan) {
+    _planselected = plan;
+    notifyListeners();
+  }
+
+  void setplatselected(String plat) {
+    _platselected = plat;
+    notifyListeners();
+  }
+
 }
+

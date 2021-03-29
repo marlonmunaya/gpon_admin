@@ -5,8 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'client_provider.dart';
 
-class EditClient extends StatelessWidget {
-  const EditClient({Key key}) : super(key: key);
+class EditClient2 extends StatelessWidget {
+  const EditClient2({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class EditClient extends StatelessWidget {
                 children: [
                   _crearDni(),
                   SizedBox(width: 10.0),
-                  _crearPlataforma()
+                  _crearPlataforma(context)
                 ],
               ),
               SizedBox(height: 5.0),
@@ -35,7 +35,11 @@ class EditClient extends StatelessWidget {
               SizedBox(height: 5.0),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [_crearCelular(), SizedBox(width: 10.0), _crearplan()],
+                children: [
+                  _crearCelular(),
+                  SizedBox(width: 10.0),
+                  _crearplan(context)
+                ],
               ),
               SizedBox(height: 5.0),
               _crearFecha(context)
@@ -80,30 +84,27 @@ Widget _crearFecha(BuildContext context) {
   return SizedBox(
     width: 100,
     child: TextFormField(
-      readOnly: true,
-      decoration: InputDecoration(
-        labelText: 'Fecha',
-        isDense: true,
-        contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-        suffixIcon: IconButton(
-            tooltip: "Fecha",
-            iconSize: 20,
-            padding: EdgeInsets.all(0.0),
-            icon: Icon(Icons.calendar_today),
-            onPressed: () =>
-              context.read<ClientProvider>().pickDateDialog(context)
-            
-      ),
-      
-      // onSaved: (value) {},
-      // validator: (value) {
-      //   if (value.length < 9) {
-      //     return 'Ingrese el número válido';
-      //   } else {
-      //     return null;
-      //   }
-      // },
-    )),
+        readOnly: true,
+        decoration: InputDecoration(
+          labelText: 'Fecha',
+          isDense: true,
+          contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+          suffixIcon: IconButton(
+              tooltip: "Fecha",
+              iconSize: 20,
+              padding: EdgeInsets.all(0.0),
+              icon: Icon(Icons.calendar_today),
+              onPressed: () =>
+                  context.read<ClientProvider>().pickDateDialog(context)),
+          // onSaved: (value) {},
+          // validator: (value) {
+          //   if (value.length < 9) {
+          //     return 'Ingrese el número válido';
+          //   } else {
+          //     return null;
+          //   }
+          // },
+        )),
   );
 }
 
@@ -118,7 +119,6 @@ Widget _crearDni() {
         isDense: true,
         contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 0),
         suffixIcon: Container(
-
           child: IconButton(
               tooltip: "Buscar",
               iconSize: 20,
@@ -141,11 +141,15 @@ Widget _crearDni() {
   );
 }
 
-Widget _crearplan() {
+Widget _crearplan(BuildContext context) {
   return DropdownButton<String>(
-    value: "One",
-    onChanged: (String newValue) {},
-    items: <String>['One', 'Two', 'Free', 'Four']
+    value: context.watch<ClientProvider>().planselected,
+    onChanged: (String value) =>
+      context.read<ClientProvider>().setplanselected(value),
+    items: context
+        .watch<ClientProvider>()
+        .planes
+        .planes
         .map<DropdownMenuItem<String>>((String value) {
       return DropdownMenuItem<String>(
         value: value,
@@ -155,11 +159,15 @@ Widget _crearplan() {
   );
 }
 
-Widget _crearPlataforma() {
+Widget _crearPlataforma(BuildContext context) {
   return DropdownButton<String>(
-    value: "Fb",
-    onChanged: (String newValue) {},
-    items: <String>['Fb', 'Reco', 'Camp', 'Web']
+    value: context.watch<ClientProvider>().platselected,
+    onChanged: (String value) =>
+        context.read<ClientProvider>().setplatselected(value),
+    items: context
+        .watch<ClientProvider>()
+        .plataformas
+        .plataforma
         .map<DropdownMenuItem<String>>((String value) {
       return DropdownMenuItem<String>(
         value: value,
@@ -187,10 +195,12 @@ Widget _crearNombre(context) {
   );
 }
 
-Widget _crearGuardar(context) {
+Widget _crearGuardar(BuildContext context) {
   return ElevatedButton(
     child: Text('Guardar'),
-    onPressed: () {},
+    onPressed: () {
+      context.read<ClientProvider>().getplanes();
+    },
   );
 }
 
@@ -199,13 +209,4 @@ Widget _cancelar(context) {
       // textColor: Theme.of(context).primaryColor,
       child: Text('Cancelar'),
       onPressed: () => Navigator.of(context).pop());
-}
-
-OutlineInputBorder property() {
-  return OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-    borderSide: BorderSide(
-      color: Colors.grey,
-    ),
-  );
 }

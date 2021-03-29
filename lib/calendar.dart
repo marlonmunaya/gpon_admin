@@ -4,11 +4,11 @@ import 'package:gpon_admin/user_provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:gpon_admin/src/model.dart';
+import 'package:gpon_admin/src/model/model.dart';
 import 'package:gpon_admin/src/responsive.dart';
 import 'package:gpon_admin/src/popup/editclient.dart';
 import 'package:gpon_admin/src/popup/editclient2.dart';
-
+import 'package:gpon_admin/src/popup/client_provider.dart';
 // Example holidays
 
 class CalendarPage extends StatefulWidget {
@@ -28,6 +28,7 @@ class _MyHomePageState extends State<CalendarPage>
   @override
   void initState() {
     super.initState();
+    context.read<ClientProvider>().getplanes();
     final provider = Provider.of<UserProvider>(context, listen: false);
     provider.setdate();
     provider.getcollectionmolycop();
@@ -415,10 +416,10 @@ Widget _floatactionbutton(prov, BuildContext context) {
   return FloatingActionButton(
     child: Icon(Icons.person_add),
     onPressed: () {
-      // prov.getcollectionmolycop();
-      // prov.addUser("fullName", "company", "age");
+      context.read<ClientProvider>().setplanselected("RL-120");
+      context.read<ClientProvider>().setplatselected("Recomendado");
       showDialog(
-          context: context, builder: (BuildContext context) => EditClient());
+          context: context, builder: (BuildContext context) => EditClient2());
     },
   );
 }

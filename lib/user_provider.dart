@@ -2,7 +2,7 @@ import 'dart:html';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:gpon_admin/src/model.dart';
+import 'package:gpon_admin/src/model/model.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 ///Librerias para la conexion DB
