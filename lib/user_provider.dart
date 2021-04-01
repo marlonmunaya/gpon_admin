@@ -8,7 +8,7 @@ import 'package:table_calendar/table_calendar.dart';
 ///Librerias para la conexion DB
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class UserProvider with ChangeNotifier {
+class HomeProvider with ChangeNotifier {
   int _count = 0;
   int get count => _count;
   DateTime _selectedDay = DateTime.now();
@@ -19,8 +19,8 @@ class UserProvider with ChangeNotifier {
   Map<DateTime, List> get eventos => _eventos;
   Map<DateTime, List> _holidays;
   Map<DateTime, List> get holidays => _holidays;
-  List<DevicesModel> _model;
-  List<DevicesModel> get model => _model;
+  // List<ClientModel> _model;
+  // List<ClientModel> get model => _model;
 
   // TextEditingController get counter => _counter;
   void setdate() {
@@ -53,7 +53,7 @@ class UserProvider with ChangeNotifier {
       DateTime(2021, 4, 21): ['Easter Sunday'],
       DateTime(2021, 4, 22): ['Easter Monday'],
     };
-    getcollectionmolycop();
+    // getcollectionmolycop();
   }
 
   void increment() {
@@ -79,18 +79,18 @@ class UserProvider with ChangeNotifier {
     print('CALLBACK: _onCalendarCreated');
   }
 
-  void getcollectionmolycop() async {
-    print('obteniento datos');
-    final snapshot = await FirebaseFirestore.instance.collection('user').get();
-    // .where('fecha', isGreaterThanOrEqualTo: start)
-    // .where('fecha', isLessThanOrEqualTo: end)
-    // .orderBy('fecha', descending: true)
-    // .getDocuments();
-    // _model = DocumentSnapshot.documents.map((e) => DevicesModel.fromSnapshot(e)).toList();
-    _model = snapshot.docs.map((e) => DevicesModel.fromSnapshot(e)).toList();
-    print(_model);
-    notifyListeners();
-  }
+  // void getcollectionmolycop() async {
+  //   print('obteniento datos');
+  //   final snapshot = await FirebaseFirestore.instance.collection('user').get();
+  //   // .where('fecha', isGreaterThanOrEqualTo: start)
+  //   // .where('fecha', isLessThanOrEqualTo: end)
+  //   // .orderBy('fecha', descending: true)
+  //   // .getDocuments();
+  //   // _model = DocumentSnapshot.documents.map((e) => DevicesModel.fromSnapshot(e)).toList();
+  //   _model = snapshot.docs.map((e) => ClientModel.fromSnapshot(e)).toList();
+  //   print(_model);
+  //   notifyListeners();
+  // }
 
   Future<void> addUser(fullName, company, age) {
     CollectionReference users = FirebaseFirestore.instance.collection('user');

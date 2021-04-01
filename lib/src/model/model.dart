@@ -1,32 +1,33 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class DevicesModel {
-  final String fullname;
-  final String company;
-  final String age;
-  // final double sales;
-  // final double var2valor;
-  // final String var1name;
-  // final Timestamp tiempo;
-  // final DateTime time;
-  // final TimeSeriesSales serie;
-  // final Timestamp
-  final DocumentReference reference;
+// class ClientModel {
+//   final String nombre;
+//   final String cedula;
+//   final String celular;
+//   final String fijo;
+//   final String direccion;
+//   final String email;
+//   final String fechainstalacion;
+//   final String fechacaptacion;
+//   final String departamento;
+//   final String provincia;
+//   final String distrito;
+//   final String observacion;
+//   final DocumentReference reference;
 
-  DevicesModel.fromMap(Map<String, dynamic> map, {this.reference})
-      :
-        // assert(map['fecha']  != null),
-        // sales = map['var1valor'],
-        // var2valor = map['var2valor'],
-        // var1name = map['var1name'],
-        // tiempo = map['fecha'],
-        // time = (map['fecha']).toDate();
-        fullname = map["full_name"],
-        company = map["company"],
-        age = map["age"];
+//   ClientModel.fromMap(Map<String, dynamic> map, {this.reference})
+//       : nombre = map["full_name"],
+//         cedula = map["full_name"],
+//         celular = map["full_name"],
+//         fijo = map["full_name"],
+//         direccion = map["full_name"],
+//         email = map["full_name"],
+//         fechainstalacion = map["full_name"],
+//         fechacaptacion = map["full_name"],
+//         observacion = map["full_name"];
 
-  DevicesModel.fromSnapshot(DocumentSnapshot snapshot)
-      : this.fromMap(snapshot.data(), reference: snapshot.reference);
+//   ClientModel.fromSnapshot(DocumentSnapshot snapshot)
+//       : this.fromMap(snapshot.data(), reference: snapshot.reference);
 
-  // String toString() => "$sales;$time\n";
-}
+//   // String toString() => "$sales;$time\n";
+// }

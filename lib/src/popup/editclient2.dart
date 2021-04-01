@@ -17,7 +17,7 @@ class EditClient2 extends StatelessWidget {
       ),
       content: SingleChildScrollView(
         child: Form(
-          key: key,
+          key: context.watch<ClientProvider>().formKeysign,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -25,7 +25,7 @@ class EditClient2 extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _crearDni(),
+                  _crearDni(context),
                   SizedBox(width: 10.0),
                   _crearPlataforma(context)
                 ],
@@ -36,7 +36,7 @@ class EditClient2 extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _crearCelular(),
+                  _crearCelular(context),
                   SizedBox(width: 10.0),
                   _crearplan(context)
                 ],
@@ -57,7 +57,7 @@ class EditClient2 extends StatelessWidget {
   }
 }
 
-Widget _crearCelular() {
+Widget _crearCelular(BuildContext context) {
   return SizedBox(
     width: 130,
     child: TextFormField(
@@ -68,10 +68,12 @@ Widget _crearCelular() {
         prefixIcon: Icon(Icons.smartphone),
         contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 0),
       ),
-      onSaved: (value) {},
+      onSaved: (value) {
+        context.read<ClientProvider>().setcell(value);
+      },
       validator: (value) {
         if (value.length < 9) {
-          return 'Ingrese el número válido';
+          return 'Ingrese un número válido';
         } else {
           return null;
         }
@@ -82,39 +84,41 @@ Widget _crearCelular() {
 
 Widget _crearFecha(BuildContext context) {
   return SizedBox(
-    width: 100,
+    width: 120,
     child: TextFormField(
-        readOnly: true,
-        decoration: InputDecoration(
-          labelText: 'Fecha',
-          isDense: true,
-          contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-          suffixIcon: IconButton(
-              tooltip: "Fecha",
-              iconSize: 20,
-              padding: EdgeInsets.all(0.0),
-              icon: Icon(Icons.calendar_today),
-              onPressed: () =>
-                  context.read<ClientProvider>().pickDateDialog(context)),
-          // onSaved: (value) {},
-          // validator: (value) {
-          //   if (value.length < 9) {
-          //     return 'Ingrese el número válido';
-          //   } else {
-          //     return null;
-          //   }
-          // },
-        )),
+      controller: context.watch<ClientProvider>().dateCtl,
+      readOnly: true,
+      decoration: InputDecoration(
+        labelText: 'Fecha',
+        isDense: true,
+        contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+        suffixIcon: IconButton(
+            tooltip: "Fecha",
+            iconSize: 20,
+            padding: EdgeInsets.all(0.0),
+            icon: Icon(Icons.calendar_today),
+            onPressed: () =>
+                context.read<ClientProvider>().pickDateDialog(context)),
+      ),
+      onSaved: (value) {},
+      validator: (value) {
+        if (value.length < 9) {
+          return 'Ingrese una Fecha válida';
+        } else {
+          return null;
+        }
+      },
+    ),
   );
 }
 
-Widget _crearDni() {
+Widget _crearDni(BuildContext context) {
   return SizedBox(
-    width: 150,
+    width: 160,
     child: TextFormField(
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
-        labelText: 'DNI',
+        labelText: 'DNI/RUC/CEDULA',
         prefixIcon: Icon(Icons.person),
         isDense: true,
         contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 0),
@@ -129,10 +133,12 @@ Widget _crearDni() {
               }),
         ),
       ),
-      onSaved: (value) {},
+      onSaved: (value) {
+        context.read<ClientProvider>().setcedula(value);
+      },
       validator: (value) {
-        if (value.length < 8) {
-          return 'Ingrese el número válido';
+        if (value.length < 6) {
+          return 'Ingrese número válido, min 6 caract';
         } else {
           return null;
         }
@@ -145,7 +151,7 @@ Widget _crearplan(BuildContext context) {
   return DropdownButton<String>(
     value: context.watch<ClientProvider>().planselected,
     onChanged: (String value) =>
-      context.read<ClientProvider>().setplanselected(value),
+        context.read<ClientProvider>().setplanselected(value),
     items: context
         .watch<ClientProvider>()
         .planes
@@ -177,17 +183,18 @@ Widget _crearPlataforma(BuildContext context) {
   );
 }
 
-Widget _crearNombre(context) {
+Widget _crearNombre(BuildContext context) {
   return TextFormField(
-    initialValue: "name",
     decoration: InputDecoration(
       labelText: 'Nombre completo',
       contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 0),
     ),
-    onSaved: (value) {},
+    onSaved: (value) {
+      context.read<ClientProvider>().setnombre(value);
+    },
     validator: (value) {
-      if (value.length < 9) {
-        return 'Ingrese el número válido';
+      if (value.length < 5) {
+        return 'Ingrese nombre válido, min 5 carac';
       } else {
         return null;
       }
@@ -199,7 +206,7 @@ Widget _crearGuardar(BuildContext context) {
   return ElevatedButton(
     child: Text('Guardar'),
     onPressed: () {
-      context.read<ClientProvider>().getplanes();
+      context.read<ClientProvider>().guardar(context);
     },
   );
 }

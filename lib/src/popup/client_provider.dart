@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gpon_admin/src/data.dart';
 import 'package:gpon_admin/src/model/utils_model.dart';
+
 class ClientProvider with ChangeNotifier {
   String _nombre = "";
-  String _dni = "";
+  String _cedula = "";
   String _celular = "";
   String _fijo = "";
   String _direccion = "";
@@ -12,22 +13,32 @@ class ClientProvider with ChangeNotifier {
   String _fechacaptacion = "";
   String _observacion = "";
   String get nombre => _nombre;
-  String get dni => _dni;
+  String get cedula => _cedula;
   String get celular => _celular;
 
-  DateTime _selectedDate;
-  DateTime get selectedDate => _selectedDate;
-  UtilsModel _planes ;
+  UtilsModel _planes;
   UtilsModel get planes => _planes;
-  UtilsModel _plats ;
+  UtilsModel _plats;
   UtilsModel get plataformas => _plats;
-  String _planselected ;
+  String _planselected;
   String get planselected => _planselected;
-  String _platselected ;
+  String _platselected;
   String get platselected => _platselected;
+  DateTime _dateselected;
+  DateTime get dateselected => _dateselected;
+  TextEditingController _dateCtl = TextEditingController();
+  TextEditingController get dateCtl => _dateCtl;
+  static final _formKeysign = GlobalKey<FormState>();
+  get formKeysign => _formKeysign;
 
-  void guardar() {
+  void guardar(context) {
+    print("Validando");
+    if (!_formKeysign.currentState.validate()) return;
+    _formKeysign.currentState.save();
+    print("Guardando");
     notifyListeners();
+    addClient();
+    Navigator.of(context).pop();
   }
 
   void pickDateDialog(context) {
@@ -35,34 +46,47 @@ class ClientProvider with ChangeNotifier {
             context: context,
             initialDate: DateTime.now(),
             firstDate: DateTime(2018),
-            lastDate: DateTime
-                .now()) //what will be the up to supported date in picker
+            lastDate: DateTime.now().add(Duration(
+                days: 180))) //what will be the up to supported date in picker
         .then((pickedDate) {
       //then usually do the future job
       if (pickedDate == null) {
-        //if user tap cancel then this function will stop
         return;
       }
-      _selectedDate = pickedDate;
+      _dateselected = pickedDate;
+      dateCtl.text = '${pickedDate.day}-${pickedDate.month}-${pickedDate.year}';
       print(pickedDate);
-      print("pickedDate");
+      print(dateCtl.text);
     });
     notifyListeners();
   }
-  
-  Future<void> addUser1(fullName, company, age) {
-    final users = Backend().users;
+
+  Future<void> addClient() {
+    final users = Backend().usersv1;
     return users
         .add({
-          'full_name': fullName, // John Doe
-          'company': company, // Stokes and Sons
-          'age': age
+          'nombre': _nombre, // John Doe
+          'celular': _celular, // Stokes and Sons
+          'cedula': _cedula,
+          'fijo': _cedula,
+          'celular': _platselected,
+          'plan': _planselected,
+          'date': _dateselected,
+          'dateinst': _dateselected,
+          'dep': "",
+          'prov': "",
+          'dist': "",
+          'direccion': "",
+          'email': "",
+          'loc': "",
+          'group': "",
+          'obser': "",
         })
-        .then((value) => print("User Added"))
+        .then((value) => print("Client Added"))
         .catchError((error) => print("Failes to ass user: $error"));
   }
 
-  void getplanes() async {
+  void getutils() async {
     print('obteniento planes');
     final snapplan = await Backend().utils.doc("plan").get();
     _planes = UtilsModel.fromMapPlan(snapplan.data());
@@ -83,5 +107,23 @@ class ClientProvider with ChangeNotifier {
     notifyListeners();
   }
 
-}
+  void setDateselected(DateTime date) {
+    _dateselected = date;
+    notifyListeners();
+  }
 
+  void setnombre(String data) {
+    _nombre = data;
+    notifyListeners();
+  }
+
+  void setcedula(String data) {
+    _cedula = data;
+    notifyListeners();
+  }
+
+  void setcell(String data) {
+    _celular = data;
+    notifyListeners();
+  }
+}

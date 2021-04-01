@@ -28,10 +28,10 @@ class _MyHomePageState extends State<CalendarPage>
   @override
   void initState() {
     super.initState();
-    context.read<ClientProvider>().getplanes();
-    final provider = Provider.of<UserProvider>(context, listen: false);
+    context.read<ClientProvider>().getutils();
+    final provider = Provider.of<HomeProvider>(context, listen: false);
     provider.setdate();
-    provider.getcollectionmolycop();
+    // provider.getcollectionmolycop();
     final _selectedDay = provider.selectedDay;
     _events = provider.eventos;
 
@@ -52,7 +52,7 @@ class _MyHomePageState extends State<CalendarPage>
 
   @override
   Widget build(BuildContext context) {
-    final prov = Provider.of<UserProvider>(context);
+    final prov = Provider.of<HomeProvider>(context);
     var screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -73,7 +73,7 @@ class _MyHomePageState extends State<CalendarPage>
                   const SizedBox(width: 8.0),
                   _buildButtons(),
                   const SizedBox(height: 8.0),
-                  Expanded(child: _buildEventListmodel(screenSize, prov)),
+                  // Expanded(child: _buildEventListmodel(screenSize, prov)),
                 ],
               )
             : Row(
@@ -88,7 +88,7 @@ class _MyHomePageState extends State<CalendarPage>
                   SingleChildScrollView(
                     child: Column(
                       children: [
-                        _buildEventListmodel(screenSize, prov),
+                        // _buildEventListmodel(screenSize, prov),
                       ],
                     ),
                   )
@@ -292,50 +292,50 @@ class _MyHomePageState extends State<CalendarPage>
     );
   }
 
-  Widget _buildEventListmodel(screensize, prov) {
-    final List<DevicesModel> lista = prov.model;
+  // Widget _clientList(screensize, prov) {
+  //   final List<DevicesModel> lista = prov.model;
 
-    return lista == null
-        ? Center(
-            child: CircularProgressIndicator(),
-          )
-        : Card(
-            child: Container(
-                width: 0.68 * screensize.width,
-                height: screensize.height,
-                child: ListView.builder(
-                  itemCount: lista.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text("${lista[index].fullname}"),
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.red,
-                        // child: Container(
-                        //   color: Colors.red,
-                        // ),
-                      ),
-                      trailing: Wrap(
-                        spacing: 5,
-                        children: [
-                          Text("${lista[index].fullname}"),
-                          Container(
-                              width: 50,
-                              child: TextField(
-                                maxLines: 2,
-                              ))
-                        ],
-                      ),
-                      subtitle: Row(
-                        children: [
-                          Text("${lista[index].age}"),
-                        ],
-                      ),
-                    );
-                    // return Text("data");
-                  },
-                )),
-          );
-  }
+  //   return lista == null
+  //       ? Center(
+  //           child: CircularProgressIndicator(),
+  //         )
+  //       : Card(
+  //           child: Container(
+  //               width: 0.68 * screensize.width,
+  //               height: screensize.height,
+  //               child: ListView.builder(
+  //                 itemCount: lista.length,
+  //                 itemBuilder: (context, index) {
+  //                   return ListTile(
+  //                     title: Text("${lista[index].fullname}"),
+  //                     leading: CircleAvatar(
+  //                       backgroundColor: Colors.red,
+  //                       // child: Container(
+  //                       //   color: Colors.red,
+  //                       // ),
+  //                     ),
+  //                     trailing: Wrap(
+  //                       spacing: 5,
+  //                       children: [
+  //                         Text("${lista[index].fullname}"),
+  //                         Container(
+  //                             width: 50,
+  //                             child: TextField(
+  //                               maxLines: 2,
+  //                             ))
+  //                       ],
+  //                     ),
+  //                     subtitle: Row(
+  //                       children: [
+  //                         Text("${lista[index].age}"),
+  //                       ],
+  //                     ),
+  //                   );
+  //                   // return Text("data");
+  //                 },
+  //               )),
+  //         );
+  // }
 
   Widget _buildEventList2(context) {
     return DataTable(
