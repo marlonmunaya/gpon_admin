@@ -65,22 +65,26 @@ class ClientProvider with ChangeNotifier {
     final users = Backend().usersv1;
     return users
         .add({
-          'nombre': _nombre, // John Doe
-          'celular': _celular, // Stokes and Sons
+          'nombre': _nombre,
           'cedula': _cedula,
-          'fijo': _cedula,
-          'celular': _platselected,
-          'plan': _planselected,
-          'date': _dateselected,
-          'dateinst': _dateselected,
-          'dep': "",
-          'prov': "",
-          'dist': "",
+          'celular': _celular,
+          'fijo': "",
           'direccion': "",
           'email': "",
-          'loc': "",
-          'group': "",
-          'obser': "",
+          'plan': _planselected,
+          'fechainstalacion': "",
+          'fechacaptacion': "",
+          'departamento': "",
+          'provincia': "",
+          'distrito': "",
+          'observacion': "",
+          'grupo': "",
+          'cableadoutp': "",
+          'deco': "",
+          'plataforma': platselected,
+          'cordenadas': "",
+          'vendedor': "",
+          'reference': "",
         })
         .then((value) => print("Client Added"))
         .catchError((error) => print("Failes to ass user: $error"));

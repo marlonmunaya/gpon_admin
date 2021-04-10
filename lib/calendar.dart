@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gpon_admin/pages/video_player.dart';
 import 'package:gpon_admin/user_provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
@@ -88,6 +89,15 @@ class _MyHomePageState extends State<CalendarPage>
                   SingleChildScrollView(
                     child: Column(
                       children: [
+                        ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => VideoApp()),
+                              );
+                            },
+                            child: Icon(Icons.tv_rounded))
                         // _buildEventListmodel(screenSize, prov),
                       ],
                     ),
