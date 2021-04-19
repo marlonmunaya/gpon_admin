@@ -2,6 +2,7 @@ import 'dart:html';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:gpon_admin/src/api/data.dart';
 import 'package:gpon_admin/src/model/model.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -9,18 +10,20 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeProvider with ChangeNotifier {
-  int _count = 0;
-  int get count => _count;
+  Size _screenSize;
+  Size get screenSize => _screenSize;
   DateTime _selectedDay = DateTime.now();
   DateTime get selectedDay => _selectedDay;
+  CalendarController _calendarController;
+  CalendarController get calendarController => _calendarController;
   List<dynamic> _selectedEventos;
   List<dynamic> get selectedEventos => _selectedEventos;
   Map<DateTime, List> _eventos;
   Map<DateTime, List> get eventos => _eventos;
   Map<DateTime, List> _holidays;
   Map<DateTime, List> get holidays => _holidays;
-  // List<ClientModel> _model;
-  // List<ClientModel> get model => _model;
+  List<ClientModel> _model;
+  List<ClientModel> get model => _model;
 
   // TextEditingController get counter => _counter;
   void setdate() {
@@ -53,18 +56,17 @@ class HomeProvider with ChangeNotifier {
       DateTime(2021, 4, 21): ['Easter Sunday'],
       DateTime(2021, 4, 22): ['Easter Monday'],
     };
-    // getcollectionmolycop();
+    getclient();
   }
 
-  void increment() {
-    _count++;
-    print(_count);
+  void setscreensize(screensize) {
+    _screenSize = screensize;
+    print(_screenSize.toString());
     notifyListeners();
   }
 
   void onDaySelected(DateTime day, List events, List holidays) {
     _selectedEventos = events;
-    _count++;
     print('CALLBACK provider : _onDaySelected');
     print(_selectedEventos);
     notifyListeners();
@@ -79,18 +81,18 @@ class HomeProvider with ChangeNotifier {
     print('CALLBACK: _onCalendarCreated');
   }
 
-  // void getcollectionmolycop() async {
-  //   print('obteniento datos');
-  //   final snapshot = await FirebaseFirestore.instance.collection('user').get();
-  //   // .where('fecha', isGreaterThanOrEqualTo: start)
-  //   // .where('fecha', isLessThanOrEqualTo: end)
-  //   // .orderBy('fecha', descending: true)
-  //   // .getDocuments();
-  //   // _model = DocumentSnapshot.documents.map((e) => DevicesModel.fromSnapshot(e)).toList();
-  //   _model = snapshot.docs.map((e) => ClientModel.fromSnapshot(e)).toList();
-  //   print(_model);
-  //   notifyListeners();
-  // }
+  void getclient() async {
+    print('obteniento datos');
+    final snapshot = await Backend().usersv1.get();
+    // .where('fecha', isGreaterThanOrEqualTo: start)
+    // .where('fecha', isLessThanOrEqualTo: end)
+    // .orderBy('fecha', descending: true)
+    // .getDocuments();
+    // _model = DocumentSnapshot.documents.map((e) => DevicesModel.fromSnapshot(e)).toList();
+    _model = snapshot.docs.map((e) => ClientModel.fromSnapshot(e)).toList();
+    print("Lista obtenida");
+    notifyListeners();
+  }
 
   Future<void> addUser(fullName, company, age) {
     CollectionReference users = FirebaseFirestore.instance.collection('user');

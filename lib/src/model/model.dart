@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class UserModel {
+class ClientModel {
   final String nombre;
   final String cedula;
   final String celular;
@@ -8,8 +8,8 @@ class UserModel {
   final String direccion;
   final String email;
   final String plan;
-  final DateTime fechainstalacion;
-  final DateTime fechacaptacion;
+  final String fechainstalacion;
+  final String fechacaptacion;
   final String departamento;
   final String provincia;
   final String distrito;
@@ -22,7 +22,7 @@ class UserModel {
   final String vendedor;
   final DocumentReference reference;
 
-  UserModel.fromMap(Map<String, dynamic> map, {this.reference})
+  ClientModel.fromMap(Map<String, dynamic> map, {this.reference})
       : nombre = map["nombre"],
         cedula = map["cedula"],
         celular = map["celular"],
@@ -43,8 +43,14 @@ class UserModel {
         cordenadas = map["cordenadas"],
         vendedor = map["vendedor"];
 
-  UserModel.fromSnapshot(DocumentSnapshot snapshot)
+  ClientModel.fromSnapshot(DocumentSnapshot snapshot)
       : this.fromMap(snapshot.data(), reference: snapshot.reference);
 
   // String toString() => "$sales;$time\n";
 }
+  // assert(map['fecha']  != null),
+        // sales = map['var1valor'],
+        // var2valor = map['var2valor'],
+        // var1name = map['var1name'],
+        // tiempo = map['fecha'],
+        // time = (map['fecha']).toDate();

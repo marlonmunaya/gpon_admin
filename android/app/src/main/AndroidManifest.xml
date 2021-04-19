@@ -2,7 +2,13 @@
     package="com.example.gpon_admin">
    <application
         android:label="gpon_admin"
+        
         android:icon="@mipmap/ic_launcher">
+        <network-security-config>
+  <domain-config cleartextTrafficPermitted="true">
+    <domain includeSubdomains="true">10.20.7.100</domain>
+  </domain-config>
+</network-security-config>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

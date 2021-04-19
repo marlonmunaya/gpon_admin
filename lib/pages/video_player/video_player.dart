@@ -13,8 +13,8 @@ class _VideoAppState extends State<VideoApp> {
   void initState() {
     super.initState();
     _controller = VideoPlayerController.network(
-        'http://10.20.7.100/americatv_hd/index.m3u8')
-      ..initialize().then((_) {
+      'http://10.20.7.100/americatv_hd/index.m3u8:network-caching=1000',
+    )..initialize().then((_) {
         // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
         setState(() {});
       });

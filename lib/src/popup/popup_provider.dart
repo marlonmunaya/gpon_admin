@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:gpon_admin/src/data.dart';
+import 'package:gpon_admin/src/api/data.dart';
 import 'package:gpon_admin/src/model/utils_model.dart';
 
-class ClientProvider with ChangeNotifier {
+class PopupProvider with ChangeNotifier {
   String _nombre = "";
   String _cedula = "";
   String _celular = "";
@@ -84,7 +84,6 @@ class ClientProvider with ChangeNotifier {
           'plataforma': platselected,
           'cordenadas': "",
           'vendedor': "",
-          'reference': "",
         })
         .then((value) => print("Client Added"))
         .catchError((error) => print("Failes to ass user: $error"));

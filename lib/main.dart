@@ -2,9 +2,9 @@ import 'dart:html';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:gpon_admin/user_provider.dart';
-import 'package:gpon_admin/src/popup/client_provider.dart';
-import 'package:gpon_admin/calendar.dart';
+import 'package:gpon_admin/pages/Home/home_provider.dart';
+import 'package:gpon_admin/src/popup/popup_provider.dart';
+import 'package:gpon_admin/pages/Home/home.dart';
 
 void main() {
   runApp(MyApp());
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => HomeProvider()),
-        ChangeNotifierProvider(create: (_) => ClientProvider()),
+        ChangeNotifierProvider(create: (_) => PopupProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
             primarySwatch: Colors.blue,
             // iconTheme: IconThemeData(size: 12),
-            accentIconTheme: IconThemeData(size: 12),
+            // accentIconTheme: IconThemeData(size: 12),
             primaryIconTheme: IconThemeData(size: 12),
             textTheme: TextTheme(
                 headline1: TextStyle(fontSize: 12.0),
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
                 bodyText2: TextStyle(fontSize: 11.0)
                 // bodyText1: TextStyle(fontSize: 11.0)
                 )),
-        home: CalendarPage(),
+        home: HomePage(),
       ),
     );
   }
