@@ -12,7 +12,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class HomeProvider with ChangeNotifier {
   Size _screenSize;
   Size get screenSize => _screenSize;
-  DateTime _selectedDay = DateTime.now();
+  DateTime _selectedDay;
   DateTime get selectedDay => _selectedDay;
   CalendarController _calendarController;
   CalendarController get calendarController => _calendarController;
@@ -27,6 +27,7 @@ class HomeProvider with ChangeNotifier {
 
   // TextEditingController get counter => _counter;
   void setdate() {
+    _selectedDay = DateTime.now();
     _eventos = {
       _selectedDay.subtract(Duration(days: 16)): ['Event A3', 'Event B3'],
       _selectedDay.subtract(Duration(days: 10)): [
@@ -67,6 +68,7 @@ class HomeProvider with ChangeNotifier {
 
   void onDaySelected(DateTime day, List events, List holidays) {
     _selectedEventos = events;
+    _selectedDay = day;
     print('CALLBACK provider : _onDaySelected');
     print(_selectedEventos);
     notifyListeners();
@@ -92,6 +94,18 @@ class HomeProvider with ChangeNotifier {
     _model = snapshot.docs.map((e) => ClientModel.fromSnapshot(e)).toList();
     print("Lista obtenida");
     notifyListeners();
+  }
+
+  Future updateObs(String refer, TextEditingController ctl) async {
+    final users = Backend().usersv1;
+    await users
+        .doc("$refer")
+        .update({
+          'observacion': ctl.text,
+        })
+        .then((value) => print("Client updated"))
+        .catchError((error) => print("Failes to ass user: $error"));
+    getclient();
   }
 
   Future<void> addUser(fullName, company, age) {

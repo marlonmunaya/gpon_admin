@@ -1,20 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:gpon_admin/src/api/data.dart';
 import 'package:gpon_admin/src/model/utils_model.dart';
+import 'package:gpon_admin/src/model/model.dart';
 
 class PopupProvider with ChangeNotifier {
-  String _nombre = "";
-  String _cedula = "";
-  String _celular = "";
-  String _fijo = "";
-  String _direccion = "";
-  String _email = "";
-  String _fechainstalacion = "";
-  String _fechacaptacion = "";
-  String _observacion = "";
-  String get nombre => _nombre;
-  String get cedula => _cedula;
-  String get celular => _celular;
+  TextEditingController _nombre = TextEditingController();
+  TextEditingController get nombre => _nombre;
+  TextEditingController _cedula = TextEditingController();
+  TextEditingController get cedula => _cedula;
+  TextEditingController _celular = TextEditingController();
+  TextEditingController get celular => _celular;
+  TextEditingController _fijo = TextEditingController();
+  TextEditingController get fijo => _fijo;
+  TextEditingController _direccion = TextEditingController();
+  TextEditingController get direccion => _direccion;
+  TextEditingController _email = TextEditingController();
+  TextEditingController get email => _email;
+  TextEditingController _plan = TextEditingController();
+  TextEditingController get plan => _plan;
+  TextEditingController _fechainstalacion = TextEditingController();
+  TextEditingController get fechainstalacion => _fechainstalacion;
+  TextEditingController _fechacaptacion = TextEditingController();
+  TextEditingController get fechacaptacion => _fechacaptacion;
+  TextEditingController _departamento = TextEditingController();
+  TextEditingController get departamento => _departamento;
+  TextEditingController _provincia = TextEditingController();
+  TextEditingController get provincia => _provincia;
+  TextEditingController _distrito = TextEditingController();
+  TextEditingController get distrito => _distrito;
+  TextEditingController _observacion = TextEditingController();
+  TextEditingController get observacion => _observacion;
+  TextEditingController _grupo = TextEditingController();
+  TextEditingController get grupo => _grupo;
+  TextEditingController _cableadoutp = TextEditingController();
+  TextEditingController get cableadoutp => _cableadoutp;
+  TextEditingController _deco = TextEditingController();
+  TextEditingController get deco => _deco;
+  TextEditingController _plataforma = TextEditingController();
+  TextEditingController get plataforma => _plataforma;
+  TextEditingController _cordenadas = TextEditingController();
+  TextEditingController get cordenadas => _cordenadas;
+  TextEditingController _vendedor = TextEditingController();
+  TextEditingController get vendedor => _vendedor;
 
   UtilsModel _planes;
   UtilsModel get planes => _planes;
@@ -100,6 +127,16 @@ class PopupProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void getoneclient(String refer) async {
+    ClientModel ide;
+    print('obteniento dato');
+    final snapshot = await Backend().usersv1.doc(refer).get();
+    ide = ClientModel.fromSnapshot(snapshot);
+    _cedula.text = ide.cedula;
+    print("cliente obtenido");
+    notifyListeners();
+  }
+
   void setplanselected(String plan) {
     _planselected = plan;
     notifyListeners();
@@ -116,17 +153,17 @@ class PopupProvider with ChangeNotifier {
   }
 
   void setnombre(String data) {
-    _nombre = data;
+    _nombre.text = data;
     notifyListeners();
   }
 
   void setcedula(String data) {
-    _cedula = data;
+    _cedula.text = data;
     notifyListeners();
   }
 
   void setcell(String data) {
-    _celular = data;
+    _celular.text = data;
     notifyListeners();
   }
 }

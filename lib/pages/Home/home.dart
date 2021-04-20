@@ -71,7 +71,6 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
                         ],
                       ),
                     ),
-                    // Expanded(child: _buildEventListmodel(screenSize, prov)),
                   ],
                 ),
               )
@@ -262,70 +261,4 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
       width: 10,
     );
   }
-
-  // Widget _buildEventList(prov) {
-  //   final List<dynamic> lista = prov.selectedEventos;
-  //   return ListView(
-  //     children: lista
-  //         .map((event) => Container(
-  //               decoration: BoxDecoration(
-  //                 border: Border.all(width: 0.8),
-  //                 borderRadius: BorderRadius.circular(12.0),
-  //               ),
-  //               margin:
-  //                   const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-  //               child: ListTile(
-  //                 title: Text(event.toString()),
-  //                 onTap: () => print('$event tapped!'),
-  //               ),
-  //             ))
-  //         .toList(),
-  //   );
-  // }
-
-  // Widget _clientList(screensize, prov) {
-  //   final List<DevicesModel> lista = prov.model;
-
-  //   return lista == null
-  //       ? Center(
-  //           child: CircularProgressIndicator(),
-  //         )
-  //       : Card(
-  //           child: Container(
-  //               width: 0.68 * screensize.width,
-  //               height: screensize.height,
-  //               child: ListView.builder(
-  //                 itemCount: lista.length,
-  //                 itemBuilder: (context, index) {
-  //                   return ListTile(
-  //                     title: Text("${lista[index].fullname}"),
-  //                     leading: CircleAvatar(
-  //                       backgroundColor: Colors.red,
-  //                       // child: Container(
-  //                       //   color: Colors.red,
-  //                       // ),
-  //                     ),
-  //                     trailing: Wrap(
-  //                       spacing: 5,
-  //                       children: [
-  //                         Text("${lista[index].fullname}"),
-  //                         Container(
-  //                             width: 50,
-  //                             child: TextField(
-  //                               maxLines: 2,
-  //                             ))
-  //                       ],
-  //                     ),
-  //                     subtitle: Row(
-  //                       children: [
-  //                         Text("${lista[index].age}"),
-  //                       ],
-  //                     ),
-  //                   );
-  //                   // return Text("data");
-  //                 },
-  //               )),
-  //         );
-  // }
-
 }

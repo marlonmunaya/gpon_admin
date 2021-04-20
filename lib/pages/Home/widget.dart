@@ -18,7 +18,7 @@ Widget floatactionbutton(BuildContext context) {
       context.read<PopupProvider>().setplanselected("RL-120");
       context.read<PopupProvider>().setplatselected("Recomendado");
       showDialog(
-          context: context, builder: (BuildContext context) => EditClient2());
+          context: context, builder: (BuildContext context) => EditClient());
     },
   );
 }

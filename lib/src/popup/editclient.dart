@@ -1,13 +1,12 @@
 import 'dart:js';
-
 import 'package:flutter/material.dart';
 import 'package:gpon_admin/pages/Home/home_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'popup_provider.dart';
 
-class EditClient2 extends StatelessWidget {
-  const EditClient2({Key key}) : super(key: key);
+class EditClient extends StatelessWidget {
+  const EditClient({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +25,7 @@ class EditClient2 extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _crearDni(context),
+                  _crearCedula(context),
                   SizedBox(width: 10.0),
                   _crearPlataforma(context)
                 ],
@@ -62,6 +61,7 @@ Widget _crearCelular(BuildContext context) {
   return SizedBox(
     width: 130,
     child: TextFormField(
+      controller: context.read<PopupProvider>().celular,
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
         labelText: 'Celular',
@@ -113,10 +113,11 @@ Widget _crearFecha(BuildContext context) {
   );
 }
 
-Widget _crearDni(BuildContext context) {
+Widget _crearCedula(BuildContext context) {
   return SizedBox(
     width: 160,
     child: TextFormField(
+      controller: context.read<PopupProvider>().cedula,
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
         labelText: 'DNI/RUC/CEDULA',
