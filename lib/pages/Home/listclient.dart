@@ -2,16 +2,17 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:gpon_admin/src/model/model.dart';
-import 'package:gpon_admin/src/model/panel_model.dart';
 import 'package:gpon_admin/src/popup/editclient.dart';
 import 'package:gpon_admin/src/popup/popup_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:gpon_admin/pages/Home/home_provider.dart';
 import 'package:gpon_admin/src/responsive/responsive.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:o_color_picker/o_color_picker.dart';
 
 class ClientList extends StatelessWidget {
   ClientList({Key key}) : super(key: key);
-
+  final Color currentColor = Colors.lightGreen[300];
   @override
   Widget build(BuildContext context) {
     final prov = Provider.of<HomeProvider>(context);
@@ -28,7 +29,9 @@ class ClientList extends StatelessWidget {
           ),
           SizedBox(height: 10),
           Container(
-              width: 0.68 * _screensize.width,
+              width: ResponsiveWidget.isSmallScreen(context)
+                  ? _screensize.width
+                  : 0.68 * _screensize.width,
               height: _screensize.height - 100,
               child: lista == null
                   ? Center(child: CircularProgressIndicator())
@@ -53,6 +56,8 @@ class ClientList extends StatelessWidget {
         final desctl = TextEditingController();
         desctl.text = i.observacion;
         return ExpansionPanelRadio(
+            backgroundColor:
+                i.color.isEmpty ? Colors.white60 : Color(int.parse(i.color)),
             canTapOnHeader: true,
             value: i.reference,
             headerBuilder: (BuildContext context, bool isExpanded) {
@@ -72,7 +77,8 @@ class ClientList extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           saveobs(context, i, desctl),
-                          edit(context, i)
+                          edit(context, i),
+                          o_pickcolor(context, i)
                         ],
                       )
                     : SizedBox(
@@ -90,11 +96,12 @@ class ClientList extends StatelessWidget {
                               ),
                             ),
                             Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 saveobs(context, i, desctl),
-                                edit(context, i)
+                                edit(context, i),
+                                o_pickcolor(context, i)
                               ],
                             )
                           ],
@@ -157,6 +164,30 @@ class ClientList extends StatelessWidget {
         showDialog(
             context: context, builder: (BuildContext context) => EditClient());
       },
+    );
+  }
+
+  Widget o_pickcolor(BuildContext context, ClientModel i) {
+    return InkWell(
+      child: Icon(Icons.color_lens_outlined, size: 14),
+      onTap: () => showDialog<void>(
+        context: context,
+        builder: (_) => AlertDialog(
+          content: OColorPicker(
+            spacing: 3,
+            boxBorder: OColorBoxBorder(color: Colors.black12, width: 1),
+            selectedColor: currentColor,
+            colors: primaryColorsPalette,
+            onColorChange: (color) {
+              print(color);
+              context
+                  .read<HomeProvider>()
+                  .updatecolor(context, i.reference.id, color.value.toString());
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
+      ),
     );
   }
 }

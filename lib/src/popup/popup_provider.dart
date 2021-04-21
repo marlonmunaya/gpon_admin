@@ -4,24 +4,28 @@ import 'package:gpon_admin/src/model/utils_model.dart';
 import 'package:gpon_admin/src/model/model.dart';
 
 class PopupProvider with ChangeNotifier {
-  TextEditingController _nombre = TextEditingController();
-  TextEditingController get nombre => _nombre;
   TextEditingController _cedula = TextEditingController();
   TextEditingController get cedula => _cedula;
+  String _plataforma;
+  String get plataforma => _plataforma;
+  TextEditingController _nombre = TextEditingController();
+  TextEditingController get nombre => _nombre;
   TextEditingController _celular = TextEditingController();
   TextEditingController get celular => _celular;
+  String _plan;
+  String get plan => _plan;
   TextEditingController _fijo = TextEditingController();
   TextEditingController get fijo => _fijo;
   TextEditingController _direccion = TextEditingController();
   TextEditingController get direccion => _direccion;
   TextEditingController _email = TextEditingController();
   TextEditingController get email => _email;
-  TextEditingController _plan = TextEditingController();
-  TextEditingController get plan => _plan;
   TextEditingController _fechainstalacion = TextEditingController();
   TextEditingController get fechainstalacion => _fechainstalacion;
   TextEditingController _fechacaptacion = TextEditingController();
   TextEditingController get fechacaptacion => _fechacaptacion;
+  DateTime _fechacaptaciond;
+  DateTime get fechacaptaciond => _fechacaptaciond;
   TextEditingController _departamento = TextEditingController();
   TextEditingController get departamento => _departamento;
   TextEditingController _provincia = TextEditingController();
@@ -36,13 +40,12 @@ class PopupProvider with ChangeNotifier {
   TextEditingController get cableadoutp => _cableadoutp;
   TextEditingController _deco = TextEditingController();
   TextEditingController get deco => _deco;
-  TextEditingController _plataforma = TextEditingController();
-  TextEditingController get plataforma => _plataforma;
   TextEditingController _cordenadas = TextEditingController();
   TextEditingController get cordenadas => _cordenadas;
   TextEditingController _vendedor = TextEditingController();
   TextEditingController get vendedor => _vendedor;
-
+  String _color;
+  String get color => _color;
   UtilsModel _planes;
   UtilsModel get planes => _planes;
   UtilsModel _plats;
@@ -59,13 +62,20 @@ class PopupProvider with ChangeNotifier {
   get formKeysign => _formKeysign;
 
   void guardar(context) {
-    print("Validando");
+    showsnackbar(context, "Validando");
     if (!_formKeysign.currentState.validate()) return;
     _formKeysign.currentState.save();
-    print("Guardando");
     notifyListeners();
     addClient();
+    showsnackbar(context, "Guardado");
     Navigator.of(context).pop();
+  }
+
+  void showsnackbar(BuildContext context, String data) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(data),
+      duration: Duration(seconds: 3),
+    ));
   }
 
   void pickDateDialog(context) {
@@ -73,17 +83,37 @@ class PopupProvider with ChangeNotifier {
             context: context,
             initialDate: DateTime.now(),
             firstDate: DateTime(2018),
-            lastDate: DateTime.now().add(Duration(
-                days: 180))) //what will be the up to supported date in picker
+            lastDate: DateTime.now().add(Duration(days: 180)))
         .then((pickedDate) {
       //then usually do the future job
       if (pickedDate == null) {
         return;
       }
-      _dateselected = pickedDate;
-      dateCtl.text = '${pickedDate.day}-${pickedDate.month}-${pickedDate.year}';
-      print(pickedDate);
-      print(dateCtl.text);
+      _fechacaptaciond = pickedDate;
+      _fechacaptacion.text =
+          '${pickedDate.day}-${pickedDate.month}-${pickedDate.year}';
+      // print(pickedDate);
+      // print(dateCtl.text);
+    });
+    notifyListeners();
+  }
+
+  void pickColorDialog(context) {
+    showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(2018),
+            lastDate: DateTime.now().add(Duration(days: 180)))
+        .then((pickedDate) {
+      //then usually do the future job
+      if (pickedDate == null) {
+        return;
+      }
+      _fechacaptaciond = pickedDate;
+      _fechacaptacion.text =
+          '${pickedDate.day}-${pickedDate.month}-${pickedDate.year}';
+      // print(pickedDate);
+      // print(dateCtl.text);
     });
     notifyListeners();
   }
@@ -92,13 +122,13 @@ class PopupProvider with ChangeNotifier {
     final users = Backend().usersv1;
     return users
         .add({
-          'nombre': _nombre,
-          'cedula': _cedula,
-          'celular': _celular,
+          'nombre': _nombre.text,
+          'cedula': _cedula.text,
+          'celular': _celular.text,
           'fijo': "",
           'direccion': "",
           'email': "",
-          'plan': _planselected,
+          'plan': _plan,
           'fechainstalacion': "",
           'fechacaptacion': "",
           'departamento': "",
@@ -108,9 +138,10 @@ class PopupProvider with ChangeNotifier {
           'grupo': "",
           'cableadoutp': "",
           'deco': "",
-          'plataforma': platselected,
+          'plataforma': _plataforma,
           'cordenadas': "",
           'vendedor': "",
+          'color': ""
         })
         .then((value) => print("Client Added"))
         .catchError((error) => print("Failes to ass user: $error"));
@@ -122,6 +153,8 @@ class PopupProvider with ChangeNotifier {
     _planes = UtilsModel.fromMapPlan(snapplan.data());
     final snapplat = await Backend().utils.doc("plataforma").get();
     _plats = UtilsModel.fromMapPlat(snapplat.data());
+    // final snapvendedor = await Backend().utils.doc("vendedor").get();
+    // _vendedor = UtilsModel.fromMapVendedor(snapvendedor.data());
     print(_planes.planes.toString());
     print(_plats.plataforma.toString());
     notifyListeners();
@@ -137,13 +170,13 @@ class PopupProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setplanselected(String plan) {
-    _planselected = plan;
+  void setplan(String plan) {
+    _plan = plan;
     notifyListeners();
   }
 
-  void setplatselected(String plat) {
-    _platselected = plat;
+  void setplataforma(String plat) {
+    _plataforma = plat;
     notifyListeners();
   }
 

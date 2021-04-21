@@ -15,8 +15,8 @@ Widget floatactionbutton(BuildContext context) {
   return FloatingActionButton(
     child: Icon(Icons.person_add),
     onPressed: () {
-      context.read<PopupProvider>().setplanselected("RL-120");
-      context.read<PopupProvider>().setplatselected("Recomendado");
+      context.read<PopupProvider>().setplan("RL-120");
+      context.read<PopupProvider>().setplataforma("Recomendado");
       showDialog(
           context: context, builder: (BuildContext context) => EditClient());
     },

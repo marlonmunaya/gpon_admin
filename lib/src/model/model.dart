@@ -20,6 +20,7 @@ class ClientModel {
   final String plataforma;
   final String cordenadas;
   final String vendedor;
+  final String color;
   final DocumentReference reference;
 
   ClientModel.fromMap(Map<String, dynamic> map, {this.reference})
@@ -41,16 +42,17 @@ class ClientModel {
         deco = map["deco"],
         plataforma = map["plataforma"],
         cordenadas = map["cordenadas"],
-        vendedor = map["vendedor"];
+        vendedor = map["vendedor"],
+        color = map["color"];
 
   ClientModel.fromSnapshot(DocumentSnapshot snapshot)
       : this.fromMap(snapshot.data(), reference: snapshot.reference);
 
   // String toString() => "$sales;$time\n";
 }
-  // assert(map['fecha']  != null),
-        // sales = map['var1valor'],
-        // var2valor = map['var2valor'],
-        // var1name = map['var1name'],
-        // tiempo = map['fecha'],
-        // time = (map['fecha']).toDate();
+// assert(map['fecha']  != null),
+// sales = map['var1valor'],
+// var2valor = map['var2valor'],
+// var1name = map['var1name'],
+// tiempo = map['fecha'],
+// time = (map['fecha']).toDate();

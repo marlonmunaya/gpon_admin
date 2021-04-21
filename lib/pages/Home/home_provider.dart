@@ -1,4 +1,4 @@
-import 'dart:html';
+// import 'dart:html';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -60,6 +60,13 @@ class HomeProvider with ChangeNotifier {
     getclient();
   }
 
+  void showsnackbar(BuildContext context, String data) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(data),
+      duration: Duration(seconds: 3),
+    ));
+  }
+
   void setscreensize(screensize) {
     _screenSize = screensize;
     print(_screenSize.toString());
@@ -105,6 +112,19 @@ class HomeProvider with ChangeNotifier {
         })
         .then((value) => print("Client updated"))
         .catchError((error) => print("Failes to ass user: $error"));
+    getclient();
+  }
+
+  Future updatecolor(context, String refer, String color) async {
+    final users = Backend().usersv1;
+    await users
+        .doc("$refer")
+        .update({
+          'color': color,
+        })
+        .then((value) => print("Client color updated"))
+        .catchError((error) => print("Failes to ass user: $error"));
+    showsnackbar(context, "Color actualizado");
     getclient();
   }
 

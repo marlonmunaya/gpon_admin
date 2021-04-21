@@ -40,6 +40,8 @@ android {
         targetSdkVersion 30
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        // se agrego para multidex
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -57,5 +59,8 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation platform('com.google.firebase:firebase-bom:26.7.0')
+    implementation platform('com.google.firebase:firebase-bom:27.0.0')
+    // Se agregó esto para multidex
+    implementation 'androidx.multidex:multidex:2.0.1'
+    
 }

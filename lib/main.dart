@@ -1,4 +1,5 @@
-import 'dart:html';
+// import 'dart:html';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -6,7 +7,9 @@ import 'package:gpon_admin/pages/Home/home_provider.dart';
 import 'package:gpon_admin/src/popup/popup_provider.dart';
 import 'package:gpon_admin/pages/Home/home.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -29,13 +32,11 @@ class MyApp extends StatelessWidget {
             textTheme: TextTheme(
                 headline1: TextStyle(fontSize: 12.0),
                 headline2: TextStyle(fontSize: 12.0),
-                subtitle1: TextStyle(fontSize: 11.0),
-                subtitle2: TextStyle(fontSize: 11.0),
+                subtitle1: TextStyle(fontSize: 12.0),
+                subtitle2: TextStyle(fontSize: 12.0),
                 caption: TextStyle(fontSize: 12.0),
-                bodyText1: TextStyle(fontSize: 11.0),
-                bodyText2: TextStyle(fontSize: 11.0)
-                // bodyText1: TextStyle(fontSize: 11.0)
-                )),
+                bodyText1: TextStyle(fontSize: 12.0),
+                bodyText2: TextStyle(fontSize: 12.0))),
         home: HomePage(),
       ),
     );

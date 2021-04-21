@@ -1,11 +1,12 @@
 class UtilsModel {
-    List<String> planes;
-    List<String> plataforma;
-    List<String> departamentos;
-    List<String> limaprovincias;
-    List<String> cuscoprovincias;
-    List<String> limadistritos;
-    List<String> cuscodistritos;
+  List<String> planes;
+  List<String> plataforma;
+  List<String> departamentos;
+  List<String> limaprovincias;
+  List<String> cuscoprovincias;
+  List<String> limadistritos;
+  List<String> cuscodistritos;
+  List<String> vendedor;
 
   UtilsModel.fromMapPlan(Map<dynamic, dynamic> data)
       : planes = List.from(data['planes']);
@@ -15,7 +16,7 @@ class UtilsModel {
 
   UtilsModel.fromMapDep(Map<dynamic, dynamic> data)
       : departamentos = List.from(data['departamentos']);
-  
+
   UtilsModel.fromMapDeplima(Map<dynamic, dynamic> data)
       : limaprovincias = List.from(data['departamento-Lima']);
 
@@ -27,5 +28,7 @@ class UtilsModel {
 
   UtilsModel.fromMapProvcusco(Map<dynamic, dynamic> data)
       : cuscodistritos = List.from(data['provincia-Cusco']);
-}
 
+  UtilsModel.fromMapVendedor(Map<dynamic, dynamic> data)
+      : vendedor = List.from(data['vendedor']);
+}

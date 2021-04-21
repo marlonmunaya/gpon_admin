@@ -26,10 +26,11 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     final provider = Provider.of<HomeProvider>(context, listen: false);
+    print("conseguiendo");
     context.read<PopupProvider>().getutils();
     context.read<HomeProvider>().getclient();
     provider.setdate();
-    final _selectedDay = provider.selectedDay;
+    // final _selectedDay = provider.selectedDay;
     _events = provider.eventos;
     _calendarController = CalendarController();
     _animationController = AnimationController(
@@ -50,7 +51,7 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final prov = Provider.of<HomeProvider>(context);
     var screenSize = MediaQuery.of(context).size;
-    // prov.setscreensize(screenSize);
+
     return Scaffold(
         appBar: AppBar(
           title: Text("Administrador"),
@@ -99,7 +100,9 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget _buildTableCalendarWithBuilders(screenSize, prov) {
     return Card(
       child: Container(
-        width: screenSize.width < 800 ? 270 : screenSize.width * 0.29,
+        width: ResponsiveWidget.isSmallScreen(context)
+            ? screenSize.width
+            : screenSize.width * 0.29,
         child: TableCalendar(
           // locale: 'pl_PL',
           calendarController: _calendarController,

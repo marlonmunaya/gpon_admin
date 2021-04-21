@@ -1,4 +1,4 @@
-import 'dart:js';
+// import 'dart:js';
 import 'package:flutter/material.dart';
 import 'package:gpon_admin/pages/Home/home_provider.dart';
 import 'package:intl/intl.dart';
@@ -24,9 +24,10 @@ class EditClient extends StatelessWidget {
             children: <Widget>[
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _crearCedula(context),
-                  SizedBox(width: 10.0),
+                  // SizedBox(width: 10.0),
                   _crearPlataforma(context)
                 ],
               ),
@@ -35,6 +36,7 @@ class EditClient extends StatelessWidget {
               SizedBox(height: 5.0),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _crearCelular(context),
                   SizedBox(width: 10.0),
@@ -42,7 +44,7 @@ class EditClient extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 5.0),
-              _crearFecha(context)
+              _crearFechacaptacion(context)
             ],
           ),
         ),
@@ -57,82 +59,26 @@ class EditClient extends StatelessWidget {
   }
 }
 
-Widget _crearCelular(BuildContext context) {
-  return SizedBox(
-    width: 130,
-    child: TextFormField(
-      controller: context.read<PopupProvider>().celular,
-      keyboardType: TextInputType.number,
-      decoration: InputDecoration(
-        labelText: 'Celular',
-        isDense: true,
-        prefixIcon: Icon(Icons.smartphone),
-        contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-      ),
-      onSaved: (value) {
-        context.read<PopupProvider>().setcell(value);
-      },
-      validator: (value) {
-        if (value.length < 9) {
-          return 'Ingrese un número válido';
-        } else {
-          return null;
-        }
-      },
-    ),
-  );
-}
-
-Widget _crearFecha(BuildContext context) {
-  return SizedBox(
-    width: 120,
-    child: TextFormField(
-      controller: context.watch<PopupProvider>().dateCtl,
-      readOnly: true,
-      decoration: InputDecoration(
-        labelText: 'Fecha',
-        isDense: true,
-        contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-        suffixIcon: IconButton(
-            tooltip: "Fecha",
-            iconSize: 20,
-            padding: EdgeInsets.all(0.0),
-            icon: Icon(Icons.calendar_today),
-            onPressed: () =>
-                context.read<PopupProvider>().pickDateDialog(context)),
-      ),
-      onSaved: (value) {},
-      validator: (value) {
-        if (value.length < 9) {
-          return 'Ingrese una Fecha válida';
-        } else {
-          return null;
-        }
-      },
-    ),
-  );
-}
-
 Widget _crearCedula(BuildContext context) {
   return SizedBox(
-    width: 160,
+    width: 140,
     child: TextFormField(
       controller: context.read<PopupProvider>().cedula,
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
-        labelText: 'DNI/RUC/CEDULA',
-        prefixIcon: Icon(Icons.person),
+        labelText: 'dni/ruc/cedula',
         isDense: true,
-        contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-        suffixIcon: Container(
-          child: IconButton(
-              tooltip: "Buscar",
-              iconSize: 20,
-              padding: EdgeInsets.all(0.0),
-              icon: Icon(Icons.search),
-              onPressed: () {
-                print("tap search");
-              }),
+        contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
+        suffixIconConstraints: BoxConstraints(minHeight: 24, minWidth: 24),
+        suffixIcon: GestureDetector(
+          child: Tooltip(
+            message: "Buscar",
+            child: InkWell(
+                child: Icon(Icons.search),
+                onTap: () {
+                  print("tap search");
+                }),
+          ),
         ),
       ),
       onSaved: (value) {
@@ -149,29 +95,11 @@ Widget _crearCedula(BuildContext context) {
   );
 }
 
-Widget _crearplan(BuildContext context) {
-  return DropdownButton<String>(
-    value: context.watch<PopupProvider>().planselected,
-    onChanged: (String value) =>
-        context.read<PopupProvider>().setplanselected(value),
-    items: context
-        .watch<PopupProvider>()
-        .planes
-        .planes
-        .map<DropdownMenuItem<String>>((String value) {
-      return DropdownMenuItem<String>(
-        value: value,
-        child: Text(value),
-      );
-    }).toList(),
-  );
-}
-
 Widget _crearPlataforma(BuildContext context) {
   return DropdownButton<String>(
-    value: context.watch<PopupProvider>().platselected,
+    value: context.watch<PopupProvider>().plataforma,
     onChanged: (String value) =>
-        context.read<PopupProvider>().setplatselected(value),
+        context.read<PopupProvider>().setplataforma(value),
     items: context
         .watch<PopupProvider>()
         .plataformas
@@ -187,6 +115,7 @@ Widget _crearPlataforma(BuildContext context) {
 
 Widget _crearNombre(BuildContext context) {
   return TextFormField(
+    controller: context.read<PopupProvider>().nombre,
     decoration: InputDecoration(
       labelText: 'Nombre completo',
       contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 0),
@@ -201,6 +130,82 @@ Widget _crearNombre(BuildContext context) {
         return null;
       }
     },
+  );
+}
+
+Widget _crearCelular(BuildContext context) {
+  return SizedBox(
+    width: 130,
+    child: TextFormField(
+      controller: context.read<PopupProvider>().celular,
+      keyboardType: TextInputType.number,
+      decoration: InputDecoration(
+        labelText: 'Celular',
+        isDense: true,
+        contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
+      ),
+      onSaved: (value) {
+        context.read<PopupProvider>().setcell(value);
+      },
+      validator: (value) {
+        if (value.length < 9) {
+          return 'Ingrese un número válido';
+        } else {
+          return null;
+        }
+      },
+    ),
+  );
+}
+
+Widget _crearplan(BuildContext context) {
+  return DropdownButton<String>(
+    value: context.watch<PopupProvider>().plan,
+    onChanged: (String value) => context.read<PopupProvider>().setplan(value),
+    items: context
+        .watch<PopupProvider>()
+        .planes
+        .planes
+        .map<DropdownMenuItem<String>>((String value) {
+      return DropdownMenuItem<String>(
+        value: value,
+        child: Text(value),
+      );
+    }).toList(),
+  );
+}
+
+Widget _crearFechacaptacion(BuildContext context) {
+  return SizedBox(
+    width: 120,
+    child: TextFormField(
+      controller: context.watch<PopupProvider>().fechacaptacion,
+      readOnly: true,
+      decoration: InputDecoration(
+        labelText: 'Fecha',
+        isDense: true,
+        contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
+        suffixIconConstraints: BoxConstraints(minHeight: 24, minWidth: 24),
+        suffixIcon: GestureDetector(
+          child: Tooltip(
+            message: "Fecha",
+            child: InkWell(
+              child: Icon(Icons.calendar_today),
+              onTap: () =>
+                  context.read<PopupProvider>().pickDateDialog(context),
+            ),
+          ),
+        ),
+      ),
+      onSaved: (value) {},
+      validator: (value) {
+        if (value.length < 9) {
+          return 'Ingrese una Fecha válida';
+        } else {
+          return null;
+        }
+      },
+    ),
   );
 }
 

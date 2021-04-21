@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "286689828550-4ll41umsu3ggp4smvfpmv2tbomdjtdi6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.gpon_admin",
+            "certificate_hash": "905ecc1e88c7f78f4628a823d65b3a0d4121c128"
+          }
+        },
+        {
           "client_id": "286689828550-emp8lrl1ds1s95pp0ejs52ttbkqjs32q.apps.googleusercontent.com",
           "client_type": 3
         }
