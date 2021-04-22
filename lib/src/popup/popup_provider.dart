@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gpon_admin/src/api/data.dart';
 import 'package:gpon_admin/src/model/utils_model.dart';
 import 'package:gpon_admin/src/model/model.dart';
+import 'package:gpon_admin/pages/Home/home_provider.dart';
 
 class PopupProvider with ChangeNotifier {
   TextEditingController _cedula = TextEditingController();
@@ -48,8 +49,12 @@ class PopupProvider with ChangeNotifier {
   String get color => _color;
   UtilsModel _planes;
   UtilsModel get planes => _planes;
-  UtilsModel _plats;
-  UtilsModel get plataformas => _plats;
+  UtilsModel _plataformas;
+  UtilsModel get plataformas => _plataformas;
+  UtilsModel _ubicaciones;
+  UtilsModel get ubicaciones => _ubicaciones;
+  UtilsModel _vendedores;
+  UtilsModel get vendedores => _vendedores;
   String _planselected;
   String get planselected => _planselected;
   String _platselected;
@@ -152,11 +157,13 @@ class PopupProvider with ChangeNotifier {
     final snapplan = await Backend().utils.doc("plan").get();
     _planes = UtilsModel.fromMapPlan(snapplan.data());
     final snapplat = await Backend().utils.doc("plataforma").get();
-    _plats = UtilsModel.fromMapPlat(snapplat.data());
-    // final snapvendedor = await Backend().utils.doc("vendedor").get();
-    // _vendedor = UtilsModel.fromMapVendedor(snapvendedor.data());
-    print(_planes.planes.toString());
-    print(_plats.plataforma.toString());
+    _plataformas = UtilsModel.fromMapPlat(snapplat.data());
+    final snapubicaciones = await Backend().utils.doc("ubicaciones").get();
+    _ubicaciones = UtilsModel.fromMapubicaciones(snapubicaciones.data());
+    final snapvendedor = await Backend().utils.doc("vendedor").get();
+    _vendedores = UtilsModel.fromMapVendedor(snapvendedor.data());
+    print("Utilidades obtenidos");
+    print(_ubicaciones.departamentos);
     notifyListeners();
   }
 
@@ -166,8 +173,38 @@ class PopupProvider with ChangeNotifier {
     final snapshot = await Backend().usersv1.doc(refer).get();
     ide = ClientModel.fromSnapshot(snapshot);
     _cedula.text = ide.cedula;
+    _plan = ide.plan;
+    _nombre.text = ide.nombre;
+    _celular.text = ide.celular;
+    _fijo.text = ide.fijo;
+    _plataforma = ide.plataforma;
+    _vendedor.text = ide.vendedor;
+    _fechacaptacion.text = ide.fechacaptacion;
+    _deco.text = ide.deco;
+    _cableadoutp.text = ide.cableadoutp;
+    _direccion.text = ide.direccion;
+    _departamento.text = ide.departamento;
+    _provincia.text = ide.provincia;
+    _distrito.text = ide.distrito;
+    _email.text = ide.email;
+    _cordenadas.text = ide.cordenadas;
+    _observacion.text = ide.observacion;
+    // _cedula.text = ide.cedula;
+    // _cedula.text = ide.cedula;
     print("cliente obtenido");
     notifyListeners();
+  }
+
+  Future updateonclient(context, String refer) async {
+    final users = Backend().usersv1;
+    await users
+        .doc("$refer")
+        .update({
+          'observacion': obs.text,
+        })
+        .then((value) => print("Client updated"))
+        .catchError((error) => print("Failes to ass user: $error"));
+    showsnackbar(context, "Observación actualizada");
   }
 
   void setplan(String plan) {
@@ -197,6 +234,58 @@ class PopupProvider with ChangeNotifier {
 
   void setcell(String data) {
     _celular.text = data;
+    notifyListeners();
+  }
+
+  void setdireccion(String data) {
+    _direccion.text = data;
+    notifyListeners();
+  }
+
+  void setemail(String data) {
+    _email.text = data;
+    notifyListeners();
+  }
+
+  void setfijo(String data) {
+    _fijo.text = data;
+    notifyListeners();
+  }
+
+  void setutp(String data) {
+    _cableadoutp.text = data;
+    notifyListeners();
+  }
+
+  void setdepartamento(String data) {
+    _provincia.text = "Provin";
+    _distrito.text = "Distrito";
+    _departamento.text = data;
+    notifyListeners();
+  }
+
+  void setprovincia(String data) {
+    _provincia.text = data;
+    notifyListeners();
+  }
+
+  void setdistrito(String data) {
+    _distrito.text = data;
+    notifyListeners();
+  }
+
+  void setdeco(String data) {
+    _deco.text = data;
+    notifyListeners();
+  }
+
+  void setvendedor(String data) {
+    _vendedor.text = data;
+    notifyListeners();
+  }
+
+  void setcordenadas(String data) {
+    _cordenadas.text = data;
     notifyListeners();
   }
 }

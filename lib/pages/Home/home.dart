@@ -60,6 +60,7 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
         body: ResponsiveWidget.isSmallScreen(context)
             ? SingleChildScrollView(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     _buildTableCalendarWithBuilders(screenSize, prov),
                     const SizedBox(width: 8.0),
@@ -67,6 +68,7 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
                     const SizedBox(height: 8.0),
                     SingleChildScrollView(
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           ClientList(),
                         ],
@@ -78,6 +80,7 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
             : Row(
                 children: <Widget>[
                   Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       _buildTableCalendarWithBuilders(screenSize, prov),
                       const SizedBox(width: 8.0),
@@ -86,6 +89,7 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                   SingleChildScrollView(
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         ClientList(),
                       ],

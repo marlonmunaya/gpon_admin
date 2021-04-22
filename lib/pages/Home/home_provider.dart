@@ -103,18 +103,6 @@ class HomeProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future updateObs(String refer, TextEditingController ctl) async {
-    final users = Backend().usersv1;
-    await users
-        .doc("$refer")
-        .update({
-          'observacion': ctl.text,
-        })
-        .then((value) => print("Client updated"))
-        .catchError((error) => print("Failes to ass user: $error"));
-    getclient();
-  }
-
   Future updatecolor(context, String refer, String color) async {
     final users = Backend().usersv1;
     await users

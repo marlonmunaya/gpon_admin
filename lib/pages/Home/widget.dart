@@ -17,6 +17,10 @@ Widget floatactionbutton(BuildContext context) {
     onPressed: () {
       context.read<PopupProvider>().setplan("RL-120");
       context.read<PopupProvider>().setplataforma("Recomendado");
+      context.read<PopupProvider>().setdepartamento("Lima");
+      context.read<PopupProvider>().setprovincia("Provin");
+      context.read<PopupProvider>().setdistrito("Distrito");
+      context.read<PopupProvider>().setvendedor("Vendedor");
       showDialog(
           context: context, builder: (BuildContext context) => EditClient());
     },

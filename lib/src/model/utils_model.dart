@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UtilsModel {
   List<String> planes;
   List<String> plataforma;
@@ -14,21 +16,30 @@ class UtilsModel {
   UtilsModel.fromMapPlat(Map<dynamic, dynamic> data)
       : plataforma = List.from(data['plataforma']);
 
-  UtilsModel.fromMapDep(Map<dynamic, dynamic> data)
-      : departamentos = List.from(data['departamentos']);
-
-  UtilsModel.fromMapDeplima(Map<dynamic, dynamic> data)
-      : limaprovincias = List.from(data['departamento-Lima']);
-
-  UtilsModel.fromMapDepcusco(Map<dynamic, dynamic> data)
-      : cuscoprovincias = List.from(data['departamento-Cusco']);
-
-  UtilsModel.fromMapProvlima(Map<dynamic, dynamic> data)
-      : limadistritos = List.from(data['provincia-Lima']);
-
-  UtilsModel.fromMapProvcusco(Map<dynamic, dynamic> data)
-      : cuscodistritos = List.from(data['provincia-Cusco']);
+  UtilsModel.fromMapubicaciones(Map<dynamic, dynamic> data)
+      : departamentos = List.from(data['departamentos']),
+        limaprovincias = List.from(data['provincias-lima']),
+        cuscoprovincias = List.from(data['provincias-cusco']),
+        limadistritos = List.from(data['distritos-lima']),
+        cuscodistritos = List.from(data['distritos-cusco']);
+  UtilsModel.fromdocument(DocumentSnapshot snapshot)
+      : this.fromMapubicaciones(snapshot.data());
 
   UtilsModel.fromMapVendedor(Map<dynamic, dynamic> data)
       : vendedor = List.from(data['vendedor']);
 }
+
+// UtilsModel.fromMapDep(Map<dynamic, dynamic> data)
+//     : departamentos = List.from(data['departamentos']);
+
+// UtilsModel.fromMapprovlima(Map<dynamic, dynamic> data)
+//     : limaprovincias = List.from(data['provincias-Lima']);
+
+// UtilsModel.fromMapprovcusco(Map<dynamic, dynamic> data)
+//     : cuscoprovincias = List.from(data['provincias-Cusco']);
+
+// UtilsModel.fromMapdislima(Map<dynamic, dynamic> data)
+//     : limadistritos = List.from(data['distritos-Lima']);
+
+// UtilsModel.fromMapdiscusco(Map<dynamic, dynamic> data)
+//     : cuscodistritos = List.from(data['distritos-Cusco']);
