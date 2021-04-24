@@ -21,10 +21,13 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
   List _selectedEvents;
   AnimationController _animationController;
   CalendarController _calendarController;
+  GlobalKey<ScaffoldState> globalScaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
+    context.read<HomeProvider>().globalkey(globalScaffoldKey);
+    context.read<PopupProvider>().globalkey(globalScaffoldKey);
     final provider = Provider.of<HomeProvider>(context, listen: false);
     print("conseguiendo");
     context.read<PopupProvider>().getutils();
@@ -53,6 +56,7 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
     var screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
+        key: globalScaffoldKey,
         appBar: AppBar(
           title: Text("Administrador"),
         ),
@@ -108,91 +112,80 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
             ? screenSize.width
             : screenSize.width * 0.29,
         child: TableCalendar(
-          // locale: 'pl_PL',
-          calendarController: _calendarController,
-          events: prov.eventos,
-          holidays: prov.holidays,
-          initialCalendarFormat: CalendarFormat.month,
-          formatAnimation: FormatAnimation.slide,
-          startingDayOfWeek: StartingDayOfWeek.sunday,
-          availableGestures: AvailableGestures.all,
-          availableCalendarFormats: const {
-            CalendarFormat.month: '',
-            CalendarFormat.week: '',
-          },
-          calendarStyle: CalendarStyle(
-            outsideDaysVisible: false,
-            weekendStyle: TextStyle().copyWith(color: Colors.blue[800]),
-            holidayStyle: TextStyle().copyWith(color: Colors.blue[800]),
-          ),
-          daysOfWeekStyle: DaysOfWeekStyle(
-            weekendStyle: TextStyle().copyWith(color: Colors.blue[600]),
-          ),
-          headerStyle: HeaderStyle(
-            centerHeaderTitle: true,
-            formatButtonVisible: false,
-          ),
-          builders: CalendarBuilders(
-            selectedDayBuilder: (context, date, _) {
-              return FadeTransition(
-                opacity:
-                    Tween(begin: 0.0, end: 1.0).animate(_animationController),
-                child: Container(
+            // locale: 'pl_PL',
+            calendarController: _calendarController,
+            events: prov.eventos,
+            holidays: prov.holidays,
+            initialCalendarFormat: CalendarFormat.month,
+            formatAnimation: FormatAnimation.slide,
+            startingDayOfWeek: StartingDayOfWeek.sunday,
+            availableGestures: AvailableGestures.all,
+            availableCalendarFormats: const {
+              CalendarFormat.month: '',
+              CalendarFormat.week: '',
+            },
+            calendarStyle: CalendarStyle(
+                outsideDaysVisible: false,
+                weekendStyle: TextStyle().copyWith(color: Colors.blue[800]),
+                holidayStyle: TextStyle().copyWith(color: Colors.blue[800])),
+            daysOfWeekStyle: DaysOfWeekStyle(
+                weekendStyle: TextStyle().copyWith(color: Colors.blue[600])),
+            headerStyle: HeaderStyle(
+              centerHeaderTitle: true,
+              formatButtonVisible: false,
+            ),
+            builders: CalendarBuilders(
+              selectedDayBuilder: (context, date, _) {
+                return FadeTransition(
+                  opacity:
+                      Tween(begin: 0.0, end: 1.0).animate(_animationController),
+                  child: Container(
+                    margin: const EdgeInsets.all(4.0),
+                    padding: const EdgeInsets.only(top: 5.0, left: 6.0),
+                    color: Colors.deepOrange[300],
+                    width: 100,
+                    height: 100,
+                    child: Text('${date.day}',
+                        style: TextStyle().copyWith(fontSize: 16.0)),
+                  ),
+                );
+              },
+              todayDayBuilder: (context, date, _) {
+                return Container(
                   margin: const EdgeInsets.all(4.0),
                   padding: const EdgeInsets.only(top: 5.0, left: 6.0),
-                  color: Colors.deepOrange[300],
+                  color: Colors.amber[400],
                   width: 100,
                   height: 100,
-                  child: Text(
-                    '${date.day}',
-                    style: TextStyle().copyWith(fontSize: 16.0),
-                  ),
-                ),
-              );
-            },
-            todayDayBuilder: (context, date, _) {
-              return Container(
-                margin: const EdgeInsets.all(4.0),
-                padding: const EdgeInsets.only(top: 5.0, left: 6.0),
-                color: Colors.amber[400],
-                width: 100,
-                height: 100,
-                child: Text(
-                  '${date.day}',
-                  style: TextStyle().copyWith(fontSize: 16.0),
-                ),
-              );
-            },
-            markersBuilder: (context, date, events, holidays) {
-              final children = <Widget>[];
-              if (events.isNotEmpty) {
-                children.add(
-                  Positioned(
-                    right: 2,
-                    bottom: 2,
-                    child: _buildEventsMarker(date, events),
-                  ),
+                  child: Text('${date.day}',
+                      style: TextStyle().copyWith(fontSize: 16.0)),
                 );
-              }
-              if (holidays.isNotEmpty) {
-                children.add(
-                  Positioned(
-                    right: -2,
-                    top: -2,
-                    child: buildHolidaysMarker(),
-                  ),
-                );
-              }
-              return children;
+              },
+              markersBuilder: (context, date, events, holidays) {
+                final children = <Widget>[];
+                if (events.isNotEmpty) {
+                  children.add(
+                    Positioned(
+                        right: 2,
+                        bottom: 2,
+                        child: _buildEventsMarker(date, events)),
+                  );
+                }
+                if (holidays.isNotEmpty) {
+                  children.add(
+                    Positioned(
+                        right: -2, top: -2, child: buildHolidaysMarker()),
+                  );
+                }
+                return children;
+              },
+            ),
+            onDaySelected: (date, events, holidays) {
+              prov.onDaySelected(date, events, holidays);
+              _animationController.forward(from: 0.0);
             },
-          ),
-          onDaySelected: (date, events, holidays) {
-            prov.onDaySelected(date, events, holidays);
-            _animationController.forward(from: 0.0);
-          },
-          onVisibleDaysChanged: prov.onVisibleDaysChanged,
-          onCalendarCreated: prov.onCalendarCreated,
-        ),
+            onVisibleDaysChanged: prov.onVisibleDaysChanged,
+            onCalendarCreated: prov.onCalendarCreated),
       ),
     );
   }

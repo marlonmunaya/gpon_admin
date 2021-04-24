@@ -86,7 +86,15 @@ class EditClient extends StatelessWidget {
                 SizedBox(height: 5.0),
                 _crearemail(context),
                 SizedBox(height: 5.0),
-                _crearcordenadas(context)
+                _crearcordenadas(context),
+                // Row(
+                //   children: [
+                //     SizedBox(width: 5.0),
+                //     _creargrupo(context)
+                //   ],
+                // ),
+                SizedBox(height: 5.0),
+                _crearobservacion(context)
               ],
             ),
           ),
@@ -188,7 +196,7 @@ Widget _crearCelular(BuildContext context) {
         contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
       ),
       onSaved: (value) {
-        context.read<PopupProvider>().setcell(value);
+        context.read<PopupProvider>().setcelular(value);
       },
       validator: (value) {
         if (value.length < 9) {
@@ -424,7 +432,7 @@ Widget _crearvendedor(BuildContext context) {
     items: context
         .watch<PopupProvider>()
         .vendedores
-        .vendedor
+        .vendedores
         .map<DropdownMenuItem<String>>((String value) {
       return DropdownMenuItem<String>(
         value: value,
@@ -433,6 +441,23 @@ Widget _crearvendedor(BuildContext context) {
     }).toList(),
   );
 }
+
+// Widget _creargrupo(BuildContext context) {
+//   return DropdownButton<String>(
+//     value: context.watch<PopupProvider>().grupo.text,
+//     onChanged: (String value) => context.read<PopupProvider>().setgrupo(value),
+//     items: context
+//         .watch<PopupProvider>()
+//         .vendedores
+//         .vendedor
+//         .map<DropdownMenuItem<String>>((String value) {
+//       return DropdownMenuItem<String>(
+//         value: value,
+//         child: Text(value),
+//       );
+//     }).toList(),
+//   );
+// }
 
 Widget _crearcordenadas(BuildContext context) {
   return TextFormField(
@@ -447,19 +472,38 @@ Widget _crearcordenadas(BuildContext context) {
   );
 }
 
-Widget _crearGuardar(BuildContext context) {
-  return ElevatedButton(
-    child: Text('Guardar'),
-    onPressed: () {
-      context.read<PopupProvider>().guardar(context);
-      context.read<HomeProvider>().getclient();
+Widget _crearobservacion(BuildContext context) {
+  return TextFormField(
+    minLines: 1,
+    maxLines: 2,
+    controller: context.read<PopupProvider>().observacion,
+    decoration: InputDecoration(
+      labelText: 'Observación',
+      contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
+    ),
+    onSaved: (value) {
+      context.read<PopupProvider>().setobservacion(value);
     },
   );
+}
+
+Widget _crearGuardar(BuildContext context) {
+  return ElevatedButton(
+      child: Text('Guardar'),
+      onPressed: () async {
+        await context.read<PopupProvider>().guardar(context);
+        print("3.5");
+
+        context.read<HomeProvider>().getclient();
+      });
 }
 
 Widget _cancelar(context) {
   return ElevatedButton(
       // textColor: Theme.of(context).primaryColor,
       child: Text('Cancelar'),
-      onPressed: () => Navigator.of(context).pop());
+      onPressed: () async {
+        Navigator.of(context).pop();
+        // await context.read<PopupProvider>().clearclient();
+      });
 }

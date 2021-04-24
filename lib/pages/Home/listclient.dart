@@ -147,21 +147,26 @@ class ClientList extends StatelessWidget {
     );
   }
 
-  Widget saveobs(BuildContext context, ClientModel i, obs) {
+  Widget saveobs(
+      BuildContext context, ClientModel i, TextEditingController obs) {
     return InkWell(
         child: Icon(Icons.save, size: 14),
         onTap: () {
-          context.read<PopupProvider>().getoneclient(i.reference.id);
-          context.read<HomeProvider>().getclient();
+          context.read<PopupProvider>().setupdateguardar(false);
+          context
+              .read<HomeProvider>()
+              .updateobservacion(i.reference.id, obs.text);
         });
   }
 
   Widget edit(BuildContext context, ClientModel i) {
     return InkWell(
       child: Icon(Icons.edit, size: 14),
-      onTap: () {
-        context.read<PopupProvider>().getoneclient(i.reference.id);
-        showDialog(
+      onTap: () async {
+        await context
+            .read<PopupProvider>()
+            .getoneclient(context, i.reference.id);
+        await showDialog(
             context: context, builder: (BuildContext context) => EditClient());
       },
     );
@@ -179,10 +184,9 @@ class ClientList extends StatelessWidget {
             selectedColor: currentColor,
             colors: primaryColorsPalette,
             onColorChange: (color) {
-              print(color);
               context
                   .read<HomeProvider>()
-                  .updatecolor(context, i.reference.id, color.value.toString());
+                  .updatecolor(i.reference.id, color.value.toString());
               Navigator.of(context).pop();
             },
           ),

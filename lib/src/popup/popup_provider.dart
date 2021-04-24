@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gpon_admin/src/api/data.dart';
 import 'package:gpon_admin/src/model/utils_model.dart';
 import 'package:gpon_admin/src/model/model.dart';
 import 'package:gpon_admin/pages/Home/home_provider.dart';
+import 'package:gpon_admin/src/popup/editclient.dart';
 
 class PopupProvider with ChangeNotifier {
   TextEditingController _cedula = TextEditingController();
@@ -55,31 +57,39 @@ class PopupProvider with ChangeNotifier {
   UtilsModel get ubicaciones => _ubicaciones;
   UtilsModel _vendedores;
   UtilsModel get vendedores => _vendedores;
+  UtilsModel _personal;
+  UtilsModel get personal => _personal;
   String _planselected;
   String get planselected => _planselected;
   String _platselected;
   String get platselected => _platselected;
   DateTime _dateselected;
   DateTime get dateselected => _dateselected;
+  bool _updateguardar; //1=update,0=guardar
+  bool get updateguardar => _updateguardar;
   TextEditingController _dateCtl = TextEditingController();
   TextEditingController get dateCtl => _dateCtl;
   static final _formKeysign = GlobalKey<FormState>();
   get formKeysign => _formKeysign;
+  String refer;
+  GlobalKey<ScaffoldState> _globalScaffoldKey;
+  get globalScaffoldKey => _globalScaffoldKey;
 
-  void guardar(context) {
-    showsnackbar(context, "Validando");
+  Future<void> guardar(BuildContext context) async {
+    print("1");
+    showsnackbar("Validando");
     if (!_formKeysign.currentState.validate()) return;
     _formKeysign.currentState.save();
     notifyListeners();
-    addClient();
-    showsnackbar(context, "Guardado");
-    Navigator.of(context).pop();
+    _updateguardar ? await updateClient() : addClient();
+    Navigator.of(_globalScaffoldKey.currentContext).pop();
   }
 
-  void showsnackbar(BuildContext context, String data) {
+  void showsnackbar(String data) async {
+    final context = globalScaffoldKey.currentContext;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(data),
-      duration: Duration(seconds: 3),
+      duration: Duration(seconds: 2),
     ));
   }
 
@@ -124,32 +134,68 @@ class PopupProvider with ChangeNotifier {
   }
 
   Future<void> addClient() {
-    final users = Backend().usersv1;
+    CollectionReference users;
+    users = Backend().usersv1;
     return users
         .add({
           'nombre': _nombre.text,
           'cedula': _cedula.text,
           'celular': _celular.text,
-          'fijo': "",
-          'direccion': "",
-          'email': "",
+          'fijo': _fijo.text,
+          'direccion': _direccion.text,
+          'email': _email.text,
           'plan': _plan,
           'fechainstalacion': "",
-          'fechacaptacion': "",
-          'departamento': "",
-          'provincia': "",
-          'distrito': "",
-          'observacion': "",
+          'fechacaptacion': _fechacaptacion.text,
+          'departamento': _departamento.text,
+          'provincia': _provincia.text,
+          'distrito': _distrito.text,
+          'observacion': _observacion.text,
           'grupo': "",
-          'cableadoutp': "",
-          'deco': "",
+          'cableadoutp': _cableadoutp.text,
+          'deco': _deco.text,
           'plataforma': _plataforma,
-          'cordenadas': "",
-          'vendedor': "",
-          'color': ""
+          'cordenadas': _cordenadas.text,
+          'vendedor': _vendedor.text,
+          'color': Colors.white60.value.toString()
         })
-        .then((value) => print("Client Added"))
+        // .then((value) => showsnackbar(context, "Cliente agregado"))
+        .then((value) => print("Cliente agregado"))
         .catchError((error) => print("Failes to ass user: $error"));
+  }
+
+  Future updateClient() async {
+    print("2");
+    CollectionReference users;
+    users = Backend().usersv1;
+    await users
+        .doc(refer)
+        .update({
+          'nombre': _nombre.text,
+          'cedula': _cedula.text,
+          'celular': _celular.text,
+          'fijo': _fijo.text,
+          'direccion': _direccion.text,
+          'email': _email.text,
+          'plan': _plan,
+          'fechainstalacion': "",
+          'fechacaptacion': _fechacaptacion.text,
+          'departamento': _departamento.text,
+          'provincia': _provincia.text,
+          'distrito': _distrito.text,
+          'observacion': _observacion.text,
+          'grupo': "",
+          'cableadoutp': _cableadoutp.text,
+          'deco': _deco.text,
+          'plataforma': _plataforma,
+          'cordenadas': _cordenadas.text,
+          'vendedor': _vendedor.text,
+          'color': _color,
+        })
+        // .then((value) => showsnackbar("Cliente actualizado"))
+        .then((value) => print("Cliente actualizado"))
+        .catchError((error) => print("Failes to update user: $error"));
+    print("3");
   }
 
   void getutils() async {
@@ -162,23 +208,26 @@ class PopupProvider with ChangeNotifier {
     _ubicaciones = UtilsModel.fromMapubicaciones(snapubicaciones.data());
     final snapvendedor = await Backend().utils.doc("vendedor").get();
     _vendedores = UtilsModel.fromMapVendedor(snapvendedor.data());
+    final snappersonal = await Backend().utils.doc("grupos").get();
+    _personal = UtilsModel.fromMappersonal(snappersonal.data());
     print("Utilidades obtenidos");
-    print(_ubicaciones.departamentos);
+    print(_vendedores.vendedores);
     notifyListeners();
   }
 
-  void getoneclient(String refer) async {
-    ClientModel ide;
+  Future<void> getoneclient(context, String data) async {
+    refer = data;
     print('obteniento dato');
+    _updateguardar = true;
     final snapshot = await Backend().usersv1.doc(refer).get();
-    ide = ClientModel.fromSnapshot(snapshot);
+    final ide = ClientModel.fromSnapshot(snapshot);
+    _vendedor.text = ide.vendedor;
     _cedula.text = ide.cedula;
     _plan = ide.plan;
     _nombre.text = ide.nombre;
     _celular.text = ide.celular;
     _fijo.text = ide.fijo;
     _plataforma = ide.plataforma;
-    _vendedor.text = ide.vendedor;
     _fechacaptacion.text = ide.fechacaptacion;
     _deco.text = ide.deco;
     _cableadoutp.text = ide.cableadoutp;
@@ -189,22 +238,33 @@ class PopupProvider with ChangeNotifier {
     _email.text = ide.email;
     _cordenadas.text = ide.cordenadas;
     _observacion.text = ide.observacion;
-    // _cedula.text = ide.cedula;
-    // _cedula.text = ide.cedula;
-    print("cliente obtenido");
-    notifyListeners();
+    _color = ide.color;
+    _grupo.text = ide.cedula; //falta verificar.
+    _fechainstalacion.text = ide.cedula; //falta verificar.
+    showsnackbar("cliente para actualizar");
   }
 
-  Future updateonclient(context, String refer) async {
-    final users = Backend().usersv1;
-    await users
-        .doc("$refer")
-        .update({
-          'observacion': obs.text,
-        })
-        .then((value) => print("Client updated"))
-        .catchError((error) => print("Failes to ass user: $error"));
-    showsnackbar(context, "Observación actualizada");
+  Future<void> clearclient() async {
+    _vendedor.text = "";
+    _cedula.text = "";
+    _plan = "";
+    _nombre.text = "";
+    _celular.text = "";
+    _fijo.text = "";
+    _plataforma = "";
+    _fechacaptacion.text = "";
+    _deco.text = "";
+    _cableadoutp.text = "";
+    _direccion.text = "";
+    _departamento.text = "";
+    _provincia.text = "";
+    _distrito.text = "";
+    _email.text = "";
+    _cordenadas.text = "";
+    _observacion.text = "";
+    _color = "";
+    _grupo.text = ""; //falta verificar.
+    _fechainstalacion.text = ""; //falta verificar.
   }
 
   void setplan(String plan) {
@@ -232,7 +292,7 @@ class PopupProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setcell(String data) {
+  void setcelular(String data) {
     _celular.text = data;
     notifyListeners();
   }
@@ -279,13 +339,37 @@ class PopupProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setvendedor(String data) {
-    _vendedor.text = data;
+  void setvendedor(String data1) {
+    _vendedor.text = data1;
     notifyListeners();
   }
 
   void setcordenadas(String data) {
     _cordenadas.text = data;
     notifyListeners();
+  }
+
+  void setobservacion(String data) {
+    _observacion.text = data;
+    notifyListeners();
+  }
+
+  void setgrupo(String data) {
+    _grupo.text = data;
+    notifyListeners();
+  }
+
+  void setupdateguardar(bool data) {
+    _updateguardar = data;
+    notifyListeners();
+  }
+
+  void setcolor(String data) {
+    _color = data;
+    notifyListeners();
+  }
+
+  void globalkey(data) {
+    _globalScaffoldKey = data;
   }
 }

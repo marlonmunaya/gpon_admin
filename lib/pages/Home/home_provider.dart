@@ -1,7 +1,6 @@
-// import 'dart:html';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
 import 'package:gpon_admin/src/api/data.dart';
 import 'package:gpon_admin/src/model/model.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -24,8 +23,7 @@ class HomeProvider with ChangeNotifier {
   Map<DateTime, List> get holidays => _holidays;
   List<ClientModel> _model;
   List<ClientModel> get model => _model;
-
-  // TextEditingController get counter => _counter;
+  GlobalKey<ScaffoldState> globalScaffoldKey;
   void setdate() {
     _selectedDay = DateTime.now();
     _eventos = {
@@ -57,10 +55,11 @@ class HomeProvider with ChangeNotifier {
       DateTime(2021, 4, 21): ['Easter Sunday'],
       DateTime(2021, 4, 22): ['Easter Monday'],
     };
-    getclient();
+    // getclient(c);
   }
 
-  void showsnackbar(BuildContext context, String data) {
+  void showsnackbar(String data) {
+    final context = globalScaffoldKey.currentContext;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(data),
       duration: Duration(seconds: 3),
@@ -90,8 +89,9 @@ class HomeProvider with ChangeNotifier {
     print('CALLBACK: _onCalendarCreated');
   }
 
-  void getclient() async {
+  Future getclient() async {
     print('obteniento datos');
+    print("4");
     final snapshot = await Backend().usersv1.get();
     // .where('fecha', isGreaterThanOrEqualTo: start)
     // .where('fecha', isLessThanOrEqualTo: end)
@@ -99,11 +99,11 @@ class HomeProvider with ChangeNotifier {
     // .getDocuments();
     // _model = DocumentSnapshot.documents.map((e) => DevicesModel.fromSnapshot(e)).toList();
     _model = snapshot.docs.map((e) => ClientModel.fromSnapshot(e)).toList();
-    print("Lista obtenida");
+    // showsnackbar("Clientes listos");
     notifyListeners();
   }
 
-  Future updatecolor(context, String refer, String color) async {
+  Future updatecolor(String refer, String color) async {
     final users = Backend().usersv1;
     await users
         .doc("$refer")
@@ -112,7 +112,7 @@ class HomeProvider with ChangeNotifier {
         })
         .then((value) => print("Client color updated"))
         .catchError((error) => print("Failes to ass user: $error"));
-    showsnackbar(context, "Color actualizado");
+    showsnackbar("Color actualizado");
     getclient();
   }
 
@@ -125,6 +125,22 @@ class HomeProvider with ChangeNotifier {
           'age': age
         })
         .then((value) => print("User Added"))
+        .catchError((error) => print("Failes adduser: $error"));
+  }
+
+  void updateobservacion(String i, obs) async {
+    final users = Backend().usersv1;
+    await users
+        .doc(i)
+        .update({
+          'observacion': obs,
+        })
+        .then((value) => showsnackbar("Obervacion actualizada"))
         .catchError((error) => print("Failes to ass user: $error"));
+    await getclient();
+  }
+
+  void globalkey(data) {
+    globalScaffoldKey = data;
   }
 }

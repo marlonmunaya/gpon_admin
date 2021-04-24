@@ -8,7 +8,9 @@ class UtilsModel {
   List<String> cuscoprovincias;
   List<String> limadistritos;
   List<String> cuscodistritos;
-  List<String> vendedor;
+  List<String> vendedores;
+  List<String> grupo;
+  List<String> tecnicos;
 
   UtilsModel.fromMapPlan(Map<dynamic, dynamic> data)
       : planes = List.from(data['planes']);
@@ -22,11 +24,13 @@ class UtilsModel {
         cuscoprovincias = List.from(data['provincias-cusco']),
         limadistritos = List.from(data['distritos-lima']),
         cuscodistritos = List.from(data['distritos-cusco']);
-  UtilsModel.fromdocument(DocumentSnapshot snapshot)
-      : this.fromMapubicaciones(snapshot.data());
+
+  UtilsModel.fromMappersonal(Map<dynamic, dynamic> data)
+      : grupo = List.from(data['grupos']),
+        tecnicos = List.from(data['tecnicos']);
 
   UtilsModel.fromMapVendedor(Map<dynamic, dynamic> data)
-      : vendedor = List.from(data['vendedor']);
+      : vendedores = List.from(data['vendedor']);
 }
 
 // UtilsModel.fromMapDep(Map<dynamic, dynamic> data)

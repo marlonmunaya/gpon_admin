@@ -48,11 +48,62 @@ class ClientModel {
   ClientModel.fromSnapshot(DocumentSnapshot snapshot)
       : this.fromMap(snapshot.data(), reference: snapshot.reference);
 
-  // String toString() => "$sales;$time\n";
+  //" String toString() => "$sales;$time\n";
+
+//  Map<String, dynamic> toMap(){
+//         "nombre" = map["nombre"],
+//         "cedula" = map["cedula"],
+//         "celular" = map["celular"],
+//         "fijo" = map["fijo"],
+//         "direccion" = map["direccion"],
+//         "email" = map["email"],
+//         "plan" = map["plan"],
+//         "fechainstalacion" = map["fechainstalacion"],
+//         "fechacaptacion" = map["fechacaptacion"],
+//         "departamento" = map["departamento"],
+//         "provincia" = map["provincia"],
+//         "distrito" = map["distrito"],
+//         "observacion" = map["observacion"],
+//         "grupo" = map["grupo"],
+//         "cableadoutp" = map["cableadoutp"],
+//         "deco" = map["deco"],
+//         "plataforma" = map["plataforma"],
+//         "cordenadas" = map["cordenadas"],
+//         "vendedor" = map["vendedor"],
+//         "color" = map["color"];
+
+//  }
+
 }
-// assert(map['fecha']  != null),
-// sales = map['var1valor'],
-// var2valor = map['var2valor'],
-// var1name = map['var1name'],
-// tiempo = map['fecha'],
-// time = (map['fecha']).toDate();
+
+//  class Clientadd{
+
+//   Clientadd.fromMapupdate(Map<String, dynamic> map,)
+//       : "nombre" = map["nombre"],
+//         "cedula" = map["cedula"],
+//         "celular" = map["celular"],
+//         "fijo" = map["fijo"],
+//         "direccion" = map["direccion"],
+//         "email" = map["email"],
+//         "plan" = map["plan"],
+//         "fechainstalacion" = map["fechainstalacion"],
+//         "fechacaptacion" = map["fechacaptacion"],
+//         "departamento" = map["departamento"],
+//         "provincia" = map["provincia"],
+//         "distrito" = map["distrito"],
+//         "observacion" = map["observacion"],
+//         "grupo" = map["grupo"],
+//         "cableadoutp" = map["cableadoutp"],
+//         "deco" = map["deco"],
+//         "plataforma" = map["plataforma"],
+//         "cordenadas" = map["cordenadas"],
+//         "vendedor" = map["vendedor"],
+//         "color" = map["color"];
+
+// }
+// // assert(map['fecha']  != null),
+// // sales = map['var1valor'],
+// // var2valor = map['var2valor'],
+// // var1name = map['var1name'],
+// // tiempo = map['fecha'],
+// // time = (map['fecha']).toDate();
