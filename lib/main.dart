@@ -3,9 +3,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:gpon_admin/pages/Home/home.dart';
 import 'package:gpon_admin/pages/Home/home_provider.dart';
 import 'package:gpon_admin/src/popup/popup_provider.dart';
-import 'package:gpon_admin/pages/Home/home.dart';
+import 'package:gpon_admin/pages/drag_list/draglist_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,14 +21,13 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => HomeProvider()),
         ChangeNotifierProvider(create: (_) => PopupProvider()),
+        ChangeNotifierProvider(create: (_) => DragListProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Gpon-Clients',
         theme: ThemeData(
             primarySwatch: Colors.blue,
-            // iconTheme: IconThemeData(size: 12),
-            // accentIconTheme: IconThemeData(size: 12),
             primaryIconTheme: IconThemeData(size: 12),
             textTheme: TextTheme(
                 headline1: TextStyle(fontSize: 12.0),

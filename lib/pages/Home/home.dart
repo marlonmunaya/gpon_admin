@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:gpon_admin/pages/Home/listclient%20copy.dart';
 import 'package:gpon_admin/pages/Home/listclient.dart';
 import 'package:gpon_admin/pages/Home/widget.dart';
 import 'package:gpon_admin/pages/Home/home_provider.dart';
+import 'package:gpon_admin/pages/drag_list/draglist.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -37,9 +39,7 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
     _events = provider.eventos;
     _calendarController = CalendarController();
     _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 400),
-    );
+        vsync: this, duration: const Duration(milliseconds: 400));
     _animationController.forward();
   }
 
@@ -59,6 +59,23 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
         key: globalScaffoldKey,
         appBar: AppBar(
           title: Text("Administrador"),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.skip_next),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DragHandleExample()));
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.add_a_photo),
+              onPressed: () {
+                context.read<HomeProvider>().getlist();
+              },
+            )
+          ],
         ),
         drawer: drawer(),
         body: ResponsiveWidget.isSmallScreen(context)
@@ -74,7 +91,8 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          ClientList(),
+                          ClientListCopy(),
+                          // ClientList()
                         ],
                       ),
                     ),
@@ -95,7 +113,8 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        ClientList(),
+                        ClientListCopy(),
+                        // ClientList(),
                       ],
                     ),
                   )
@@ -116,13 +135,13 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
             calendarController: _calendarController,
             events: prov.eventos,
             holidays: prov.holidays,
-            initialCalendarFormat: CalendarFormat.month,
+            initialCalendarFormat: CalendarFormat.week,
             formatAnimation: FormatAnimation.slide,
             startingDayOfWeek: StartingDayOfWeek.sunday,
             availableGestures: AvailableGestures.all,
             availableCalendarFormats: const {
-              CalendarFormat.month: '',
               CalendarFormat.week: '',
+              CalendarFormat.month: '',
             },
             calendarStyle: CalendarStyle(
                 outsideDaysVisible: false,

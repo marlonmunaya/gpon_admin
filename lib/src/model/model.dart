@@ -8,8 +8,8 @@ class ClientModel {
   final String direccion;
   final String email;
   final String plan;
-  final String fechainstalacion;
-  final String fechacaptacion;
+  final DateTime fechainstalacion;
+  final DateTime fechacaptacion;
   final String departamento;
   final String provincia;
   final String distrito;
@@ -31,8 +31,8 @@ class ClientModel {
         direccion = map["direccion"],
         email = map["email"],
         plan = map["plan"],
-        fechainstalacion = map["fechainstalacion"],
-        fechacaptacion = map["fechacaptacion"],
+        fechainstalacion = map["fechainstalacion"].toDate(),
+        fechacaptacion = map["fechacaptacion"].toDate(),
         departamento = map["departamento"],
         provincia = map["provincia"],
         distrito = map["distrito"],
@@ -76,34 +76,9 @@ class ClientModel {
 
 }
 
-//  class Clientadd{
+class Listagrupo {
+  final String grupo;
+  final List<ClientModel> lista;
 
-//   Clientadd.fromMapupdate(Map<String, dynamic> map,)
-//       : "nombre" = map["nombre"],
-//         "cedula" = map["cedula"],
-//         "celular" = map["celular"],
-//         "fijo" = map["fijo"],
-//         "direccion" = map["direccion"],
-//         "email" = map["email"],
-//         "plan" = map["plan"],
-//         "fechainstalacion" = map["fechainstalacion"],
-//         "fechacaptacion" = map["fechacaptacion"],
-//         "departamento" = map["departamento"],
-//         "provincia" = map["provincia"],
-//         "distrito" = map["distrito"],
-//         "observacion" = map["observacion"],
-//         "grupo" = map["grupo"],
-//         "cableadoutp" = map["cableadoutp"],
-//         "deco" = map["deco"],
-//         "plataforma" = map["plataforma"],
-//         "cordenadas" = map["cordenadas"],
-//         "vendedor" = map["vendedor"],
-//         "color" = map["color"];
-
-// }
-// // assert(map['fecha']  != null),
-// // sales = map['var1valor'],
-// // var2valor = map['var2valor'],
-// // var1name = map['var1name'],
-// // tiempo = map['fecha'],
-// // time = (map['fecha']).toDate();
+  Listagrupo(this.grupo, this.lista);
+}

@@ -103,7 +103,7 @@ class EditClient extends StatelessWidget {
           _cancelar(context),
           SizedBox(width: 10.0),
           _crearGuardar(context),
-          SizedBox(width: 10.0),
+          SizedBox(width: 10.0)
         ],
       ),
     );
@@ -492,8 +492,6 @@ Widget _crearGuardar(BuildContext context) {
       child: Text('Guardar'),
       onPressed: () async {
         await context.read<PopupProvider>().guardar(context);
-        print("3.5");
-
         context.read<HomeProvider>().getclient();
       });
 }
@@ -504,6 +502,5 @@ Widget _cancelar(context) {
       child: Text('Cancelar'),
       onPressed: () async {
         Navigator.of(context).pop();
-        // await context.read<PopupProvider>().clearclient();
       });
 }

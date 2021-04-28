@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 
 import 'package:gpon_admin/src/api/data.dart';
 import 'package:gpon_admin/src/model/model.dart';
@@ -24,6 +25,13 @@ class HomeProvider with ChangeNotifier {
   List<ClientModel> _model;
   List<ClientModel> get model => _model;
   GlobalKey<ScaffoldState> globalScaffoldKey;
+  Set<String> _group;
+  Set<String> get group => _group;
+  List<String> _totalgrupo = [];
+  List<DragAndDropList> _contents = [];
+  List<DragAndDropList> get contents => _contents;
+  List<Listagrupo> _listgroup = [];
+  List<Listagrupo> get listgroup => _listgroup;
   void setdate() {
     _selectedDay = DateTime.now();
     _eventos = {
@@ -55,7 +63,6 @@ class HomeProvider with ChangeNotifier {
       DateTime(2021, 4, 21): ['Easter Sunday'],
       DateTime(2021, 4, 22): ['Easter Monday'],
     };
-    // getclient(c);
   }
 
   void showsnackbar(String data) {
@@ -91,15 +98,49 @@ class HomeProvider with ChangeNotifier {
 
   Future getclient() async {
     print('obteniento datos');
-    print("4");
     final snapshot = await Backend().usersv1.get();
     // .where('fecha', isGreaterThanOrEqualTo: start)
     // .where('fecha', isLessThanOrEqualTo: end)
     // .orderBy('fecha', descending: true)
     // .getDocuments();
     // _model = DocumentSnapshot.documents.map((e) => DevicesModel.fromSnapshot(e)).toList();
+    await tomodel(snapshot);
+    // await getgroup(); // _model = snapshot.docs.map((e) => ClientModel.fromSnapshot(e)).toList();
+    await getgroup();
+    await getlist();
+    notifyListeners();
+  }
+
+  Future<void> tomodel(QuerySnapshot snapshot) {
     _model = snapshot.docs.map((e) => ClientModel.fromSnapshot(e)).toList();
-    // showsnackbar("Clientes listos");
+  }
+
+  Future<void> getgroup() async {
+    await Future(() {
+      _model.forEach((e) {
+        _totalgrupo.add(e.grupo);
+      });
+      _group = Set.from(_totalgrupo);
+      // getlist();
+    });
+    notifyListeners();
+  }
+
+  Future<void> getlist() async {
+    await Future(() {
+      _listgroup = [];
+      _group.forEach((e) {
+        List<ClientModel> lis = _model.where((i) => i.grupo == e).toList();
+        _listgroup.add(Listagrupo(e, lis));
+        // print(lis);
+      });
+    });
+    notifyListeners();
+  }
+
+  Future deleteclient(reference) async {
+    final snapshot =
+        await Backend().usersv1.doc(reference).delete().then((value) => null);
     notifyListeners();
   }
 
@@ -116,18 +157,6 @@ class HomeProvider with ChangeNotifier {
     getclient();
   }
 
-  Future<void> addUser(fullName, company, age) {
-    CollectionReference users = FirebaseFirestore.instance.collection('user');
-    return users
-        .add({
-          'full_name': fullName, // John Doe
-          'company': company, // Stokes and Sons
-          'age': age
-        })
-        .then((value) => print("User Added"))
-        .catchError((error) => print("Failes adduser: $error"));
-  }
-
   void updateobservacion(String i, obs) async {
     final users = Backend().usersv1;
     await users
@@ -140,7 +169,38 @@ class HomeProvider with ChangeNotifier {
     await getclient();
   }
 
+  void updategroup(String i, gp) async {
+    final users = Backend().usersv1;
+    await users
+        .doc(i)
+        .update({
+          'grupo': gp,
+        })
+        .then((value) => showsnackbar("grupo actualizado"))
+        .catchError((error) => print("Failes to ass user: $error"));
+    await getclient();
+  }
+
   void globalkey(data) {
     globalScaffoldKey = data;
+  }
+
+  void onItemReorder(
+      int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
+    final i = _listgroup[oldListIndex].lista[oldItemIndex].reference.id;
+    final gp = _listgroup.elementAt(newListIndex).grupo;
+    print(i);
+    print(gp);
+    updategroup(i, gp);
+  }
+
+  void onListReorder(int oldListIndex, int newListIndex) {
+    var movedList = _contents.removeAt(oldListIndex);
+    _contents.insert(newListIndex, movedList);
+  }
+
+  void setcontent(List<DragAndDropList> data) {
+    _contents = data;
+    // _listgroup = [];
   }
 }

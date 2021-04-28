@@ -76,7 +76,6 @@ class PopupProvider with ChangeNotifier {
   get globalScaffoldKey => _globalScaffoldKey;
 
   Future<void> guardar(BuildContext context) async {
-    print("1");
     showsnackbar("Validando");
     if (!_formKeysign.currentState.validate()) return;
     _formKeysign.currentState.save();
@@ -107,28 +106,6 @@ class PopupProvider with ChangeNotifier {
       _fechacaptaciond = pickedDate;
       _fechacaptacion.text =
           '${pickedDate.day}-${pickedDate.month}-${pickedDate.year}';
-      // print(pickedDate);
-      // print(dateCtl.text);
-    });
-    notifyListeners();
-  }
-
-  void pickColorDialog(context) {
-    showDatePicker(
-            context: context,
-            initialDate: DateTime.now(),
-            firstDate: DateTime(2018),
-            lastDate: DateTime.now().add(Duration(days: 180)))
-        .then((pickedDate) {
-      //then usually do the future job
-      if (pickedDate == null) {
-        return;
-      }
-      _fechacaptaciond = pickedDate;
-      _fechacaptacion.text =
-          '${pickedDate.day}-${pickedDate.month}-${pickedDate.year}';
-      // print(pickedDate);
-      // print(dateCtl.text);
     });
     notifyListeners();
   }
@@ -145,13 +122,13 @@ class PopupProvider with ChangeNotifier {
           'direccion': _direccion.text,
           'email': _email.text,
           'plan': _plan,
-          'fechainstalacion': "",
-          'fechacaptacion': _fechacaptacion.text,
+          'fechainstalacion': _fechacaptaciond,
+          'fechacaptacion': _fechacaptaciond,
           'departamento': _departamento.text,
           'provincia': _provincia.text,
           'distrito': _distrito.text,
           'observacion': _observacion.text,
-          'grupo': "",
+          'grupo': "Vacío",
           'cableadoutp': _cableadoutp.text,
           'deco': _deco.text,
           'plataforma': _plataforma,
@@ -159,13 +136,11 @@ class PopupProvider with ChangeNotifier {
           'vendedor': _vendedor.text,
           'color': Colors.white60.value.toString()
         })
-        // .then((value) => showsnackbar(context, "Cliente agregado"))
-        .then((value) => print("Cliente agregado"))
-        .catchError((error) => print("Failes to ass user: $error"));
+        .then((value) => showsnackbar("Cliente agregado"))
+        .catchError((error) => print("Failes to add user: $error"));
   }
 
   Future updateClient() async {
-    print("2");
     CollectionReference users;
     users = Backend().usersv1;
     await users
@@ -178,13 +153,13 @@ class PopupProvider with ChangeNotifier {
           'direccion': _direccion.text,
           'email': _email.text,
           'plan': _plan,
-          'fechainstalacion': "",
-          'fechacaptacion': _fechacaptacion.text,
+          'fechainstalacion': _fechacaptaciond,
+          'fechacaptacion': _fechacaptaciond,
           'departamento': _departamento.text,
           'provincia': _provincia.text,
           'distrito': _distrito.text,
           'observacion': _observacion.text,
-          'grupo': "",
+          'grupo': _grupo.text,
           'cableadoutp': _cableadoutp.text,
           'deco': _deco.text,
           'plataforma': _plataforma,
@@ -192,10 +167,8 @@ class PopupProvider with ChangeNotifier {
           'vendedor': _vendedor.text,
           'color': _color,
         })
-        // .then((value) => showsnackbar("Cliente actualizado"))
-        .then((value) => print("Cliente actualizado"))
+        .then((value) => showsnackbar("Cliente actualizado"))
         .catchError((error) => print("Failes to update user: $error"));
-    print("3");
   }
 
   void getutils() async {
@@ -228,7 +201,10 @@ class PopupProvider with ChangeNotifier {
     _celular.text = ide.celular;
     _fijo.text = ide.fijo;
     _plataforma = ide.plataforma;
-    _fechacaptacion.text = ide.fechacaptacion;
+    _fechacaptacion.text =
+        '${_fechacaptaciond.day}-${_fechacaptaciond.month}-${_fechacaptaciond.year}';
+    _fechainstalacion.text =
+        '${_fechacaptaciond.day}-${_fechacaptaciond.month}-${_fechacaptaciond.year}';
     _deco.text = ide.deco;
     _cableadoutp.text = ide.cableadoutp;
     _direccion.text = ide.direccion;
@@ -239,8 +215,8 @@ class PopupProvider with ChangeNotifier {
     _cordenadas.text = ide.cordenadas;
     _observacion.text = ide.observacion;
     _color = ide.color;
-    _grupo.text = ide.cedula; //falta verificar.
-    _fechainstalacion.text = ide.cedula; //falta verificar.
+    _grupo.text = ide.grupo; //falta verificar.
+    // _fechainstalacion.text = ide.cedula; //falta verificar.
     showsnackbar("cliente para actualizar");
   }
 

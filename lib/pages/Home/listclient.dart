@@ -113,6 +113,8 @@ class ClientList extends StatelessWidget {
                     styledrop(context, Icons.group, i.grupo),
                     styledrop(context, Icons.local_phone, i.fijo),
                     styledrop(context, Icons.location_on_sharp, i.cordenadas),
+                    styledrop(context, Icons.location_on_sharp,
+                        i.fechacaptacion.toString()),
                   ],
                 ),
                 trailing: ResponsiveWidget.isSmallScreen(context)
