@@ -201,6 +201,7 @@ class PopupProvider with ChangeNotifier {
     _celular.text = ide.celular;
     _fijo.text = ide.fijo;
     _plataforma = ide.plataforma;
+    _fechacaptaciond = ide.fechacaptacion;
     _fechacaptacion.text =
         '${_fechacaptaciond.day}-${_fechacaptaciond.month}-${_fechacaptaciond.year}';
     _fechainstalacion.text =

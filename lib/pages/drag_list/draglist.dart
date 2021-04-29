@@ -1,15 +1,20 @@
+import 'dart:js';
+
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
+import 'package:gpon_admin/pages/Home/listclient_builpanel.dart';
 import 'package:gpon_admin/src/model/model.dart';
+import 'package:gpon_admin/src/popup/popup_provider.dart';
+import 'package:gpon_admin/src/responsive/responsive.dart';
 
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gpon_admin/pages/Home/home_provider.dart';
+import 'package:gpon_admin/pages/Home/listclient.dart';
 
 class DragHandleExample extends StatelessWidget {
   DragHandleExample({Key key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     var backgroundColor = Color.fromARGB(255, 243, 242, 248);
@@ -19,18 +24,20 @@ class DragHandleExample extends StatelessWidget {
     listgroup.forEach((e) {
       contents.add(DragAndDropList(
         header: Padding(
-          padding: EdgeInsets.only(left: 8, bottom: 4),
-          child: Text('Header ${e.grupo}',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          padding: EdgeInsets.only(bottom: 8.0),
+          child: Row(
+            children: [
+              Text(e.grupo,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              SizedBox(width: 10),
+              addtecnicos(context),
+            ],
+          ),
         ),
         children: e.lista.map<DragAndDropItem>((ClientModel i) {
           return DragAndDropItem(
             child: Row(
-              children: [
-                Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                    child: Text(i.nombre)),
-              ],
+              children: [Expanded(child: BuildPanel(i)), SizedBox(width: 30)],
             ),
           );
         }).toList(),
@@ -57,17 +64,11 @@ class DragHandleExample extends StatelessWidget {
               offset: Offset(0, 0)),
         ],
       ),
-      listInnerDecoration: BoxDecoration(
-        color: Theme.of(context).canvasColor,
-        borderRadius: BorderRadius.all(Radius.circular(8.0)),
-      ),
-      lastItemTargetHeight: 8,
-      addLastItemTargetHeightToTop: true,
-      lastListTargetSize: 40,
+      lastItemTargetHeight: 55,
       listDragHandle: DragHandle(
         verticalAlignment: DragHandleVerticalAlignment.top,
         child: Padding(
-          padding: EdgeInsets.only(right: 10),
+          padding: EdgeInsets.only(right: 5),
           child: Icon(
             Icons.menu,
             color: Colors.black26,
@@ -76,13 +77,35 @@ class DragHandleExample extends StatelessWidget {
       ),
       itemDragHandle: DragHandle(
         child: Padding(
-          padding: EdgeInsets.only(right: 10),
+          padding: EdgeInsets.only(right: 5),
           child: Icon(
-            Icons.menu,
-            color: Colors.blueGrey,
+            Icons.vertical_align_center_rounded,
+            color: Theme.of(context).primaryColor,
           ),
         ),
       ),
     );
+  }
+
+  Widget addtecnicos(BuildContext context) {
+    return InkWell(
+      child: Icon(Icons.group_add_rounded),
+      onTap: () => showDialog(
+          context: context,
+          builder: (BuildContext context) => tecnicos(context)),
+    );
+  }
+
+  Widget tecnicos(BuildContext context) {
+    List<String> tec = context.watch<PopupProvider>().personal.tecnicos;
+    return AlertDialog(
+        title: Text("Agrega los técnicos"),
+        content: Wrap(
+          children: tec.map<Chip>((String a) {
+            return Chip(
+              label: Text(a),
+            );
+          }).toList(),
+        ));
   }
 }
