@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:gpon_admin/pages/Home/listclient%20copy.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:table_calendar/table_calendar.dart';
+
 import 'package:gpon_admin/pages/Home/listclient.dart';
 import 'package:gpon_admin/pages/Home/widget.dart';
 import 'package:gpon_admin/pages/Home/home_provider.dart';
-import 'package:gpon_admin/pages/drag_list/draglist.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:provider/provider.dart';
-import 'package:table_calendar/table_calendar.dart';
 import 'package:gpon_admin/src/responsive/responsive.dart';
-import 'package:gpon_admin/src/popup/editclient.dart';
 import 'package:gpon_admin/src/popup/popup_provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -35,7 +33,6 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
     context.read<PopupProvider>().getutils();
     context.read<HomeProvider>().getclient();
     provider.setdate();
-    // final _selectedDay = provider.selectedDay;
     _events = provider.eventos;
     _calendarController = CalendarController();
     _animationController = AnimationController(
@@ -56,19 +53,11 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
     var screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
+        backgroundColor: Colors.blueGrey[50],
         key: globalScaffoldKey,
         appBar: AppBar(
           title: Text("Administrador"),
           actions: [
-            IconButton(
-              icon: Icon(Icons.skip_next),
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => DragHandleExample()));
-              },
-            ),
             IconButton(
               icon: Icon(Icons.add_a_photo),
               onPressed: () {
@@ -84,18 +73,10 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     _buildTableCalendarWithBuilders(screenSize, prov),
-                    const SizedBox(width: 8.0),
+                    SizedBox(width: 8.0),
                     _buildButtons(),
-                    const SizedBox(height: 8.0),
-                    SingleChildScrollView(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          ClientListCopy(),
-                          // ClientList()
-                        ],
-                      ),
-                    ),
+                    SizedBox(height: 8.0),
+                    ClientList(),
                   ],
                 ),
               )
@@ -105,25 +86,16 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       _buildTableCalendarWithBuilders(screenSize, prov),
-                      const SizedBox(width: 8.0),
+                      SizedBox(width: 8.0),
                       _buildButtons(),
                     ],
                   ),
-                  SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        ClientListCopy(),
-                        // ClientList(),
-                      ],
-                    ),
-                  )
+                  ClientList()
                 ],
               ),
         floatingActionButton: floatactionbutton(context));
   }
 
-  // More advanced TableCalendar configuration (using Builders & Styles)
   Widget _buildTableCalendarWithBuilders(screenSize, prov) {
     return Card(
       child: Container(
@@ -137,7 +109,7 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
             holidays: prov.holidays,
             initialCalendarFormat: CalendarFormat.week,
             formatAnimation: FormatAnimation.slide,
-            startingDayOfWeek: StartingDayOfWeek.sunday,
+            startingDayOfWeek: StartingDayOfWeek.monday,
             availableGestures: AvailableGestures.all,
             availableCalendarFormats: const {
               CalendarFormat.week: '',
@@ -159,25 +131,23 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
                   opacity:
                       Tween(begin: 0.0, end: 1.0).animate(_animationController),
                   child: Container(
+                    constraints: BoxConstraints.expand(),
                     margin: const EdgeInsets.all(4.0),
-                    padding: const EdgeInsets.only(top: 5.0, left: 6.0),
-                    color: Colors.deepOrange[300],
-                    width: 100,
-                    height: 100,
+                    padding: const EdgeInsets.all(5.0),
+                    color: Theme.of(context).primaryColor,
                     child: Text('${date.day}',
-                        style: TextStyle().copyWith(fontSize: 16.0)),
+                        style: TextStyle().copyWith(fontSize: 18.0)),
                   ),
                 );
               },
               todayDayBuilder: (context, date, _) {
                 return Container(
+                  constraints: BoxConstraints.expand(),
                   margin: const EdgeInsets.all(4.0),
-                  padding: const EdgeInsets.only(top: 5.0, left: 6.0),
-                  color: Colors.amber[400],
-                  width: 100,
-                  height: 100,
+                  padding: const EdgeInsets.all(5.0),
+                  color: Theme.of(context).disabledColor,
                   child: Text('${date.day}',
-                      style: TextStyle().copyWith(fontSize: 16.0)),
+                      style: TextStyle().copyWith(fontSize: 18.0)),
                 );
               },
               markersBuilder: (context, date, events, holidays) {
@@ -215,20 +185,17 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: _calendarController.isSelected(date)
-            ? Colors.brown[500]
+            ? Theme.of(context).disabledColor
             : _calendarController.isToday(date)
-                ? Colors.brown[300]
-                : Colors.blue[400],
+                ? Theme.of(context).disabledColor
+                : Theme.of(context).primaryColor,
       ),
-      width: 12.0,
-      height: 12.0,
+      width: 14.0,
+      height: 14.0,
       child: Center(
         child: Text(
           '${events.length}',
-          style: TextStyle().copyWith(
-            color: Colors.white,
-            fontSize: 12.0,
-          ),
+          style: TextStyle().copyWith(color: Colors.white, fontSize: 12.0),
         ),
       ),
     );
@@ -247,7 +214,7 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
             });
           },
         ),
-        box10(),
+        SizedBox(width: 10),
         ElevatedButton(
           child: Text('Semana'),
           onPressed: () {
@@ -256,7 +223,7 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
             });
           },
         ),
-        box10(),
+        SizedBox(width: 10),
         ElevatedButton(
           child: Column(
             children: [
@@ -272,12 +239,6 @@ class _MyHomePageState extends State<HomePage> with TickerProviderStateMixin {
           },
         ),
       ],
-    );
-  }
-
-  Widget box10() {
-    return SizedBox(
-      width: 10,
     );
   }
 }

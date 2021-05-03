@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class DragListProvider with ChangeNotifier {
-  void drag() {
-    notifyListeners();
-  }
+  // List<String> _tec = [];
+  // List<String> get tec => _tec;
+
+  // void addtec(item) {
+  //   // _tecnicos = data;
+
+  //   _tec.contains(item) ? _tec.remove(item) : _tec.add(item);
+
+  //   notifyListeners();
+  // }
 }
 
 // void main() {

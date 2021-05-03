@@ -87,12 +87,6 @@ class EditClient extends StatelessWidget {
                 _crearemail(context),
                 SizedBox(height: 5.0),
                 _crearcordenadas(context),
-                // Row(
-                //   children: [
-                //     SizedBox(width: 5.0),
-                //     _creargrupo(context)
-                //   ],
-                // ),
                 SizedBox(height: 5.0),
                 _crearobservacion(context)
               ],
@@ -111,10 +105,11 @@ class EditClient extends StatelessWidget {
 }
 
 Widget _crearCedula(BuildContext context) {
+  final cedula = context.read<PopupProvider>().cedula;
   return SizedBox(
     width: 140,
     child: TextFormField(
-      controller: context.read<PopupProvider>().cedula,
+      controller: cedula,
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
         labelText: '*dni/ruc/cedula',
@@ -127,7 +122,7 @@ Widget _crearCedula(BuildContext context) {
             child: InkWell(
                 child: Icon(Icons.search),
                 onTap: () {
-                  print("tap search");
+                  context.read<HomeProvider>().getcedula(cedula.text);
                 }),
           ),
         ),
@@ -166,7 +161,7 @@ Widget _crearPlataforma(BuildContext context) {
 
 Widget _crearNombre(BuildContext context) {
   return TextFormField(
-    controller: context.read<PopupProvider>().nombre,
+    controller: context.watch<PopupProvider>().nombre,
     decoration: InputDecoration(
       labelText: '*Nombre completo',
       contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),

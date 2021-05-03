@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
-
+import 'dart:convert';
 import 'package:gpon_admin/src/api/data.dart';
 import 'package:gpon_admin/src/model/model.dart';
+import 'package:gpon_admin/src/model/model_api_cedula.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:http/http.dart' as http;
 
 ///Librerias para la conexion DB
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -25,6 +29,10 @@ class HomeProvider with ChangeNotifier {
   List<ClientModel> _model;
   List<ClientModel> get model => _model;
   GlobalKey<ScaffoldState> globalScaffoldKey;
+  TextEditingController _nombregrupo = TextEditingController();
+  TextEditingController get nombregrupo => _nombregrupo;
+  TextEditingController _nuevogrupo = TextEditingController();
+  TextEditingController get nuevogrupo => _nuevogrupo;
   Set<String> _group;
   Set<String> get group => _group;
   List<String> _totalgrupo = [];
@@ -32,6 +40,8 @@ class HomeProvider with ChangeNotifier {
   List<DragAndDropList> get contents => _contents;
   List<Listagrupo> _listgroup = [];
   List<Listagrupo> get listgroup => _listgroup;
+  List<String> _selectedtec = [];
+  List<String> get selectedtec => _selectedtec;
   void setdate() {
     _selectedDay = DateTime.now();
     _eventos = {
@@ -73,6 +83,28 @@ class HomeProvider with ChangeNotifier {
     ));
   }
 
+  void edittec(item) {
+    _selectedtec.contains(item)
+        ? _selectedtec.remove(item)
+        : _selectedtec.add(item);
+    notifyListeners();
+  }
+
+  void setnamegrouptec(Listagrupo e) {
+    _nombregrupo.text = e.grupo;
+    _selectedtec = e.tecnicos;
+    print(_nombregrupo.text);
+  }
+
+  void adddgroup() {
+    _nuevogrupo.text.isEmpty
+        ? print("vacio")
+        : _listgroup.add(Listagrupo(_nuevogrupo.text, [], []));
+    print("Grupo agregado");
+    // getlist();
+    notifyListeners();
+  }
+
   void setscreensize(screensize) {
     _screenSize = screensize;
     print(_screenSize.toString());
@@ -98,10 +130,12 @@ class HomeProvider with ChangeNotifier {
 
   Future getclient() async {
     print('obteniento datos');
-    final snapshot = await Backend().usersv1.get();
-    // .where('fecha', isGreaterThanOrEqualTo: start)
-    // .where('fecha', isLessThanOrEqualTo: end)
-    // .orderBy('fecha', descending: true)
+    final snapshot = await Backend()
+        .usersv1
+        // .where('fecha', isGreaterThanOrEqualTo: start)
+        // .where('fecha', isLessThanOrEqualTo: end)
+        .orderBy('grupo', descending: false)
+        .get();
     // .getDocuments();
     // _model = DocumentSnapshot.documents.map((e) => DevicesModel.fromSnapshot(e)).toList();
     await tomodel(snapshot);
@@ -115,13 +149,21 @@ class HomeProvider with ChangeNotifier {
     _model = snapshot.docs.map((e) => ClientModel.fromSnapshot(e)).toList();
   }
 
+  //Función para actualizar el grupo a los clientes seleccionados
+  Future updategroups(nombre) async {
+    final snapshot =
+        await Backend().usersv1.where('grupo', isEqualTo: nombre).get();
+    snapshot.docs.forEach((e) {
+      print(e.reference.id.toString());
+      updateonegroup(e.reference.id, _nombregrupo.text, selectedtec);
+    });
+    await getclient();
+  }
+
   Future<void> getgroup() async {
     await Future(() {
-      _model.forEach((e) {
-        _totalgrupo.add(e.grupo);
-      });
+      _totalgrupo = _model.map((e) => e.grupo).toList();
       _group = Set.from(_totalgrupo);
-      // getlist();
     });
     notifyListeners();
   }
@@ -131,7 +173,8 @@ class HomeProvider with ChangeNotifier {
       _listgroup = [];
       _group.forEach((e) {
         List<ClientModel> lis = _model.where((i) => i.grupo == e).toList();
-        _listgroup.add(Listagrupo(e, lis));
+        List<String> listtecnicos = lis[0].tecnicos;
+        _listgroup.add(Listagrupo(e, lis, listtecnicos));
         // print(lis);
       });
     });
@@ -148,9 +191,7 @@ class HomeProvider with ChangeNotifier {
     final users = Backend().usersv1;
     await users
         .doc("$refer")
-        .update({
-          'color': color,
-        })
+        .update({'color': color})
         .then((value) => print("Client color updated"))
         .catchError((error) => print("Failes to ass user: $error"));
     showsnackbar("Color actualizado");
@@ -169,29 +210,33 @@ class HomeProvider with ChangeNotifier {
     await getclient();
   }
 
-  void updategroup(String i, gp) async {
+  //Función para actualizar el grupo de 01 cliente
+  Future updateonegroup(String i, gp, tecnicos) async {
     final users = Backend().usersv1;
     await users
         .doc(i)
         .update({
           'grupo': gp,
+          'tecnicos': tecnicos,
         })
-        .then((value) => showsnackbar("grupo actualizado"))
+        .then((value) => print("actualizado $i"))
         .catchError((error) => print("Failes to ass user: $error"));
-    await getclient();
   }
 
   void globalkey(data) {
     globalScaffoldKey = data;
   }
 
-  void onItemReorder(
-      int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
+  void onItemReorder(int oldItemIndex, int oldListIndex, int newItemIndex,
+      int newListIndex) async {
     final i = _listgroup[oldListIndex].lista[oldItemIndex].reference.id;
     final gp = _listgroup.elementAt(newListIndex).grupo;
+    final tecnicos = _listgroup.elementAt(newListIndex).tecnicos;
     print(i);
     print(gp);
-    updategroup(i, gp);
+
+    await updateonegroup(i, gp, tecnicos);
+    await getclient();
   }
 
   void onListReorder(int oldListIndex, int newListIndex) {
@@ -201,6 +246,19 @@ class HomeProvider with ChangeNotifier {
 
   void setcontent(List<DragAndDropList> data) {
     _contents = data;
-    // _listgroup = [];
+  }
+
+  Future getcedula(cedula) async {
+    final token =
+        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im1hcmxvbm11bmF5YUBob3RtYWlsLmNvbSJ9.xLMtYfO2BmErMB-7RDc_n0RGxCm5_2B5vl0cAFIoHlE";
+    final response = await http
+        .get(
+          Uri.parse('https://dniruc.apisperu.com/api/v1/dni/' +
+              '$cedula' +
+              '?token=$token'),
+        )
+        .then((value) => showsnackbar(value.body.toString()))
+        .catchError((e) => print(e));
+    // showsnackbar(response.body.toString());
   }
 }

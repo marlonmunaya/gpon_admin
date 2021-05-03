@@ -2,6 +2,7 @@ import 'dart:js';
 
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:gpon_admin/pages/Home/listclient_builpanel.dart';
+import 'package:gpon_admin/pages/drag_list/draglist_provider.dart';
 import 'package:gpon_admin/src/model/model.dart';
 import 'package:gpon_admin/src/popup/popup_provider.dart';
 import 'package:gpon_admin/src/responsive/responsive.dart';
@@ -11,18 +12,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gpon_admin/pages/Home/home_provider.dart';
-import 'package:gpon_admin/pages/Home/listclient.dart';
 
-class DragHandleExample extends StatelessWidget {
-  DragHandleExample({Key key}) : super(key: key);
+class DragHandleList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var backgroundColor = Color.fromARGB(255, 243, 242, 248);
     List<DragAndDropList> contents = [];
     List<Listagrupo> listgroup = context.watch<HomeProvider>().listgroup;
 
-    listgroup.forEach((e) {
-      contents.add(DragAndDropList(
+    contents = listgroup.map((e) {
+      return DragAndDropList(
         header: Padding(
           padding: EdgeInsets.only(bottom: 8.0),
           child: Row(
@@ -30,7 +29,8 @@ class DragHandleExample extends StatelessWidget {
               Text(e.grupo,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
               SizedBox(width: 10),
-              addtecnicos(context),
+              selectedtecnicos(context, e.tecnicos),
+              e.grupo.contains("Vacío") ? SizedBox() : addtecnicos(context, e),
             ],
           ),
         ),
@@ -41,8 +41,9 @@ class DragHandleExample extends StatelessWidget {
             ),
           );
         }).toList(),
-      ));
-    });
+      );
+    }).toList();
+
     context.read<HomeProvider>().setcontent(contents);
     return DragAndDropLists(
       children: context.watch<HomeProvider>().contents,
@@ -64,7 +65,7 @@ class DragHandleExample extends StatelessWidget {
               offset: Offset(0, 0)),
         ],
       ),
-      lastItemTargetHeight: 55,
+      lastItemTargetHeight: 20,
       listDragHandle: DragHandle(
         verticalAlignment: DragHandleVerticalAlignment.top,
         child: Padding(
@@ -87,25 +88,74 @@ class DragHandleExample extends StatelessWidget {
     );
   }
 
-  Widget addtecnicos(BuildContext context) {
-    return InkWell(
-      child: Icon(Icons.group_add_rounded),
-      onTap: () => showDialog(
-          context: context,
-          builder: (BuildContext context) => tecnicos(context)),
+  Widget selectedtecnicos(BuildContext context, List<String> tecnicos) {
+    return Wrap(
+      spacing: 5.0,
+      runSpacing: 3.0,
+      children: tecnicos.map<Chip>((String a) {
+        return Chip(
+          label: Text(a),
+        );
+      }).toList(),
     );
   }
 
-  Widget tecnicos(BuildContext context) {
+  Widget addtecnicos(BuildContext context, Listagrupo e) {
+    return InkWell(
+        child: Icon(Icons.edit_attributes_rounded),
+        onTap: () {
+          showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (BuildContext context1) => tecnicos(context1, e.grupo));
+          context.read<HomeProvider>().setnamegrouptec(e);
+        });
+  }
+
+  Widget tecnicos(BuildContext context, nombre) {
     List<String> tec = context.watch<PopupProvider>().personal.tecnicos;
+    List<String> selectedtec = context.watch<HomeProvider>().selectedtec;
     return AlertDialog(
-        title: Text("Agrega los técnicos"),
-        content: Wrap(
-          children: tec.map<Chip>((String a) {
-            return Chip(
-              label: Text(a),
-            );
-          }).toList(),
-        ));
+      title: Column(
+        children: [Text("Agrega los técnicos"), _creargrupo(context)],
+      ),
+      content: Wrap(
+        spacing: 5.0,
+        runSpacing: 3.0,
+        children: tec.map<FilterChip>((String a) {
+          bool contain = selectedtec.contains(a);
+          return FilterChip(
+            selected: contain,
+            label: Text(a),
+            checkmarkColor: contain ? Colors.white : Colors.black,
+            labelStyle: TextStyle(color: contain ? Colors.white : Colors.black),
+            selectedColor: Theme.of(context).primaryColor,
+            onSelected: (selctd) {
+              Provider.of<HomeProvider>(context, listen: false).edittec(a);
+            },
+          );
+        }).toList(),
+      ),
+      actions: [_crearGuardar(context, nombre)],
+    );
+  }
+
+  Widget _creargrupo(BuildContext context) {
+    return TextField(
+      controller: context.read<HomeProvider>().nombregrupo,
+      decoration: InputDecoration(
+        labelText: 'Grupo',
+        contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
+      ),
+    );
+  }
+
+  Widget _crearGuardar(BuildContext context, nombre) {
+    return ElevatedButton(
+        child: Text('Guardar'),
+        onPressed: () async {
+          await context.read<HomeProvider>().updategroups(nombre);
+          Navigator.of(context).pop();
+        });
   }
 }

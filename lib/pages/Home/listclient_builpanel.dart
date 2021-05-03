@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:gpon_admin/src/model/model.dart';
 import 'package:gpon_admin/src/popup/editclient.dart';
@@ -30,15 +31,14 @@ class BuildPanel extends StatelessWidget {
               value: i.reference,
               headerBuilder: (BuildContext context, bool isExpanded) {
                 return ListTile(
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  title: Wrap(
                     children: [
-                      styledrop(context, Icons.smartphone, i.celular),
                       styledrop(context, Icons.account_circle, i.nombre),
-                      styledrop(context, Icons.quick_contacts_mail_outlined,
-                          i.cedula),
                       styledrop(context, Icons.location_city,
                           "${i.direccion} - ${i.distrito} - ${i.provincia} - ${i.departamento}"),
+                      styledrop(context, Icons.request_quote_outlined, i.plan),
+                      styledrop(context, Icons.live_tv_rounded, i.deco),
+                      styledrop(context, Icons.account_tree, i.cableadoutp),
                     ],
                   ),
                   trailing: ResponsiveWidget.isSmallScreen(context)
@@ -64,7 +64,7 @@ class BuildPanel extends StatelessWidget {
                                 children: [
                                   saveobs(context, i, observacion),
                                   edit(context, i),
-                                  opickcolor(context, i)
+                                  opickcolor(context, i),
                                 ],
                               )
                             ],
@@ -74,10 +74,11 @@ class BuildPanel extends StatelessWidget {
               },
               body: ListTile(
                   title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      styledrop(context, Icons.request_quote_outlined, i.plan),
-                      styledrop(context, Icons.live_tv_rounded, i.deco),
-                      styledrop(context, Icons.account_tree, i.cableadoutp),
+                      styledrop(context, Icons.smartphone, i.celular),
+                      styledrop(context, Icons.quick_contacts_mail_outlined,
+                          i.cedula),
                       styledrop(context, Icons.email, i.email),
                       styledrop(context, Icons.phonelink, i.plataforma),
                       styledrop(
@@ -87,6 +88,7 @@ class BuildPanel extends StatelessWidget {
                       styledrop(context, Icons.location_on_sharp, i.cordenadas),
                       styledrop(context, Icons.location_on_sharp,
                           i.fechacaptacion.toString()),
+                      copy(context, i)
                     ],
                   ),
                   trailing: ResponsiveWidget.isSmallScreen(context)
@@ -100,22 +102,21 @@ class BuildPanel extends StatelessWidget {
 
   Widget crearobs(TextEditingController observacion) {
     return SizedBox(
-      width: 200,
-      child: TextField(
-          controller: observacion,
-          scrollPadding: EdgeInsets.all(0.0),
-          expands: true,
-          maxLines: null,
-          minLines: null),
-    );
+        width: 200,
+        child: TextField(
+            controller: observacion,
+            scrollPadding: EdgeInsets.all(0.0),
+            expands: true,
+            maxLines: null,
+            minLines: null));
   }
 
   Widget styledrop(context, IconData icon, String data) {
-    return Row(
+    return Wrap(
       children: [
-        Icon(icon, size: 14, color: Theme.of(context).disabledColor),
+        Icon(icon, size: 14),
         SizedBox(width: 5),
-        Flexible(child: SelectableText(data, maxLines: 2, minLines: 1))
+        SelectableText(data, maxLines: 2, minLines: 1)
       ],
     );
   }
@@ -165,6 +166,23 @@ class BuildPanel extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget copy(BuildContext context, ClientModel i) {
+    return InkWell(
+      child: Icon(Icons.copy_rounded, size: 14),
+      onTap: () {
+        Clipboard.setData(ClipboardData(
+            text: "NOMBRE: ${i.nombre}\n" +
+                "DNI: ${i.cedula}\n" +
+                "CELULAR: ${i.celular}\n" +
+                "PLAN: ${i.plan}\n" +
+                "DIRECCION: ${i.plan}\n" +
+                "GPS: https://maps.google.com/?q=${i.cordenadas}\n" +
+                "DECOFICADOR: ${i.deco}\n" +
+                "UTP: ${i.cableadoutp}\n"));
+      },
     );
   }
 

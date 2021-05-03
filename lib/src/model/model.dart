@@ -21,6 +21,7 @@ class ClientModel {
   final String cordenadas;
   final String vendedor;
   final String color;
+  final List<String> tecnicos;
   final DocumentReference reference;
 
   ClientModel.fromMap(Map<String, dynamic> map, {this.reference})
@@ -43,7 +44,8 @@ class ClientModel {
         plataforma = map["plataforma"],
         cordenadas = map["cordenadas"],
         vendedor = map["vendedor"],
-        color = map["color"];
+        color = map["color"],
+        tecnicos = List.from(map["tecnicos"]);
 
   ClientModel.fromSnapshot(DocumentSnapshot snapshot)
       : this.fromMap(snapshot.data(), reference: snapshot.reference);
@@ -79,6 +81,7 @@ class ClientModel {
 class Listagrupo {
   final String grupo;
   final List<ClientModel> lista;
+  final List<String> tecnicos;
 
-  Listagrupo(this.grupo, this.lista);
+  Listagrupo(this.grupo, this.lista, this.tecnicos);
 }
