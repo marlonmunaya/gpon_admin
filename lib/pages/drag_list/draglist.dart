@@ -59,13 +59,13 @@ class DragHandleList extends StatelessWidget {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
+              color: Colors.grey.withOpacity(1),
               spreadRadius: 2,
               blurRadius: 3,
               offset: Offset(0, 0)),
         ],
       ),
-      lastItemTargetHeight: 20,
+      lastItemTargetHeight: 10,
       listDragHandle: DragHandle(
         verticalAlignment: DragHandleVerticalAlignment.top,
         child: Padding(

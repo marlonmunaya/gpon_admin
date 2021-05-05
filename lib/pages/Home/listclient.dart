@@ -16,23 +16,18 @@ class ClientList extends StatelessWidget {
     final List<ClientModel> lista = prov.model;
     var _screensize = MediaQuery.of(context).size;
     final date = context.watch<HomeProvider>().selectedDay;
+
     return Card(
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: 5),
-            Text('${date.day}-${date.month}-${date.year}',
-                style: TextStyle(fontSize: 24)),
-            lista == null
-                ? Center(child: CircularProgressIndicator())
-                : Container(
-                    // aspectRatio: 2 / 3,
-                    height: _screensize.height - 150,
-                    width: 600,
-                    child: DragHandleList()),
-            addgrupo(context),
-          ],
-        ),
+      child: Column(
+        children: [
+          SizedBox(height: 5),
+          Text('${date.day}-${date.month}-${date.year}',
+              style: TextStyle(fontSize: 24)),
+          lista == null
+              ? Center(child: CircularProgressIndicator())
+              : Expanded(child: DragHandleList()),
+          addgrupo(context),
+        ],
       ),
     );
   }
