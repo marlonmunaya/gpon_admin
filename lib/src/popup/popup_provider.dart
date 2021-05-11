@@ -76,7 +76,8 @@ class PopupProvider with ChangeNotifier {
   get globalScaffoldKey => _globalScaffoldKey;
 
   Future<void> guardar(BuildContext context) async {
-    showsnackbar("Validando");
+    // showsnackbar("Validando");
+    print("Validando");
     if (!_formKeysign.currentState.validate()) return;
     _formKeysign.currentState.save();
     notifyListeners();
@@ -137,7 +138,8 @@ class PopupProvider with ChangeNotifier {
           'vendedor': _vendedor.text,
           'color': Colors.white60.value.toString()
         })
-        .then((value) => showsnackbar("Cliente agregado"))
+        // .then((value) => showsnackbar("Cliente agregado"))
+        .then((value) => print("Cliente agregado"))
         .catchError((error) => print("Failes to add user: $error"));
   }
 
@@ -168,7 +170,8 @@ class PopupProvider with ChangeNotifier {
           'vendedor': _vendedor.text,
           'color': _color,
         })
-        .then((value) => showsnackbar("Cliente actualizado"))
+        // .then((value) => showsnackbar("Cliente actualizado"))
+        .then((value) => print("Cliente actualizado"))
         .catchError((error) => print("Failes to update user: $error"));
   }
 

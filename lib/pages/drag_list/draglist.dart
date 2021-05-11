@@ -5,7 +5,6 @@ import 'package:gpon_admin/pages/Home/listclient_builpanel.dart';
 import 'package:gpon_admin/pages/drag_list/draglist_provider.dart';
 import 'package:gpon_admin/src/model/model.dart';
 import 'package:gpon_admin/src/popup/popup_provider.dart';
-import 'package:gpon_admin/src/responsive/responsive.dart';
 
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +15,6 @@ import 'package:gpon_admin/pages/Home/home_provider.dart';
 class DragHandleList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var backgroundColor = Color.fromARGB(255, 243, 242, 248);
     List<DragAndDropList> contents = [];
     List<Listagrupo> listgroup = context.watch<HomeProvider>().listgroup;
 
@@ -54,7 +52,8 @@ class DragHandleList extends StatelessWidget {
           .read<HomeProvider>()
           .onListReorder(oldListIndex, newListIndex),
       listPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      itemDivider: Divider(thickness: 2, height: 2, color: backgroundColor),
+      itemDivider:
+          Divider(thickness: 2, height: 2, color: Colors.blueGrey[100]),
       itemDecorationWhileDragging: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -156,6 +155,7 @@ class DragHandleList extends StatelessWidget {
         onPressed: () async {
           await context.read<HomeProvider>().updategroups(nombre);
           Navigator.of(context).pop();
+          await context.read<HomeProvider>().getclient();
         });
   }
 }

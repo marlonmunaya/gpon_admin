@@ -206,6 +206,7 @@ class HomeProvider with ChangeNotifier {
           'observacion': obs,
         })
         .then((value) => showsnackbar("Obervacion actualizada"))
+        // .then((value) => print("Obervacion actualizada"))
         .catchError((error) => print("Failes to ass user: $error"));
     await getclient();
   }
@@ -229,14 +230,21 @@ class HomeProvider with ChangeNotifier {
 
   void onItemReorder(int oldItemIndex, int oldListIndex, int newItemIndex,
       int newListIndex) async {
-    final i = _listgroup[oldListIndex].lista[oldItemIndex].reference.id;
-    final gp = _listgroup.elementAt(newListIndex).grupo;
-    final tecnicos = _listgroup.elementAt(newListIndex).tecnicos;
-    print(i);
-    print(gp);
+    var _movedlist = _listgroup[oldListIndex].lista.removeAt(oldItemIndex);
+    _listgroup[newListIndex].lista.insert(newItemIndex, _movedlist);
 
-    await updateonegroup(i, gp, tecnicos);
-    await getclient();
+    // print("1");
+    // final i = _listgroup[oldListIndex].lista[oldItemIndex].reference.id;
+    // print("2");
+    // _listgroup[oldListIndex].lista.removeAt(oldItemIndex);
+    // final gp = _listgroup.elementAt(newListIndex).grupo;
+    // final tecnicos = _listgroup.elementAt(newListIndex).tecnicos;
+    // var _movedlist = _listgroup[oldListIndex].lista.removeAt(oldItemIndex);
+    // _listgroup[newListIndex].lista.insert(newItemIndex, _movedlist);
+    print("3");
+    // await updateonegroup(i, gp, tecnicos);
+    print("4");
+    // await getclient();
   }
 
   void onListReorder(int oldListIndex, int newListIndex) {
