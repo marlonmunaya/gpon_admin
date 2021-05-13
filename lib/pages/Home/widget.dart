@@ -22,6 +22,7 @@ Widget floatactionbutton(BuildContext context) {
       context.read<PopupProvider>().setprovincia("Provin");
       context.read<PopupProvider>().setdistrito("Distrito");
       context.read<PopupProvider>().setvendedor("Vendedor");
+      context.read<PopupProvider>().setfechacaptacion();
       context.read<PopupProvider>().setupdateguardar(false);
       await showDialog(
           context: context, builder: (BuildContext context) => EditClient());
@@ -30,9 +31,5 @@ Widget floatactionbutton(BuildContext context) {
 }
 
 Widget drawer() {
-  return Drawer(
-      child: Container(
-    color: Colors.amber,
-    child: Column(),
-  ));
+  return Drawer(child: Container(color: Colors.amber, child: Column()));
 }

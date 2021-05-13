@@ -6,6 +6,10 @@ import 'package:gpon_admin/src/model/model.dart';
 import 'package:gpon_admin/pages/Home/home_provider.dart';
 import 'package:gpon_admin/src/popup/editclient.dart';
 
+import 'package:gpon_admin/src/model/model_api_cedula.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 class PopupProvider with ChangeNotifier {
   TextEditingController _cedula = TextEditingController();
   TextEditingController get cedula => _cedula;
@@ -93,21 +97,38 @@ class PopupProvider with ChangeNotifier {
     ));
   }
 
-  void pickDateDialog(context) {
-    showDatePicker(
-            context: context,
-            initialDate: DateTime.now(),
-            firstDate: DateTime(2018),
-            lastDate: DateTime.now().add(Duration(days: 180)))
-        .then((pickedDate) {
-      //then usually do the future job
-      if (pickedDate == null) {
-        return;
-      }
-      _fechacaptaciond = pickedDate;
-      _fechacaptacion.text =
-          '${pickedDate.day}-${pickedDate.month}-${pickedDate.year}';
-    });
+  void pickDateDialog(context) async {
+    final selectdate = await showDatePicker(
+        context: context,
+        initialDate: _fechacaptaciond,
+        firstDate: DateTime(2018),
+        lastDate: DateTime.now().add(Duration(days: 180)));
+    if (selectdate == null) return;
+    //     .then((pickedDate) {
+    //   //then usually do the future job
+    //   if (pickedDate == null) {
+    //     return;
+    //   }
+    //   _fechacaptaciond = pickedDate;
+    //   _fechacaptacion.text =
+    //       '${pickedDate.day}-${pickedDate.month}-${pickedDate.year}';
+    // });
+    final selecttime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay(
+            hour: _fechacaptaciond.hour, minute: _fechacaptaciond.hour));
+    if (selecttime == null) return;
+    _fechacaptaciond = DateTime(
+      selectdate.year,
+      selectdate.month,
+      selectdate.day,
+      selecttime.hour,
+      selecttime.minute,
+    );
+    _fechacaptacion.text =
+        '${_fechacaptaciond.day}-${_fechacaptaciond.month}-${_fechacaptaciond.year}' +
+            ' ${_fechacaptaciond.hour}:${_fechacaptaciond.minute}';
+
     notifyListeners();
   }
 
@@ -207,9 +228,11 @@ class PopupProvider with ChangeNotifier {
     _plataforma = ide.plataforma;
     _fechacaptaciond = ide.fechacaptacion;
     _fechacaptacion.text =
-        '${_fechacaptaciond.day}-${_fechacaptaciond.month}-${_fechacaptaciond.year}';
+        '${_fechacaptaciond.day}-${_fechacaptaciond.month}-${_fechacaptaciond.year}' +
+            ' ${_fechacaptaciond.hour}:${_fechacaptaciond.minute}';
     _fechainstalacion.text =
-        '${_fechacaptaciond.day}-${_fechacaptaciond.month}-${_fechacaptaciond.year}';
+        '${_fechacaptaciond.day}-${_fechacaptaciond.month}-${_fechacaptaciond.year}' +
+            ' ${_fechacaptaciond.hour}:${_fechacaptaciond.minute}';
     _deco.text = ide.deco;
     _cableadoutp.text = ide.cableadoutp;
     _direccion.text = ide.direccion;
@@ -263,38 +286,8 @@ class PopupProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setnombre(String data) {
-    _nombre.text = data;
-    notifyListeners();
-  }
-
-  void setcedula(String data) {
-    _cedula.text = data;
-    notifyListeners();
-  }
-
-  void setcelular(String data) {
-    _celular.text = data;
-    notifyListeners();
-  }
-
-  void setdireccion(String data) {
-    _direccion.text = data;
-    notifyListeners();
-  }
-
-  void setemail(String data) {
-    _email.text = data;
-    notifyListeners();
-  }
-
-  void setfijo(String data) {
-    _fijo.text = data;
-    notifyListeners();
-  }
-
-  void setutp(String data) {
-    _cableadoutp.text = data;
+  void setfechacaptacion() {
+    _fechacaptaciond = DateTime.now();
     notifyListeners();
   }
 
@@ -315,23 +308,8 @@ class PopupProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setdeco(String data) {
-    _deco.text = data;
-    notifyListeners();
-  }
-
   void setvendedor(String data1) {
     _vendedor.text = data1;
-    notifyListeners();
-  }
-
-  void setcordenadas(String data) {
-    _cordenadas.text = data;
-    notifyListeners();
-  }
-
-  void setobservacion(String data) {
-    _observacion.text = data;
     notifyListeners();
   }
 
@@ -352,5 +330,41 @@ class PopupProvider with ChangeNotifier {
 
   void globalkey(data) {
     _globalScaffoldKey = data;
+  }
+
+  Future getcedula(String cedula) async {
+    Map<String, dynamic> _cliente;
+    final token =
+        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im1hcmxvbm11bmF5YUBob3RtYWlsLmNvbSJ9.xLMtYfO2BmErMB-7RDc_n0RGxCm5_2B5vl0cAFIoHlE";
+    final apidni = 'https://dniruc.apisperu.com/api/v1/dni/';
+    final apiruc = 'https://dniruc.apisperu.com/api/v1/ruc/';
+
+    cedula.length < 11
+        ? await http
+            .get(Uri.parse(apidni + '$cedula' + '?token=$token'))
+            .then((value) {
+            _cliente = jsonDecode(value.body);
+            _nombre.text = _cliente['nombres'] +
+                ' ' +
+                _cliente['apellidoPaterno'] +
+                ' ' +
+                _cliente['apellidoMaterno'];
+          }).catchError((e) {
+            showsnackbar("No encontrado");
+            return null;
+          })
+        : await http
+            .get(Uri.parse(apiruc + '$cedula' + '?token=$token'))
+            .then((value) {
+            _cliente = jsonDecode(value.body);
+            _nombre.text = _cliente['razonSocial'];
+            _direccion.text =
+                _cliente['direccion'] == null ? '' : _cliente['direccion'];
+          }).catchError((e) {
+            showsnackbar("No encontrado");
+            return null;
+          });
+    notifyListeners();
+    return null;
   }
 }

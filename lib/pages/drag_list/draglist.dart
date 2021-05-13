@@ -42,9 +42,8 @@ class DragHandleList extends StatelessWidget {
       );
     }).toList();
 
-    context.read<HomeProvider>().setcontent(contents);
     return DragAndDropLists(
-      children: context.watch<HomeProvider>().contents,
+      children: contents,
       onItemReorder: (oldItemIndex, oldListIndex, newItemIndex, newListIndex) =>
           context.read<HomeProvider>().onItemReorder(
               oldItemIndex, oldListIndex, newItemIndex, newListIndex),
@@ -64,17 +63,17 @@ class DragHandleList extends StatelessWidget {
               offset: Offset(0, 0)),
         ],
       ),
-      lastItemTargetHeight: 10,
-      listDragHandle: DragHandle(
-        verticalAlignment: DragHandleVerticalAlignment.top,
-        child: Padding(
-          padding: EdgeInsets.only(right: 5),
-          child: Icon(
-            Icons.menu,
-            color: Colors.black26,
-          ),
-        ),
-      ),
+      lastItemTargetHeight: 20,
+      // listDragHandle: DragHandle(
+      //   verticalAlignment: DragHandleVerticalAlignment.top,
+      //   child: Padding(
+      //     padding: EdgeInsets.only(right: 5),
+      //     child: Icon(
+      //       Icons.menu,
+      //       color: Colors.black26,
+      //     ),
+      //   ),
+      // ),
       itemDragHandle: DragHandle(
         child: Padding(
           padding: EdgeInsets.only(right: 5),
@@ -92,9 +91,7 @@ class DragHandleList extends StatelessWidget {
       spacing: 5.0,
       runSpacing: 3.0,
       children: tecnicos.map<Chip>((String a) {
-        return Chip(
-          label: Text(a),
-        );
+        return Chip(label: Text(a));
       }).toList(),
     );
   }

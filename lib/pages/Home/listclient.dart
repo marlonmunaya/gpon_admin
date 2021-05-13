@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:gpon_admin/pages/drag_list/draglist.dart';
 import 'package:gpon_admin/src/model/model.dart';
 import 'package:gpon_admin/pages/Home/home_provider.dart';
-import 'package:gpon_admin/src/responsive/responsive.dart';
 
 class ClientList extends StatelessWidget {
   ClientList({Key key}) : super(key: key);

@@ -23,9 +23,9 @@ class _CalendarComponentState extends State<CalendarComponent>
     super.initState();
     final provider = Provider.of<HomeProvider>(context, listen: false);
     print("conseguiendo");
+    provider.setdate();
     context.read<PopupProvider>().getutils();
     context.read<HomeProvider>().getclient();
-    provider.setdate();
     _events = provider.eventos;
     _calendarController = CalendarController();
     _animationController = AnimationController(
@@ -43,18 +43,17 @@ class _CalendarComponentState extends State<CalendarComponent>
   @override
   Widget build(BuildContext context) {
     final prov = Provider.of<HomeProvider>(context);
-    var screenSize = MediaQuery.of(context).size;
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        _calendar(screenSize, prov),
+        _calendar(prov),
         SizedBox(width: 8.0),
         _buildButtons(),
       ],
     );
   }
 
-  Widget _calendar(screenSize, prov) {
+  Widget _calendar(prov) {
     return Card(
       child: TableCalendar(
           // locale: 'pl_PL',
@@ -65,9 +64,9 @@ class _CalendarComponentState extends State<CalendarComponent>
           formatAnimation: FormatAnimation.slide,
           startingDayOfWeek: StartingDayOfWeek.monday,
           availableGestures: AvailableGestures.all,
-          availableCalendarFormats: const {
+          availableCalendarFormats: {
             CalendarFormat.week: '',
-            CalendarFormat.month: '',
+            CalendarFormat.month: ''
           },
           calendarStyle: CalendarStyle(
               outsideDaysVisible: false,

@@ -1,14 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
-import 'dart:convert';
+
 import 'package:gpon_admin/src/api/data.dart';
 import 'package:gpon_admin/src/model/model.dart';
-import 'package:gpon_admin/src/model/model_api_cedula.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:http/http.dart' as http;
 
 ///Librerias para la conexion DB
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,12 +11,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class HomeProvider with ChangeNotifier {
   Size _screenSize;
   Size get screenSize => _screenSize;
-  DateTime _selectedDay;
+  DateTime _selectedDay = DateTime.now();
   DateTime get selectedDay => _selectedDay;
   CalendarController _calendarController;
   CalendarController get calendarController => _calendarController;
-  List<dynamic> _selectedEventos;
-  List<dynamic> get selectedEventos => _selectedEventos;
+  // List<dynamic> _selectedEventos;
+  // List<dynamic> get selectedEventos => _selectedEventos;
   Map<DateTime, List> _eventos;
   Map<DateTime, List> get eventos => _eventos;
   Map<DateTime, List> _holidays;
@@ -36,12 +31,11 @@ class HomeProvider with ChangeNotifier {
   Set<String> _group;
   Set<String> get group => _group;
   List<String> _totalgrupo = [];
-  List<DragAndDropList> _contents = [];
-  List<DragAndDropList> get contents => _contents;
   List<Listagrupo> _listgroup = [];
   List<Listagrupo> get listgroup => _listgroup;
   List<String> _selectedtec = [];
   List<String> get selectedtec => _selectedtec;
+
   void setdate() {
     _selectedDay = DateTime.now();
     _eventos = {
@@ -65,7 +59,7 @@ class HomeProvider with ChangeNotifier {
         'Event D8'
       ],
     };
-    _selectedEventos = _eventos[_selectedDay] ?? [];
+
     _holidays = {
       DateTime(2021, 1, 1): ['New Year\'s Day'],
       DateTime(2021, 1, 6): ['Epiphany'],
@@ -112,11 +106,12 @@ class HomeProvider with ChangeNotifier {
   }
 
   void onDaySelected(DateTime day, List events, List holidays) {
-    _selectedEventos = events;
+    // _selectedEventos = events;
     _selectedDay = day;
     print('CALLBACK provider : _onDaySelected');
-    print(_selectedEventos);
+    // print(_selectedEventos);
     notifyListeners();
+    getclient();
   }
 
   void onVisibleDaysChanged(
@@ -129,20 +124,28 @@ class HomeProvider with ChangeNotifier {
   }
 
   Future getclient() async {
+    DateTime _start =
+        DateTime(_selectedDay.year, _selectedDay.month, _selectedDay.day, 0, 0);
+    DateTime _end = DateTime(
+        _selectedDay.year, _selectedDay.month, _selectedDay.day, 23, 59, 59);
+
     print('obteniento datos');
     final snapshot = await Backend()
         .usersv1
-        // .where('fecha', isGreaterThanOrEqualTo: start)
-        // .where('fecha', isLessThanOrEqualTo: end)
-        .orderBy('grupo', descending: false)
+        .where('fechacaptacion', isGreaterThanOrEqualTo: _start)
+        .where('fechacaptacion', isLessThanOrEqualTo: _end)
         .get();
-    // .getDocuments();
-    // _model = DocumentSnapshot.documents.map((e) => DevicesModel.fromSnapshot(e)).toList();
+
     await tomodel(snapshot);
-    // await getgroup(); // _model = snapshot.docs.map((e) => ClientModel.fromSnapshot(e)).toList();
     await getgroup();
     await getlist();
     notifyListeners();
+  }
+
+  Future getevents() async {
+    List<ClientModel> _modelist = [];
+    final snapshot = await Backend().usersv1.get();
+    _modelist = snapshot.docs.map((e) => ClientModel.fromSnapshot(e)).toList();
   }
 
   Future<void> tomodel(QuerySnapshot snapshot) {
@@ -230,43 +233,18 @@ class HomeProvider with ChangeNotifier {
 
   void onItemReorder(int oldItemIndex, int oldListIndex, int newItemIndex,
       int newListIndex) async {
-    var _movedlist = _listgroup[oldListIndex].lista.removeAt(oldItemIndex);
-    _listgroup[newListIndex].lista.insert(newItemIndex, _movedlist);
-
-    // print("1");
-    // final i = _listgroup[oldListIndex].lista[oldItemIndex].reference.id;
-    // print("2");
-    // _listgroup[oldListIndex].lista.removeAt(oldItemIndex);
-    // final gp = _listgroup.elementAt(newListIndex).grupo;
-    // final tecnicos = _listgroup.elementAt(newListIndex).tecnicos;
-    // var _movedlist = _listgroup[oldListIndex].lista.removeAt(oldItemIndex);
-    // _listgroup[newListIndex].lista.insert(newItemIndex, _movedlist);
-    print("3");
-    // await updateonegroup(i, gp, tecnicos);
-    print("4");
-    // await getclient();
+    final i = _listgroup[oldListIndex].lista[oldItemIndex].reference.id;
+    var movedItem = _listgroup[oldListIndex].lista.removeAt(oldItemIndex);
+    _listgroup[newListIndex].lista.insert(newItemIndex, movedItem);
+    notifyListeners();
+    final gp = _listgroup.elementAt(newListIndex).grupo;
+    final tecnicos = _listgroup.elementAt(newListIndex).tecnicos;
+    await updateonegroup(i, gp, tecnicos);
+    await getclient();
   }
 
   void onListReorder(int oldListIndex, int newListIndex) {
-    var movedList = _contents.removeAt(oldListIndex);
-    _contents.insert(newListIndex, movedList);
-  }
-
-  void setcontent(List<DragAndDropList> data) {
-    _contents = data;
-  }
-
-  Future getcedula(cedula) async {
-    final token =
-        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im1hcmxvbm11bmF5YUBob3RtYWlsLmNvbSJ9.xLMtYfO2BmErMB-7RDc_n0RGxCm5_2B5vl0cAFIoHlE";
-    final response = await http
-        .get(
-          Uri.parse('https://dniruc.apisperu.com/api/v1/dni/' +
-              '$cedula' +
-              '?token=$token'),
-        )
-        .then((value) => showsnackbar(value.body.toString()))
-        .catchError((e) => print(e));
-    // showsnackbar(response.body.toString());
+    // var movedList = _contents.removeAt(oldListIndex);
+    // _contents.insert(newListIndex, movedList);
   }
 }
