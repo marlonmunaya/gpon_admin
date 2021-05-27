@@ -1,12 +1,12 @@
+// import 'dart:io';
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gpon_admin/src/api/data.dart';
 import 'package:gpon_admin/src/model/utils_model.dart';
 import 'package:gpon_admin/src/model/model.dart';
-import 'package:gpon_admin/pages/Home/home_provider.dart';
-import 'package:gpon_admin/src/popup/editclient.dart';
 
-import 'package:gpon_admin/src/model/model_api_cedula.dart';
+import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -33,6 +33,8 @@ class PopupProvider with ChangeNotifier {
   TextEditingController get fechacaptacion => _fechacaptacion;
   DateTime _fechacaptaciond;
   DateTime get fechacaptaciond => _fechacaptaciond;
+  DateTime _fechainstalaciond;
+  DateTime get fechainstalaciond => _fechainstalaciond;
   TextEditingController _departamento = TextEditingController();
   TextEditingController get departamento => _departamento;
   TextEditingController _provincia = TextEditingController();
@@ -51,6 +53,12 @@ class PopupProvider with ChangeNotifier {
   TextEditingController get cordenadas => _cordenadas;
   TextEditingController _vendedor = TextEditingController();
   TextEditingController get vendedor => _vendedor;
+  TextEditingController _cajanap = TextEditingController();
+  TextEditingController get cajanap => _cajanap;
+  TextEditingController _puerto = TextEditingController();
+  TextEditingController get puerto => _puerto;
+  TextEditingController _servicios = TextEditingController();
+  TextEditingController get servicios => _servicios;
   String _color;
   String get color => _color;
   UtilsModel _planes;
@@ -78,6 +86,29 @@ class PopupProvider with ChangeNotifier {
   String refer;
   GlobalKey<ScaffoldState> _globalScaffoldKey;
   get globalScaffoldKey => _globalScaffoldKey;
+  DateFormat _formatocompleto = DateFormat('dd/MM/yyyy HH:mm');
+  DateFormat get formatocompleto => _formatocompleto;
+  DateFormat _formatohora = DateFormat('HH:mm');
+  DateFormat get formatohora => _formatohora;
+  ///////Estado de onTapDown/////////
+  OverlayEntry _overlayEntry;
+  OverlayEntry get overlay => _overlayEntry;
+  OverlayState _overlayState;
+  OverlayState get overlayState => _overlayState;
+  bool _buttonState = true;
+  bool get buttonState => _buttonState;
+
+  void removeoverlay() {
+    _overlayEntry.remove();
+    _buttonState = true;
+    print("removiendo");
+  }
+
+  void insertoverlay(overlay) {
+    _overlayEntry = overlay;
+    _buttonState = false;
+    print("ingresado");
+  }
 
   Future<void> guardar(BuildContext context) async {
     // showsnackbar("Validando");
@@ -100,34 +131,25 @@ class PopupProvider with ChangeNotifier {
   void pickDateDialog(context) async {
     final selectdate = await showDatePicker(
         context: context,
-        initialDate: _fechacaptaciond,
+        initialDate: _fechainstalaciond,
         firstDate: DateTime(2018),
         lastDate: DateTime.now().add(Duration(days: 180)));
     if (selectdate == null) return;
-    //     .then((pickedDate) {
-    //   //then usually do the future job
-    //   if (pickedDate == null) {
-    //     return;
-    //   }
-    //   _fechacaptaciond = pickedDate;
-    //   _fechacaptacion.text =
-    //       '${pickedDate.day}-${pickedDate.month}-${pickedDate.year}';
-    // });
     final selecttime = await showTimePicker(
         context: context,
         initialTime: TimeOfDay(
-            hour: _fechacaptaciond.hour, minute: _fechacaptaciond.hour));
+            hour: _fechainstalaciond.hour, minute: _fechainstalaciond.hour));
     if (selecttime == null) return;
-    _fechacaptaciond = DateTime(
+    _fechainstalaciond = DateTime(
       selectdate.year,
       selectdate.month,
       selectdate.day,
       selecttime.hour,
       selecttime.minute,
     );
-    _fechacaptacion.text =
-        '${_fechacaptaciond.day}-${_fechacaptaciond.month}-${_fechacaptaciond.year}' +
-            ' ${_fechacaptaciond.hour}:${_fechacaptaciond.minute}';
+    _fechainstalacion.text =
+        '${_fechainstalaciond.day}-${_fechainstalaciond.month}-${_fechainstalaciond.year}' +
+            ' ${_fechainstalaciond.hour}:${_fechainstalaciond.minute}';
 
     notifyListeners();
   }
@@ -144,14 +166,17 @@ class PopupProvider with ChangeNotifier {
           'direccion': _direccion.text,
           'email': _email.text,
           'plan': _plan,
-          'fechainstalacion': _fechacaptaciond,
-          'fechacaptacion': _fechacaptaciond,
+          'servicios': _servicios.text,
+          'fechainstalacion': _fechainstalaciond,
+          'fechacaptacion': DateTime.now(),
           'departamento': _departamento.text,
           'provincia': _provincia.text,
           'distrito': _distrito.text,
-          'observacion': _observacion.text,
+          'cajanap': _cajanap.text,
+          'puerto': _puerto.text,
           'grupo': "Vacío",
           'tecnicos': [],
+          'observaciones': [""],
           'cableadoutp': _cableadoutp.text,
           'deco': _deco.text,
           'plataforma': _plataforma,
@@ -177,12 +202,14 @@ class PopupProvider with ChangeNotifier {
           'direccion': _direccion.text,
           'email': _email.text,
           'plan': _plan,
-          'fechainstalacion': _fechacaptaciond,
+          'servicios': _servicios.text,
+          'fechainstalacion': _fechainstalaciond,
           'fechacaptacion': _fechacaptaciond,
           'departamento': _departamento.text,
           'provincia': _provincia.text,
           'distrito': _distrito.text,
-          'observacion': _observacion.text,
+          'cajanap': _cajanap.text,
+          'puerto': _puerto.text,
           // 'grupo': _grupo.text,
           'cableadoutp': _cableadoutp.text,
           'deco': _deco.text,
@@ -226,13 +253,11 @@ class PopupProvider with ChangeNotifier {
     _celular.text = ide.celular;
     _fijo.text = ide.fijo;
     _plataforma = ide.plataforma;
+    _servicios.text = ide.servicios;
+    _fechainstalacion.text = _formatocompleto.format(ide.fechainstalacion);
+    _fechainstalaciond = ide.fechainstalacion;
     _fechacaptaciond = ide.fechacaptacion;
-    _fechacaptacion.text =
-        '${_fechacaptaciond.day}-${_fechacaptaciond.month}-${_fechacaptaciond.year}' +
-            ' ${_fechacaptaciond.hour}:${_fechacaptaciond.minute}';
-    _fechainstalacion.text =
-        '${_fechacaptaciond.day}-${_fechacaptaciond.month}-${_fechacaptaciond.year}' +
-            ' ${_fechacaptaciond.hour}:${_fechacaptaciond.minute}';
+    _fechacaptacion.text = _formatocompleto.format(ide.fechacaptacion);
     _deco.text = ide.deco;
     _cableadoutp.text = ide.cableadoutp;
     _direccion.text = ide.direccion;
@@ -241,11 +266,11 @@ class PopupProvider with ChangeNotifier {
     _distrito.text = ide.distrito;
     _email.text = ide.email;
     _cordenadas.text = ide.cordenadas;
-    _observacion.text = ide.observacion;
+    _cajanap.text = ide.cajanap;
+    _puerto.text = ide.puerto;
     _color = ide.color;
-    _grupo.text = ide.grupo; //falta verificar.
-    // _fechainstalacion.text = ide.cedula; //falta verificar.
-    showsnackbar("cliente para actualizar");
+    _grupo.text = ide.grupo;
+    // showsnackbar("cliente para actualizar");
   }
 
   Future<void> clearclient() async {
@@ -256,7 +281,8 @@ class PopupProvider with ChangeNotifier {
     _celular.text = "";
     _fijo.text = "";
     _plataforma = "";
-    _fechacaptacion.text = "";
+    _servicios.text = "";
+    _fechainstalacion.text = "";
     _deco.text = "";
     _cableadoutp.text = "";
     _direccion.text = "";
@@ -265,10 +291,10 @@ class PopupProvider with ChangeNotifier {
     _distrito.text = "";
     _email.text = "";
     _cordenadas.text = "";
-    _observacion.text = "";
+    _cajanap.text = "";
+    _puerto.text = "";
     _color = "";
     _grupo.text = ""; //falta verificar.
-    _fechainstalacion.text = ""; //falta verificar.
   }
 
   void setplan(String plan) {
@@ -286,8 +312,8 @@ class PopupProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setfechacaptacion() {
-    _fechacaptaciond = DateTime.now();
+  void setfechainstalacion() {
+    _fechainstalaciond = DateTime.now();
     notifyListeners();
   }
 
@@ -367,4 +393,79 @@ class PopupProvider with ChangeNotifier {
     notifyListeners();
     return null;
   }
+
+  Future createAlbum() async {
+    Map<String, String> header = {"Content-Type": "application/json"};
+    Map msg = {
+      "token": "cFhtUEdjTFlVMWpXY3FXUjR1Rmxzdz09",
+      "cliente": "Carlos miguel perez",
+      "cedula": "45464522",
+      "direccion": "Av luis miguel 3356",
+      "telefono": "5123345",
+      "movil": "9888877665",
+      "email": "correo@gmail.com",
+      "notas": "Hola estoy interesando en el servicio ..",
+      "fecha_instalacion": "2020-12-20 10:30:35"
+    };
+    String url = "http://oficina.gpon.pe/api/v1/NewPreRegistro";
+  }
+
+  Future<http.Response> postRequest() async {
+    var url = 'http://oficina.gpon.pe/api/v1/NewPreRegistro';
+
+    Map data = {
+      "token": "cFhtUEdjTFlVMWpXY3FXUjR1Rmxzdz09",
+      "cliente": "Carlos miguel perez",
+      "cedula": "45464522",
+      "direccion": "Av luis miguel 3356",
+      "telefono": "5123345",
+      "movil": "9888877665",
+      "email": "correo@gmail.com",
+      "notas": "Hola estoy interesando en el servicio ..",
+      "fecha_instalacion": "2020-12-20 10:30:35"
+    };
+    //encode Map to JSON
+    var body = json.encode(data);
+
+    // var response = await http.post(url,
+    //     headers: {
+    //       "Access-Control-Allow-Origin":
+    //           "*", // Required for CORS support to work
+    //       "Content-Type": "application/json",
+    //       "Access-Control-Allow-Headers":
+    //           "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+    //       "Access-Control-Allow-Methods": "POST, OPTIONS"
+    //     },
+    //     body: body);
+    // print("${response.statusCode}");
+    // print("${response.body}");
+    // return response;
+  }
+
+  // void fetching() async {
+  //   var url = 'http://oficina.gpon.pe/api/v1/NewPreRegistro';
+
+  //   Map body = {
+  //     "token": "cFhtUEdjTFlVMWpXY3FXUjR1Rmxzdz09",
+  //     "cliente": "Carlos miguel perez",
+  //     "cedula": "45464522",
+  //     "direccion": "Av luis miguel 3356",
+  //     "telefono": "5123345",
+  //     "movil": "9888877665",
+  //     "email": "correo@gmail.com",
+  //     "notas": "Hola estoy interesando en el servicio ..",
+  //     "fecha_instalacion": "2020-12-20 10:30:35"
+  //   };
+
+  //   return await http.post(Uri.encodeFull(url),
+  //       body: body,
+  //       headers: {"Accept": "application/json"}).then((http.Response response) {
+  //     print(response.body);
+  //     final int statusCode = response.statusCode;
+  //     if (statusCode < 200 || statusCode > 400 || json == null) {
+  //       throw new Exception("Error while fetching data");
+  //     }
+  //     // return _decoder.convert(response.body);
+  //   });
+  // }
 }

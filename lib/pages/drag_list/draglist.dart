@@ -1,8 +1,7 @@
-import 'dart:js';
-
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
+import 'package:gpon_admin/pages/Home/creargrupo.dart';
 import 'package:gpon_admin/pages/Home/listclient_builpanel.dart';
-import 'package:gpon_admin/pages/drag_list/draglist_provider.dart';
+
 import 'package:gpon_admin/src/model/model.dart';
 import 'package:gpon_admin/src/popup/popup_provider.dart';
 
@@ -17,6 +16,9 @@ class DragHandleList extends StatelessWidget {
   Widget build(BuildContext context) {
     List<DragAndDropList> contents = [];
     List<Listagrupo> listgroup = context.watch<HomeProvider>().listgroup;
+    listgroup.sort((a, b) => a.grupo.compareTo(b.grupo));
+    final List<ClientModel> lista = context.watch<HomeProvider>().model;
+    final date = context.watch<HomeProvider>().selectedDay;
 
     contents = listgroup.map((e) {
       return DragAndDropList(
@@ -42,6 +44,22 @@ class DragHandleList extends StatelessWidget {
       );
     }).toList();
 
+    return Card(
+      child: Column(
+        children: [
+          SizedBox(height: 5),
+          Text('${date.day}-${date.month}-${date.year}',
+              style: TextStyle(fontSize: 24)),
+          lista == null
+              ? Center(child: CircularProgressIndicator())
+              : Expanded(child: draganddroplists(context, contents)),
+          Creargrupo()
+        ],
+      ),
+    );
+  }
+
+  Widget draganddroplists(BuildContext context, contents) {
     return DragAndDropLists(
       children: contents,
       onItemReorder: (oldItemIndex, oldListIndex, newItemIndex, newListIndex) =>
@@ -63,17 +81,7 @@ class DragHandleList extends StatelessWidget {
               offset: Offset(0, 0)),
         ],
       ),
-      lastItemTargetHeight: 20,
-      // listDragHandle: DragHandle(
-      //   verticalAlignment: DragHandleVerticalAlignment.top,
-      //   child: Padding(
-      //     padding: EdgeInsets.only(right: 5),
-      //     child: Icon(
-      //       Icons.menu,
-      //       color: Colors.black26,
-      //     ),
-      //   ),
-      // ),
+      lastItemTargetHeight: 50,
       itemDragHandle: DragHandle(
         child: Padding(
           padding: EdgeInsets.only(right: 5),
@@ -85,74 +93,74 @@ class DragHandleList extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget selectedtecnicos(BuildContext context, List<String> tecnicos) {
-    return Wrap(
+Widget selectedtecnicos(BuildContext context, List<String> tecnicos) {
+  return Wrap(
+    spacing: 5.0,
+    runSpacing: 3.0,
+    children: tecnicos.map<Chip>((String a) {
+      return Chip(label: Text(a));
+    }).toList(),
+  );
+}
+
+Widget addtecnicos(BuildContext context, Listagrupo e) {
+  return InkWell(
+      child: Icon(Icons.edit_attributes_rounded),
+      onTap: () {
+        showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (BuildContext context1) => tecnicos(context1, e.grupo));
+        context.read<HomeProvider>().setnamegrouptec(e);
+      });
+}
+
+Widget tecnicos(BuildContext context, nombre) {
+  List<String> tec = context.watch<PopupProvider>().personal.tecnicos;
+  List<String> selectedtec = context.watch<HomeProvider>().selectedtec;
+  return AlertDialog(
+    title: Column(
+      children: [Text("Agrega los técnicos"), _creargrupo(context)],
+    ),
+    content: Wrap(
       spacing: 5.0,
       runSpacing: 3.0,
-      children: tecnicos.map<Chip>((String a) {
-        return Chip(label: Text(a));
+      children: tec.map<FilterChip>((String a) {
+        bool contain = selectedtec.contains(a);
+        return FilterChip(
+          selected: contain,
+          label: Text(a),
+          checkmarkColor: contain ? Colors.white : Colors.black,
+          labelStyle: TextStyle(color: contain ? Colors.white : Colors.black),
+          selectedColor: Theme.of(context).primaryColor,
+          onSelected: (selctd) {
+            Provider.of<HomeProvider>(context, listen: false).edittec(a);
+          },
+        );
       }).toList(),
-    );
-  }
+    ),
+    actions: [_crearGuardar(context, nombre)],
+  );
+}
 
-  Widget addtecnicos(BuildContext context, Listagrupo e) {
-    return InkWell(
-        child: Icon(Icons.edit_attributes_rounded),
-        onTap: () {
-          showDialog(
-              barrierDismissible: false,
-              context: context,
-              builder: (BuildContext context1) => tecnicos(context1, e.grupo));
-          context.read<HomeProvider>().setnamegrouptec(e);
-        });
-  }
+Widget _creargrupo(BuildContext context) {
+  return TextField(
+    controller: context.read<HomeProvider>().nombregrupo,
+    decoration: InputDecoration(
+      labelText: 'Grupo',
+      contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
+    ),
+  );
+}
 
-  Widget tecnicos(BuildContext context, nombre) {
-    List<String> tec = context.watch<PopupProvider>().personal.tecnicos;
-    List<String> selectedtec = context.watch<HomeProvider>().selectedtec;
-    return AlertDialog(
-      title: Column(
-        children: [Text("Agrega los técnicos"), _creargrupo(context)],
-      ),
-      content: Wrap(
-        spacing: 5.0,
-        runSpacing: 3.0,
-        children: tec.map<FilterChip>((String a) {
-          bool contain = selectedtec.contains(a);
-          return FilterChip(
-            selected: contain,
-            label: Text(a),
-            checkmarkColor: contain ? Colors.white : Colors.black,
-            labelStyle: TextStyle(color: contain ? Colors.white : Colors.black),
-            selectedColor: Theme.of(context).primaryColor,
-            onSelected: (selctd) {
-              Provider.of<HomeProvider>(context, listen: false).edittec(a);
-            },
-          );
-        }).toList(),
-      ),
-      actions: [_crearGuardar(context, nombre)],
-    );
-  }
-
-  Widget _creargrupo(BuildContext context) {
-    return TextField(
-      controller: context.read<HomeProvider>().nombregrupo,
-      decoration: InputDecoration(
-        labelText: 'Grupo',
-        contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
-      ),
-    );
-  }
-
-  Widget _crearGuardar(BuildContext context, nombre) {
-    return ElevatedButton(
-        child: Text('Guardar'),
-        onPressed: () async {
-          await context.read<HomeProvider>().updategroups(nombre);
-          Navigator.of(context).pop();
-          await context.read<HomeProvider>().getclient();
-        });
-  }
+Widget _crearGuardar(BuildContext context, nombre) {
+  return ElevatedButton(
+      child: Text('Guardar'),
+      onPressed: () async {
+        await context.read<HomeProvider>().updategroups(nombre);
+        Navigator.of(context).pop();
+        await context.read<HomeProvider>().getclient();
+      });
 }

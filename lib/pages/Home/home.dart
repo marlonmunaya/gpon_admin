@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:gpon_admin/pages/Home/home_provider.dart';
 import 'package:gpon_admin/pages/calendar/calendar.dart';
 import 'package:provider/provider.dart';
-import 'package:gpon_admin/pages/Home/listclient.dart';
+
 import 'package:gpon_admin/pages/Home/widget.dart';
-import 'package:gpon_admin/src/popup/popup_provider.dart';
+import 'package:gpon_admin/pages/drag_list/draglist.dart';
 import 'package:gpon_admin/src/responsive/responsive.dart';
 
 class HomePage extends StatelessWidget {
@@ -13,7 +13,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     context.read<HomeProvider>().globalkey(globalScaffoldKey);
-    context.read<PopupProvider>().globalkey(globalScaffoldKey);
+
     var _screensize = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: Colors.blueGrey[50],
@@ -22,25 +22,25 @@ class HomePage extends StatelessWidget {
           title: Text("Administrador"),
           actions: [],
         ),
-        drawer: drawer(),
+        drawer: drawer(context),
         body: ResponsiveWidget(
           smallScreen: Column(children: [
             CalendarComponent(),
             Expanded(
                 flex: 28,
-                child:
-                    Container(height: _screensize.height, child: ClientList()))
+                child: Container(
+                    height: _screensize.height, child: DragHandleList()))
           ]),
           mediumScreen: Row(
             children: [
               Expanded(flex: 3, child: CalendarComponent()),
-              Expanded(flex: 7, child: ClientList())
+              Expanded(flex: 7, child: DragHandleList())
             ],
           ),
           largeScreen: Row(
             children: [
               Expanded(flex: 3, child: CalendarComponent()),
-              Expanded(flex: 8, child: ClientList())
+              Expanded(flex: 8, child: DragHandleList())
             ],
           ),
         ),

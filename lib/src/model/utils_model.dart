@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class UtilsModel {
   List<String> planes;
   List<String> plataforma;

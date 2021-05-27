@@ -143,12 +143,6 @@ class _CalendarComponentState extends State<CalendarComponent>
       ),
       width: 14.0,
       height: 14.0,
-      child: Center(
-        child: Text(
-          '${events.length}',
-          style: TextStyle().copyWith(color: Colors.white, fontSize: 12.0),
-        ),
-      ),
     );
   }
 
@@ -182,12 +176,10 @@ class _CalendarComponentState extends State<CalendarComponent>
               Text('${dateTime.day}-${dateTime.month}-${dateTime.year}'),
             ],
           ),
-          onPressed: () {
-            _calendarController.setSelectedDay(
-              DateTime(dateTime.year, dateTime.month, dateTime.day),
-              runCallback: true,
-            );
-          },
+          onPressed: () => _calendarController.setSelectedDay(
+            DateTime(dateTime.year, dateTime.month, dateTime.day),
+            runCallback: true,
+          ),
         ),
       ],
     );

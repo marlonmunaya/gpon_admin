@@ -11,9 +11,11 @@ class ClientModel {
   final DateTime fechainstalacion;
   final DateTime fechacaptacion;
   final String departamento;
+  final String servicios;
   final String provincia;
   final String distrito;
-  final String observacion;
+  final String cajanap;
+  final String puerto;
   final String grupo;
   final String cableadoutp;
   final String deco;
@@ -23,6 +25,7 @@ class ClientModel {
   final String color;
   final List<String> tecnicos;
   final DocumentReference reference;
+  final List<String> observaciones;
 
   ClientModel.fromMap(Map<String, dynamic> map, {this.reference})
       : nombre = map["nombre"],
@@ -37,7 +40,8 @@ class ClientModel {
         departamento = map["departamento"],
         provincia = map["provincia"],
         distrito = map["distrito"],
-        observacion = map["observacion"],
+        cajanap = map["cajanap"],
+        puerto = map["puerto"],
         grupo = map["grupo"],
         cableadoutp = map["cableadoutp"],
         deco = map["deco"],
@@ -45,7 +49,9 @@ class ClientModel {
         cordenadas = map["cordenadas"],
         vendedor = map["vendedor"],
         color = map["color"],
-        tecnicos = List.from(map["tecnicos"]);
+        servicios = map["servicios"],
+        tecnicos = List.from(map["tecnicos"]),
+        observaciones = List.from(map["observaciones"]);
 
   ClientModel.fromSnapshot(DocumentSnapshot snapshot)
       : this.fromMap(snapshot.data(), reference: snapshot.reference);

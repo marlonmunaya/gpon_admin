@@ -15,8 +15,6 @@ class HomeProvider with ChangeNotifier {
   DateTime get selectedDay => _selectedDay;
   CalendarController _calendarController;
   CalendarController get calendarController => _calendarController;
-  // List<dynamic> _selectedEventos;
-  // List<dynamic> get selectedEventos => _selectedEventos;
   Map<DateTime, List> _eventos;
   Map<DateTime, List> get eventos => _eventos;
   Map<DateTime, List> _holidays;
@@ -39,25 +37,25 @@ class HomeProvider with ChangeNotifier {
   void setdate() {
     _selectedDay = DateTime.now();
     _eventos = {
-      _selectedDay.subtract(Duration(days: 16)): ['Event A3', 'Event B3'],
-      _selectedDay.subtract(Duration(days: 10)): [
-        'Event A4',
-        'Event B4',
-        'Event C4'
-      ],
-      _selectedDay.subtract(Duration(days: 4)): [
-        'Event A5',
-        'Event B5',
-        'Event C5'
-      ],
-      _selectedDay.subtract(Duration(days: 2)): ['Event A6', 'Event B6'],
+      // _selectedDay.subtract(Duration(days: 16)): ['Event A3', 'Event B3'],
+      // _selectedDay.subtract(Duration(days: 10)): [
+      //   'Event A4',
+      //   'Event B4',
+      //   'Event C4'
+      // ],
+      // _selectedDay.subtract(Duration(days: 4)): [
+      //   'Event A5',
+      //   'Event B5',
+      //   'Event C5'
+      // ],
+      // _selectedDay.subtract(Duration(days: 2)): ['Event A6', 'Event B6'],
       _selectedDay: ['Event A7', 'Event B7', 'Event C7'],
-      _selectedDay.add(Duration(days: 1)): [
-        'Event A8',
-        'Event B8',
-        'Event C8',
-        'Event D8'
-      ],
+      // _selectedDay.add(Duration(days: 1)): [
+      //   'Event A8',
+      //   'Event B8',
+      //   'Event C8',
+      //   'Event D8'
+      // ],
     };
 
     _holidays = {
@@ -132,20 +130,14 @@ class HomeProvider with ChangeNotifier {
     print('obteniento datos');
     final snapshot = await Backend()
         .usersv1
-        .where('fechacaptacion', isGreaterThanOrEqualTo: _start)
-        .where('fechacaptacion', isLessThanOrEqualTo: _end)
+        .where('fechainstalacion', isGreaterThanOrEqualTo: _start)
+        .where('fechainstalacion', isLessThanOrEqualTo: _end)
         .get();
 
     await tomodel(snapshot);
     await getgroup();
     await getlist();
     notifyListeners();
-  }
-
-  Future getevents() async {
-    List<ClientModel> _modelist = [];
-    final snapshot = await Backend().usersv1.get();
-    _modelist = snapshot.docs.map((e) => ClientModel.fromSnapshot(e)).toList();
   }
 
   Future<void> tomodel(QuerySnapshot snapshot) {
@@ -195,23 +187,45 @@ class HomeProvider with ChangeNotifier {
     await users
         .doc("$refer")
         .update({'color': color})
-        .then((value) => print("Client color updated"))
+        .then((value) => print("Client color actualizado"))
         .catchError((error) => print("Failes to ass user: $error"));
     showsnackbar("Color actualizado");
     getclient();
   }
 
-  void updateobservacion(String i, obs) async {
+  Future updateobservaciones(String refer, List<String> obser) async {
     final users = Backend().usersv1;
     await users
-        .doc(i)
-        .update({
-          'observacion': obs,
-        })
-        .then((value) => showsnackbar("Obervacion actualizada"))
-        // .then((value) => print("Obervacion actualizada"))
+        .doc("$refer")
+        .update({'observaciones': obser})
+        .then((value) => print("Client observacione actualizado"))
         .catchError((error) => print("Failes to ass user: $error"));
-    await getclient();
+    showsnackbar("Observaciones actualizado");
+    getclient();
+  }
+
+  Future updatefechainst(BuildContext context, ClientModel i) async {
+    final selecttime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay(
+            hour: i.fechainstalacion.hour, minute: i.fechainstalacion.hour));
+    if (selecttime == null) return;
+    final fechainstalacion = DateTime(
+      i.fechainstalacion.year,
+      i.fechainstalacion.month,
+      i.fechainstalacion.day,
+      selecttime.hour,
+      selecttime.minute,
+    );
+
+    final users = Backend().usersv1;
+    await users
+        .doc("${i.reference.id}")
+        .update({'fechainstalacion': fechainstalacion})
+        .then((value) => print("Fecha updated"))
+        .catchError((error) => print("Failes to ass user: $error"));
+    showsnackbar("Fecha actualizada");
+    getclient();
   }
 
   //Función para actualizar el grupo de 01 cliente

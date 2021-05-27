@@ -23,6 +23,8 @@ class EditClient extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                _crearservicios(context),
+                SizedBox(height: 5.0),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -51,7 +53,7 @@ class EditClient extends StatelessWidget {
                     _crearvendedor(context)
                   ],
                 ),
-                _crearFechacaptacion(context),
+                _crearFechainstalacion(context),
                 SizedBox(height: 5.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -87,7 +89,9 @@ class EditClient extends StatelessWidget {
                 SizedBox(height: 5.0),
                 _crearcordenadas(context),
                 SizedBox(height: 5.0),
-                _crearobservacion(context)
+                _crearcajanap(context),
+                SizedBox(height: 5.0),
+                _crearpuerto(context)
               ],
             ),
           ),
@@ -209,11 +213,11 @@ Widget _crearplan(BuildContext context) {
   );
 }
 
-Widget _crearFechacaptacion(BuildContext context) {
+Widget _crearFechainstalacion(BuildContext context) {
   return SizedBox(
     width: 150,
     child: TextFormField(
-      controller: context.watch<PopupProvider>().fechacaptacion,
+      controller: context.watch<PopupProvider>().fechainstalacion,
       readOnly: true,
       decoration: InputDecoration(
         labelText: '*Fecha',
@@ -258,6 +262,16 @@ Widget _crearemail(BuildContext context) {
     controller: context.watch<PopupProvider>().email,
     decoration: InputDecoration(
       labelText: 'Email',
+      contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
+    ),
+  );
+}
+
+Widget _crearservicios(BuildContext context) {
+  return TextFormField(
+    controller: context.watch<PopupProvider>().servicios,
+    decoration: InputDecoration(
+      labelText: 'Servicios',
       contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
     ),
   );
@@ -420,13 +434,21 @@ Widget _crearcordenadas(BuildContext context) {
   );
 }
 
-Widget _crearobservacion(BuildContext context) {
+Widget _crearcajanap(BuildContext context) {
   return TextFormField(
-    minLines: 1,
-    maxLines: 2,
-    controller: context.watch<PopupProvider>().observacion,
+    controller: context.watch<PopupProvider>().cajanap,
     decoration: InputDecoration(
-      labelText: 'Observación',
+      labelText: 'Caja NAP',
+      contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
+    ),
+  );
+}
+
+Widget _crearpuerto(BuildContext context) {
+  return TextFormField(
+    controller: context.watch<PopupProvider>().puerto,
+    decoration: InputDecoration(
+      labelText: 'Puerto',
       contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
     ),
   );
