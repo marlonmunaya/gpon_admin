@@ -10,7 +10,12 @@ import 'package:gpon_admin/src/popup/popup_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+      options: FirebaseOptions(
+          apiKey: "AIzaSyCnGwm1aFg6hvgVcZcDJSTu9an62w1kqWk",
+          appId: "1:286689828550:web:8477380ad7f6b9899841c7",
+          messagingSenderId: "286689828550",
+          projectId: "gpon-peru"));
   runApp(MyApp());
 }
 

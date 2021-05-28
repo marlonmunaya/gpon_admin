@@ -40,9 +40,9 @@ class EditClient extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _crearCelular(context),
-                    SizedBox(width: 10.0),
-                    _crearfijo(context),
+                    Expanded(child: _crearCelular(context)),
+                    SizedBox(width: 5.0),
+                    Expanded(child: _crearfijo(context)),
                   ],
                 ),
                 SizedBox(height: 5.0),
@@ -56,8 +56,11 @@ class EditClient extends StatelessWidget {
                 _crearFechainstalacion(context),
                 SizedBox(height: 5.0),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [_creardeco(context), _crearutp(context)],
+                  children: [
+                    Expanded(child: _creardeco(context)),
+                    SizedBox(width: 5.0),
+                    Expanded(child: _crearutp(context))
+                  ],
                 ),
                 _creardireccion(context),
                 SizedBox(height: 5.0),
@@ -175,24 +178,21 @@ Widget _crearNombre(BuildContext context) {
 }
 
 Widget _crearCelular(BuildContext context) {
-  return SizedBox(
-    width: 130,
-    child: TextFormField(
-      controller: context.watch<PopupProvider>().celular,
-      keyboardType: TextInputType.number,
-      decoration: InputDecoration(
-        labelText: '*Celular',
-        isDense: true,
-        contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
-      ),
-      validator: (value) {
-        if (value.length < 9) {
-          return 'Ingrese un número válido';
-        } else {
-          return null;
-        }
-      },
+  return TextFormField(
+    controller: context.watch<PopupProvider>().celular,
+    keyboardType: TextInputType.number,
+    decoration: InputDecoration(
+      labelText: '*Celular',
+      isDense: true,
+      contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
     ),
+    validator: (value) {
+      if (value.length < 9) {
+        return 'Ingrese un número válido';
+      } else {
+        return null;
+      }
+    },
   );
 }
 
@@ -268,51 +268,30 @@ Widget _crearemail(BuildContext context) {
 }
 
 Widget _crearservicios(BuildContext context) {
-  return TextFormField(
-    controller: context.watch<PopupProvider>().servicios,
-    decoration: InputDecoration(
-      labelText: 'Servicios',
-      contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
-    ),
+  return _crearcampo(
+    context.watch<PopupProvider>().servicios,
+    'Servicios',
   );
 }
 
 Widget _crearfijo(BuildContext context) {
-  return SizedBox(
-    width: 100,
-    child: TextFormField(
-      controller: context.watch<PopupProvider>().fijo,
-      decoration: InputDecoration(
-        labelText: 'Fijo',
-        contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
-      ),
-    ),
+  return _crearcampo(
+    context.watch<PopupProvider>().fijo,
+    'Fijo',
   );
 }
 
 Widget _crearutp(BuildContext context) {
-  return SizedBox(
-    width: 100,
-    child: TextFormField(
-      controller: context.watch<PopupProvider>().cableadoutp,
-      decoration: InputDecoration(
-        labelText: 'UTP',
-        contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
-      ),
-    ),
+  return _crearcampo(
+    context.watch<PopupProvider>().cableadoutp,
+    'UTP',
   );
 }
 
 Widget _creardeco(BuildContext context) {
-  return SizedBox(
-    width: 100,
-    child: TextFormField(
-      controller: context.watch<PopupProvider>().deco,
-      decoration: InputDecoration(
-        labelText: 'Decodificador',
-        contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
-      ),
-    ),
+  return _crearcampo(
+    context.watch<PopupProvider>().deco,
+    'Decodificador',
   );
 }
 
@@ -425,32 +404,23 @@ Widget _crearvendedor(BuildContext context) {
 }
 
 Widget _crearcordenadas(BuildContext context) {
-  return TextFormField(
-    controller: context.watch<PopupProvider>().cordenadas,
-    decoration: InputDecoration(
-      labelText: 'Cordenadas',
-      contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
-    ),
+  return _crearcampo(
+    context.watch<PopupProvider>().cordenadas,
+    'Cordenadas',
   );
 }
 
 Widget _crearcajanap(BuildContext context) {
-  return TextFormField(
-    controller: context.watch<PopupProvider>().cajanap,
-    decoration: InputDecoration(
-      labelText: 'Caja NAP',
-      contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
-    ),
+  return _crearcampo(
+    context.watch<PopupProvider>().cajanap,
+    'Caja NAP',
   );
 }
 
 Widget _crearpuerto(BuildContext context) {
-  return TextFormField(
-    controller: context.watch<PopupProvider>().puerto,
-    decoration: InputDecoration(
-      labelText: 'Puerto',
-      contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
-    ),
+  return _crearcampo(
+    context.watch<PopupProvider>().puerto,
+    'Puerto',
   );
 }
 
@@ -465,9 +435,18 @@ Widget _crearGuardar(BuildContext context) {
 
 Widget _cancelar(context) {
   return ElevatedButton(
-      // textColor: Theme.of(context).primaryColor,
       child: Text('Cancelar'),
       onPressed: () async {
         Navigator.of(context).pop();
       });
+}
+
+Widget _crearcampo(TextEditingController controller, String label) {
+  return TextFormField(
+    controller: controller,
+    decoration: InputDecoration(
+      labelText: label,
+      contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
+    ),
+  );
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gpon_admin/pages/Home/home_provider.dart';
 import 'package:gpon_admin/pages/calendar/calendar.dart';
+import 'package:gpon_admin/src/popup/popup_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'package:gpon_admin/pages/Home/widget.dart';
@@ -13,6 +14,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     context.read<HomeProvider>().globalkey(globalScaffoldKey);
+    context.read<PopupProvider>().globalkey(globalScaffoldKey);
 
     var _screensize = MediaQuery.of(context).size;
     return Scaffold(

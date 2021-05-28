@@ -33,6 +33,8 @@ class BuildPanel extends StatelessWidget {
             value: i.reference,
             headerBuilder: (BuildContext context, bool isExpanded) {
               return ListTile(
+                // minVerticalPadding: 0,
+                contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                 leading: fechainsta(context, i),
                 title: Row(
                   children: [
@@ -66,7 +68,7 @@ class BuildPanel extends StatelessWidget {
               );
             },
             body: Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -224,7 +226,7 @@ class BuildPanel extends StatelessWidget {
       onTapDown: (TapDownDetails details) {
         context.read<PopupProvider>().buttonState
             ? _onTapDown(details, context, i, overlayEntry)
-            : print("");
+            : context.read<PopupProvider>().removeoverlay();
       },
     );
   }
@@ -323,10 +325,10 @@ class BuildPanel extends StatelessWidget {
         icon: Icons.edit,
         color: i.color,
         onTap: () async {
-          // context.read<PopupProvider>().removeoverlay();
           await context
               .read<PopupProvider>()
               .getoneclient(context, i.reference.id);
+          context.read<PopupProvider>().removeoverlay();
           await showDialog(
               context: context,
               builder: (BuildContext context1) => EditClient());

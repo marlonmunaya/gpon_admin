@@ -13,7 +13,7 @@ class Loginprovider with ChangeNotifier {
   get formKeysign => _formKeysign;
 
   //// Estado de Autenticación///
-  bool _loggedIn = false;
+  bool _loggedIn = false; //colocar en false
   bool _loading = false;
   User _user;
   final FirebaseAuth _auth = FirebaseAuth.instance;

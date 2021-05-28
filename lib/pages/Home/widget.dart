@@ -34,7 +34,7 @@ Widget floatactionbutton(BuildContext context) {
 }
 
 Widget drawer(BuildContext context) {
-  User user = context.watch<Loginprovider>().currentUser;
+  User user = context.watch<Loginprovider>().currentUser; //habilitar
   return Drawer(
       child: Container(
           color: Colors.blueGrey[400],
@@ -49,7 +49,8 @@ Widget drawer(BuildContext context) {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        '${user.email}',
+                        '${user.email}', //habilitar
+                        // 'G',
                         style: TextStyle(color: Colors.white),
                       ),
                       SizedBox(
@@ -70,7 +71,6 @@ Widget drawer(BuildContext context) {
                       fit: BoxFit.fitWidth,
                     ),
                   )),
-              // )
             ],
           )));
 }

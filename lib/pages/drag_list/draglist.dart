@@ -23,7 +23,7 @@ class DragHandleList extends StatelessWidget {
     contents = listgroup.map((e) {
       return DragAndDropList(
         header: Padding(
-          padding: EdgeInsets.only(bottom: 8.0),
+          padding: EdgeInsets.only(bottom: 5.0),
           child: Row(
             children: [
               Text(e.grupo,
@@ -36,8 +36,13 @@ class DragHandleList extends StatelessWidget {
         ),
         children: e.lista.map<DragAndDropItem>((ClientModel i) {
           return DragAndDropItem(
-            child: Row(
-              children: [Expanded(child: BuildPanel(i)), SizedBox(width: 30)],
+            child: Padding(
+              padding: EdgeInsets.only(right: 30),
+              child: Row(
+                children: [
+                  Expanded(child: BuildPanel(i)),
+                ],
+              ),
             ),
           );
         }).toList(),
@@ -61,6 +66,7 @@ class DragHandleList extends StatelessWidget {
 
   Widget draganddroplists(BuildContext context, contents) {
     return DragAndDropLists(
+      contentsWhenEmpty: Center(child: CircularProgressIndicator()),
       children: contents,
       onItemReorder: (oldItemIndex, oldListIndex, newItemIndex, newListIndex) =>
           context.read<HomeProvider>().onItemReorder(
@@ -68,7 +74,7 @@ class DragHandleList extends StatelessWidget {
       onListReorder: (oldListIndex, newListIndex) => context
           .read<HomeProvider>()
           .onListReorder(oldListIndex, newListIndex),
-      listPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      listPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
       itemDivider:
           Divider(thickness: 2, height: 2, color: Colors.blueGrey[100]),
       itemDecorationWhileDragging: BoxDecoration(
@@ -81,7 +87,8 @@ class DragHandleList extends StatelessWidget {
               offset: Offset(0, 0)),
         ],
       ),
-      lastItemTargetHeight: 50,
+      lastItemTargetHeight: 80,
+      lastListTargetSize: 10,
       itemDragHandle: DragHandle(
         child: Padding(
           padding: EdgeInsets.only(right: 5),

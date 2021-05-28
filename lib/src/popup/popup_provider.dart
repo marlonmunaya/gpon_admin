@@ -377,6 +377,7 @@ class PopupProvider with ChangeNotifier {
                 _cliente['apellidoMaterno'];
           }).catchError((e) {
             showsnackbar("No encontrado");
+            // print(e);
             return null;
           })
         : await http
@@ -388,10 +389,11 @@ class PopupProvider with ChangeNotifier {
                 _cliente['direccion'] == null ? '' : _cliente['direccion'];
           }).catchError((e) {
             showsnackbar("No encontrado");
-            return null;
+            // return null;
+            // print(e);
           });
     notifyListeners();
-    return null;
+    // return null;
   }
 
   Future createAlbum() async {
