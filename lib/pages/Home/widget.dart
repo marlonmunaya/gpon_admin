@@ -34,7 +34,7 @@ Widget floatactionbutton(BuildContext context) {
 }
 
 Widget drawer(BuildContext context) {
-  User user = context.watch<Loginprovider>().currentUser; //habilitar
+  User user = context.watch<Loginprovider>()?.currentUser;
   return Drawer(
       child: Container(
           color: Colors.blueGrey[400],
@@ -49,8 +49,7 @@ Widget drawer(BuildContext context) {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        '${user.email}', //habilitar
-                        // 'G',
+                        user == null ? 'Default' : '${user.email}',
                         style: TextStyle(color: Colors.white),
                       ),
                       SizedBox(
@@ -71,6 +70,7 @@ Widget drawer(BuildContext context) {
                       fit: BoxFit.fitWidth,
                     ),
                   )),
+              Text("1.2.1"),
             ],
           )));
 }
@@ -85,5 +85,46 @@ Widget circlebutton({IconData icon, String color, Function onTap}) {
       onPressed: onTap,
       child: Icon(icon, size: 15),
     ),
+  );
+}
+
+Widget numberpicker() {
+  return Card(
+    child: Container(
+        padding: EdgeInsets.fromLTRB(4, 2, 2, 2),
+        // height: 10,
+        // width: 40,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              "0",
+              style: TextStyle(fontSize: 16),
+            ),
+            Column(
+              children: [
+                Expanded(
+                  child: InkWell(
+                    child: Icon(
+                      Icons.arrow_drop_up_outlined,
+                      color: Colors.black,
+                    ),
+                    onTap: () {},
+                  ),
+                ),
+                Expanded(
+                  child: InkWell(
+                    child: Icon(
+                      Icons.arrow_drop_down_outlined,
+                      color: Colors.black,
+                    ),
+                    onTap: () {},
+                  ),
+                ),
+              ],
+            ),
+          ],
+        )),
   );
 }

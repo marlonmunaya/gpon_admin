@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:gpon_admin/pages/Home/home.dart';
 import 'package:gpon_admin/pages/Home/home_provider.dart';
 import 'package:gpon_admin/src/popup/popup_provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +31,12 @@ class MyApp extends StatelessWidget {
       ],
       child: Consumer<Loginprovider>(builder: (context, user, _) {
         return MaterialApp(
+          localizationsDelegates: [
+            // ... delegado[s] de localización específicos de la app aquí
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          supportedLocales: [const Locale('es')],
           debugShowCheckedModeBanner: false,
           title: 'Gpon-Clients',
           theme: ThemeData(

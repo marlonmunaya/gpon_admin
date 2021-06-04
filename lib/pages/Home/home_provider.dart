@@ -33,6 +33,8 @@ class HomeProvider with ChangeNotifier {
   List<Listagrupo> get listgroup => _listgroup;
   List<String> _selectedtec = [];
   List<String> get selectedtec => _selectedtec;
+  bool _transicion = false;
+  bool get transicion => _transicion;
 
   void setdate() {
     _selectedDay = DateTime.now();
@@ -104,12 +106,16 @@ class HomeProvider with ChangeNotifier {
   }
 
   void onDaySelected(DateTime day, List events, List holidays) {
-    // _selectedEventos = events;
     _selectedDay = day;
-    print('CALLBACK provider : _onDaySelected');
-    // print(_selectedEventos);
+    _transicion = true;
     notifyListeners();
     getclient();
+    notifyListeners();
+    print('CALLBACK provider : _onDaySelected');
+    Future.delayed(Duration(seconds: 1), () {
+      _transicion = false;
+      notifyListeners();
+    });
   }
 
   void onVisibleDaysChanged(

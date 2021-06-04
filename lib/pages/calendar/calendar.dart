@@ -14,7 +14,6 @@ class CalendarComponent extends StatefulWidget {
 class _CalendarComponentState extends State<CalendarComponent>
     with TickerProviderStateMixin {
   Map<DateTime, List> _events;
-  List _selectedEvents;
   AnimationController _animationController;
   CalendarController _calendarController;
 
@@ -49,6 +48,8 @@ class _CalendarComponentState extends State<CalendarComponent>
         _calendar(prov),
         SizedBox(width: 8.0),
         _buildButtons(),
+        SizedBox(width: 8.0),
+        seguimiento(context)
       ],
     );
   }
@@ -56,7 +57,7 @@ class _CalendarComponentState extends State<CalendarComponent>
   Widget _calendar(prov) {
     return Card(
       child: TableCalendar(
-          // locale: 'pl_PL',
+          locale: 'es',
           calendarController: _calendarController,
           events: prov.eventos,
           holidays: prov.holidays,
@@ -182,6 +183,29 @@ class _CalendarComponentState extends State<CalendarComponent>
           ),
         ),
       ],
+    );
+  }
+
+  Widget seguimiento(BuildContext context) {
+    var seguimiento = context.watch<PopupProvider>().seguimiento?.seguimiento;
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 5),
+      child: Wrap(
+        spacing: 5.0,
+        runSpacing: 5.0,
+        children: seguimiento == null
+            ? []
+            : seguimiento.entries.map<Chip>((a) {
+                return Chip(
+                  label: Text(
+                    a.value["etiqueta"],
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  backgroundColor:
+                      Color(int.parse(a.value["color"], radix: 16)),
+                );
+              }).toList(),
+      ),
     );
   }
 }

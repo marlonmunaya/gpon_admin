@@ -1,5 +1,7 @@
 // import 'dart:io';
 import 'dart:async';
+import 'dart:html';
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gpon_admin/src/api/data.dart';
@@ -59,6 +61,8 @@ class PopupProvider with ChangeNotifier {
   TextEditingController get puerto => _puerto;
   TextEditingController _servicios = TextEditingController();
   TextEditingController get servicios => _servicios;
+  TextEditingController _repetidor = TextEditingController();
+  TextEditingController get repetidor => _repetidor;
   String _color;
   String get color => _color;
   UtilsModel _planes;
@@ -71,6 +75,8 @@ class PopupProvider with ChangeNotifier {
   UtilsModel get vendedores => _vendedores;
   UtilsModel _personal;
   UtilsModel get personal => _personal;
+  UtilsModel _seguimiento;
+  UtilsModel get seguimiento => _seguimiento;
   String _planselected;
   String get planselected => _planselected;
   String _platselected;
@@ -179,6 +185,7 @@ class PopupProvider with ChangeNotifier {
           'observaciones': [""],
           'cableadoutp': _cableadoutp.text,
           'deco': _deco.text,
+          'repetidor': _repetidor.text,
           'plataforma': _plataforma,
           'cordenadas': _cordenadas.text,
           'vendedor': _vendedor.text,
@@ -210,6 +217,7 @@ class PopupProvider with ChangeNotifier {
           'distrito': _distrito.text,
           'cajanap': _cajanap.text,
           'puerto': _puerto.text,
+          'repetidor': _repetidor.text,
           // 'grupo': _grupo.text,
           'cableadoutp': _cableadoutp.text,
           'deco': _deco.text,
@@ -235,8 +243,10 @@ class PopupProvider with ChangeNotifier {
     _vendedores = UtilsModel.fromMapVendedor(snapvendedor.data());
     final snappersonal = await Backend().utils.doc("grupos").get();
     _personal = UtilsModel.fromMappersonal(snappersonal.data());
+    final snapseguimiento = await Backend().utils.doc("seguimiento").get();
+    _seguimiento = UtilsModel.fromMapseguimiento(snapseguimiento.data());
     print("Utilidades obtenidos");
-    print(_vendedores.vendedores);
+    print(_seguimiento.seguimiento);
     notifyListeners();
   }
 
@@ -261,6 +271,7 @@ class PopupProvider with ChangeNotifier {
     _deco.text = ide.deco;
     _cableadoutp.text = ide.cableadoutp;
     _direccion.text = ide.direccion;
+    _repetidor.text = ide.repetidor;
     _departamento.text = ide.departamento;
     _provincia.text = ide.provincia;
     _distrito.text = ide.distrito;
@@ -283,7 +294,8 @@ class PopupProvider with ChangeNotifier {
     _plataforma = "";
     _servicios.text = "";
     _fechainstalacion.text = "";
-    _deco.text = "";
+    _deco.text = "0";
+    _repetidor.text = "0";
     _cableadoutp.text = "";
     _direccion.text = "";
     _departamento.text = "";
@@ -292,7 +304,7 @@ class PopupProvider with ChangeNotifier {
     _email.text = "";
     _cordenadas.text = "";
     _cajanap.text = "";
-    _puerto.text = "";
+    _puerto.text = "0";
     _color = "";
     _grupo.text = ""; //falta verificar.
   }
@@ -344,6 +356,45 @@ class PopupProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void setdeco(int data) {
+    try {
+      int deco = int.parse(_deco.text);
+      deco += data;
+      if (deco.isNegative) {
+        deco = 0;
+      }
+      _deco.text = deco.toString();
+      notifyListeners();
+    } catch (_) {}
+    notifyListeners();
+  }
+
+  void setpuerto(int data) {
+    try {
+      int puerto = int.parse(_puerto.text);
+      puerto += data;
+      if (puerto.isNegative) {
+        puerto = 0;
+      }
+      _puerto.text = puerto.toString();
+      notifyListeners();
+    } catch (_) {}
+    notifyListeners();
+  }
+
+  void setrepetidor(int data) {
+    try {
+      int repetidor = int.parse(_repetidor.text);
+      repetidor += data;
+      if (repetidor.isNegative) {
+        repetidor = 0;
+      }
+      _repetidor.text = repetidor.toString();
+      notifyListeners();
+    } catch (_) {}
+    notifyListeners();
+  }
+
   void setupdateguardar(bool data) {
     _updateguardar = data;
     notifyListeners();
@@ -377,7 +428,6 @@ class PopupProvider with ChangeNotifier {
                 _cliente['apellidoMaterno'];
           }).catchError((e) {
             showsnackbar("No encontrado");
-            // print(e);
             return null;
           })
         : await http
@@ -389,27 +439,8 @@ class PopupProvider with ChangeNotifier {
                 _cliente['direccion'] == null ? '' : _cliente['direccion'];
           }).catchError((e) {
             showsnackbar("No encontrado");
-            // return null;
-            // print(e);
           });
     notifyListeners();
-    // return null;
-  }
-
-  Future createAlbum() async {
-    Map<String, String> header = {"Content-Type": "application/json"};
-    Map msg = {
-      "token": "cFhtUEdjTFlVMWpXY3FXUjR1Rmxzdz09",
-      "cliente": "Carlos miguel perez",
-      "cedula": "45464522",
-      "direccion": "Av luis miguel 3356",
-      "telefono": "5123345",
-      "movil": "9888877665",
-      "email": "correo@gmail.com",
-      "notas": "Hola estoy interesando en el servicio ..",
-      "fecha_instalacion": "2020-12-20 10:30:35"
-    };
-    String url = "http://oficina.gpon.pe/api/v1/NewPreRegistro";
   }
 
   Future<http.Response> postRequest() async {
@@ -444,30 +475,32 @@ class PopupProvider with ChangeNotifier {
     // return response;
   }
 
-  // void fetching() async {
-  //   var url = 'http://oficina.gpon.pe/api/v1/NewPreRegistro';
+  void fetching() async {
+    String url = 'https://demo.mikrosystem.net/api/v1/NewPreRegistro';
 
-  //   Map body = {
-  //     "token": "cFhtUEdjTFlVMWpXY3FXUjR1Rmxzdz09",
-  //     "cliente": "Carlos miguel perez",
-  //     "cedula": "45464522",
-  //     "direccion": "Av luis miguel 3356",
-  //     "telefono": "5123345",
-  //     "movil": "9888877665",
-  //     "email": "correo@gmail.com",
-  //     "notas": "Hola estoy interesando en el servicio ..",
-  //     "fecha_instalacion": "2020-12-20 10:30:35"
-  //   };
+    Map body = {
+      "token": "YjQ4cmZEZHQyNnBNQ2Z5d0R4R1NnUT09",
+      "cliente": "Carlos miguel perez",
+      "cedula": "34464522",
+      "direccion": "Av luis miguel 3356",
+      "telefono": "5123345",
+      "movil": "9888877665",
+      "email": "correo@gmail.com",
+      "notas": "Hola estoy interesando en el servicio ..",
+      "fecha_instalacion": "2020-12-20 10:30:35"
+    };
+    var client = http.Client();
 
-  //   return await http.post(Uri.encodeFull(url),
-  //       body: body,
-  //       headers: {"Accept": "application/json"}).then((http.Response response) {
-  //     print(response.body);
-  //     final int statusCode = response.statusCode;
-  //     if (statusCode < 200 || statusCode > 400 || json == null) {
-  //       throw new Exception("Error while fetching data");
-  //     }
-  //     // return _decoder.convert(response.body);
-  //   });
-  // }
+    // String jsonBody = json.encode(body);
+    // var response = await http.post(Uri.parse(url),
+    //     headers: {
+    //       "Access-Control-Allow-Origin":
+    //           "*", // Required for CORS support to work
+    //       "Content-Type": "application/json",
+    //       "Access-Control-Allow-Methods": "POST, OPTIONS"
+    //     },
+    //     body: jsonBody,
+    //     encoding: Encoding.getByName("utf-8"));
+    // print(response.body.toString());
+  }
 }

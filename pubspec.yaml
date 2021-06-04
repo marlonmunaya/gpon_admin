@@ -37,7 +37,11 @@ dependencies:
   o_color_picker: ^1.0.1
   drag_and_drop_lists: ^0.3.2
   url_launcher: ^6.0.4
+
   http:
+    
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:

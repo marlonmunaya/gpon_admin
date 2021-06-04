@@ -23,8 +23,8 @@ class DragHandleList extends StatelessWidget {
     contents = listgroup.map((e) {
       return DragAndDropList(
         header: Padding(
-          padding: EdgeInsets.only(bottom: 5.0),
-          child: Row(
+          padding: EdgeInsets.only(bottom: 5.0, top: 5.0),
+          child: Wrap(
             children: [
               Text(e.grupo,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
@@ -55,18 +55,22 @@ class DragHandleList extends StatelessWidget {
           SizedBox(height: 5),
           Text('${date.day}-${date.month}-${date.year}',
               style: TextStyle(fontSize: 24)),
-          lista == null
-              ? Center(child: CircularProgressIndicator())
-              : Expanded(child: draganddroplists(context, contents)),
+          Expanded(
+              child: lista == null
+                  ? Center(child: CircularProgressIndicator())
+                  : context.watch<HomeProvider>().transicion
+                      ? Center(child: CircularProgressIndicator())
+                      : draganddroplists(context, contents)),
           Creargrupo()
         ],
       ),
     );
   }
 
-  Widget draganddroplists(BuildContext context, contents) {
+  Widget draganddroplists(
+      BuildContext context, List<DragAndDropList> contents) {
     return DragAndDropLists(
-      contentsWhenEmpty: Center(child: CircularProgressIndicator()),
+      contentsWhenEmpty: Text("Libre"),
       children: contents,
       onItemReorder: (oldItemIndex, oldListIndex, newItemIndex, newListIndex) =>
           context.read<HomeProvider>().onItemReorder(

@@ -33,8 +33,7 @@ class BuildPanel extends StatelessWidget {
             value: i.reference,
             headerBuilder: (BuildContext context, bool isExpanded) {
               return ListTile(
-                // minVerticalPadding: 0,
-                contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                contentPadding: EdgeInsets.all(0),
                 leading: fechainsta(context, i),
                 title: Row(
                   children: [
@@ -43,14 +42,24 @@ class BuildPanel extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          styledrop(Icons.miscellaneous_services_rounded,
+                          styledropbold(Icons.miscellaneous_services_rounded,
                               i.servicios),
-                          styledrop(Icons.account_circle, i.nombre),
+                          styledropbold(Icons.account_circle, i.nombre),
                           styledrop(Icons.location_city,
-                              "${i.direccion} - ${i.distrito} - ${i.provincia} - ${i.departamento}"),
-                          styledrop(Icons.request_quote_outlined, i.plan),
-                          styledrop(Icons.live_tv_rounded, i.deco),
-                          styledrop(Icons.account_tree, i.cableadoutp),
+                              "${i.direccion} - ${i.distrito} - ${i.provincia}"),
+                          Wrap(
+                            alignment: WrapAlignment.spaceBetween,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            runAlignment: WrapAlignment.spaceBetween,
+                            spacing: 10,
+                            children: [
+                              styledropbold(
+                                  Icons.request_quote_outlined, i.plan),
+                              styledrop(Icons.live_tv_rounded, i.deco),
+                              styledrop(Icons.wifi_rounded, i.repetidor),
+                              styledrop(Icons.account_tree, i.cableadoutp),
+                            ],
+                          )
                         ],
                       ),
                     ),
@@ -82,7 +91,6 @@ class BuildPanel extends StatelessWidget {
                         styledrop(Icons.email, i.email),
                         styledrop(Icons.phonelink, i.plataforma),
                         styledrop(Icons.record_voice_over_sharp, i.vendedor),
-                        styledrop(Icons.group, i.grupo),
                         styledrop(Icons.local_phone, i.fijo),
                         linkstyledrop(Icons.location_on_sharp, i.cordenadas),
                         styledrop(Icons.power_outlined, i.puerto),
@@ -116,19 +124,22 @@ class BuildPanel extends StatelessWidget {
                   return Row(
                     children: [
                       Expanded(
-                        child: Chip(
-                            label: TextField(
-                                maxLines: 2,
-                                minLines: 1,
-                                readOnly: true,
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  border: OutlineInputBorder(
-                                      borderSide: BorderSide.none),
-                                  contentPadding:
-                                      EdgeInsets.fromLTRB(6, 0, 0, 6),
-                                ),
-                                controller: texto)),
+                        child: Card(
+                          color: Colors.grey[300],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(4),
+                            child: SelectableText(
+                              ' ' + texto.text,
+                              minLines: 1,
+                              maxLines: 2,
+                            ),
+                          ),
+                        ),
                       ),
                       circlebutton(
                           icon: Icons.close,
@@ -177,6 +188,18 @@ class BuildPanel extends StatelessWidget {
     );
   }
 
+  Widget styledropbold(IconData icon, String data) {
+    return Text.rich(
+      TextSpan(children: [
+        WidgetSpan(child: Icon(icon, size: 14)),
+        WidgetSpan(
+          child: SelectableText(' ' + data,
+              style: TextStyle(fontWeight: FontWeight.bold)),
+        ),
+      ]),
+    );
+  }
+
   Widget linkstyledrop(IconData icon, String link) {
     return Text.rich(TextSpan(children: [
       WidgetSpan(child: Icon(icon, size: 14)),
@@ -203,7 +226,7 @@ class BuildPanel extends StatelessWidget {
       constraints: BoxConstraints(minWidth: 200),
       child: Chip(
           label: TextField(
-              maxLines: 2,
+              maxLines: 3,
               minLines: 1,
               readOnly: true,
               decoration: InputDecoration(
@@ -247,7 +270,7 @@ class BuildPanel extends StatelessWidget {
                   edit(context),
                   selectcolor(context),
                   copy(context),
-                  // createAlbum(context)
+                  createAlbum(context)
                 ],
               ),
             ));
@@ -277,20 +300,20 @@ class BuildPanel extends StatelessWidget {
         context.read<PopupProvider>().removeoverlay();
         final String obs = i.observaciones.isEmpty ? "" : i.observaciones.last;
         Clipboard.setData(ClipboardData(
-            text: "*----  HORARIO: ${formato.format(i.fechainstalacion)}  ----*\n" +
-                "*SERVICIO: ${i.servicios}*\n" +
-                "*NOMBRE:* ${i.nombre}\n" +
-                "*DNI:* ${i.cedula}\n" +
-                "*CELULAR:* ${i.celular}\n" +
-                "*PLAN:* ${i.plan}\n" +
-                "*DIRECCION:* ${i.direccion} - ${i.distrito}\n" +
-                "*GPS:* https://maps.google.com/?q=${i.cordenadas}\n" +
-                "*DECOFICADOR:* ${i.deco}\n" +
-                "*UTP:* ${i.cableadoutp}\n" +
-                "*CAJA NAP:* https://maps.google.com/?q=${i.cajanap}\n" +
-                "*PUERTO:* ${i.puerto}\n" +
-                "*OBSERVACION:* $obs\n" +
-                "*cliente-NAP:* https://www.google.com/maps/dir/${i.cordenadas}/${i.cajanap}//@${i.cordenadas},17z"));
+            text:
+                "*----  HORARIO: ${formato.format(i.fechainstalacion)}  ----*\n" +
+                    "*SERVICIO: ${i.servicios}*\n" +
+                    "*NOMBRE:* ${i.nombre}\n" +
+                    "*DNI:* ${i.cedula}\n" +
+                    "*CELULAR:* ${i.celular}\n" +
+                    "*PLAN:* ${i.plan}\n" +
+                    "*DIRECCION:* ${i.direccion} - ${i.distrito}\n" +
+                    "*GPS:* https://maps.google.com/?q=${i.cordenadas}\n" +
+                    "*DECOFICADOR:* ${i.deco}\n" +
+                    "*UTP:* ${i.cableadoutp}\n" +
+                    "*CAJA NAP:* https://maps.google.com/?q=${i.cajanap}\n" +
+                    "*PUERTO:* ${i.puerto}\n" +
+                    "*OBSERVACION:* $obs\n"));
       },
     );
   }
@@ -340,7 +363,7 @@ class BuildPanel extends StatelessWidget {
         icon: Icons.settings_ethernet_rounded,
         color: i.color,
         onTap: () async {
-          // context.read<PopupProvider>().fetching();
+          context.read<PopupProvider>().fetching();
         });
   }
 

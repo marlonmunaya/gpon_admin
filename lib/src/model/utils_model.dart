@@ -9,6 +9,7 @@ class UtilsModel {
   List<String> vendedores;
   List<String> grupo;
   List<String> tecnicos;
+  Map seguimiento;
 
   UtilsModel.fromMapPlan(Map<dynamic, dynamic> data)
       : planes = List.from(data['planes']);
@@ -29,8 +30,20 @@ class UtilsModel {
 
   UtilsModel.fromMapVendedor(Map<dynamic, dynamic> data)
       : vendedores = List.from(data['vendedor']);
+
+  UtilsModel.fromMapseguimiento(Map<dynamic, dynamic> data)
+      // : seguimiento = List.from(data['seguimiento']);
+      : seguimiento = data['seguimiento'];
 }
 
+class Seguimiento {
+  String color;
+  String etiqueta;
+
+  Seguimiento.fromMapseguimiento(Map<dynamic, dynamic> data)
+      : color = data['color'],
+        etiqueta = data['etiqueta'];
+}
 // UtilsModel.fromMapDep(Map<dynamic, dynamic> data)
 //     : departamentos = List.from(data['departamentos']);
 

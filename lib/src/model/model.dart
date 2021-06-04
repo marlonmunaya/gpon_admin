@@ -26,6 +26,7 @@ class ClientModel {
   final List<String> tecnicos;
   final DocumentReference reference;
   final List<String> observaciones;
+  final String repetidor;
 
   ClientModel.fromMap(Map<String, dynamic> map, {this.reference})
       : nombre = map["nombre"],
@@ -45,6 +46,7 @@ class ClientModel {
         grupo = map["grupo"],
         cableadoutp = map["cableadoutp"],
         deco = map["deco"],
+        repetidor = (map["repetidor"] == null) ? "0" : map["repetidor"],
         plataforma = map["plataforma"],
         cordenadas = map["cordenadas"],
         vendedor = map["vendedor"],

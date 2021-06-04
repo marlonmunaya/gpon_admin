@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gpon_admin/pages/Home/home_provider.dart';
 import 'package:provider/provider.dart';
 import 'popup_provider.dart';
+import 'package:flutter/services.dart';
 
 class EditClient extends StatelessWidget {
   const EditClient({Key key}) : super(key: key);
@@ -20,29 +21,46 @@ class EditClient extends StatelessWidget {
           child: Form(
             key: context.watch<PopupProvider>().formKeysign,
             child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _crearservicios(context),
-                SizedBox(height: 5.0),
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _crearCedula(context),
-                    SizedBox(width: 10.0),
-                    _crearplan(context)
+                    Expanded(flex: 6, child: _crearCedula(context)),
+                    SizedBox(width: 5.0),
+                    Expanded(flex: 4, child: _crearCelular(context)),
                   ],
                 ),
                 _crearNombre(context),
                 SizedBox(height: 5.0),
+                _creardireccion(context),
+                SizedBox(height: 5.0),
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(child: _crearCelular(context)),
+                    _creardepartamento(context),
                     SizedBox(width: 5.0),
-                    Expanded(child: _crearfijo(context)),
+                    Row(
+                      children:
+                          context.watch<PopupProvider>().departamento.text ==
+                                  "Lima"
+                              ? [
+                                  _crearprovincialima(context),
+                                  SizedBox(width: 5.0),
+                                  _creardistritoslima(context)
+                                ]
+                              : [
+                                  _crearprovinciacusco(context),
+                                  SizedBox(width: 5.0),
+                                  _creardistritoscusco(context)
+                                ],
+                    ),
+                  ],
+                ),
+                _crearemail(context),
+                SizedBox(height: 5.0),
+                Row(
+                  children: [
+                    Expanded(flex: 6, child: _crearcordenadas(context)),
+                    SizedBox(width: 5.0),
+                    Expanded(flex: 4, child: _crearfijo(context)),
                   ],
                 ),
                 SizedBox(height: 5.0),
@@ -53,48 +71,39 @@ class EditClient extends StatelessWidget {
                     _crearvendedor(context)
                   ],
                 ),
-                _crearFechainstalacion(context),
+                //////////////// SERVICIOS///////////////////
+                Text(
+                  'Servicio',
+                  style: TextStyle(color: Theme.of(context).primaryColor),
+                ),
+                _crearservicios(context),
+                SizedBox(height: 5.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _crearFechainstalacion(context),
+                    SizedBox(width: 5.0),
+                    _crearplan(context),
+                  ],
+                ),
                 SizedBox(height: 5.0),
                 Row(
                   children: [
                     Expanded(child: _creardeco(context)),
                     SizedBox(width: 5.0),
+                    Expanded(child: _crearrepe(context)),
+                    SizedBox(width: 5.0),
                     Expanded(child: _crearutp(context))
                   ],
                 ),
-                _creardireccion(context),
                 SizedBox(height: 5.0),
                 Row(
                   children: [
-                    _creardepartamento(context),
+                    Expanded(flex: 7, child: _crearcajanap(context)),
                     SizedBox(width: 5.0),
-                    context.watch<PopupProvider>().departamento.text == "Lima"
-                        ? Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              _crearprovincialima(context),
-                              SizedBox(width: 5.0),
-                              _creardistritoslima(context)
-                            ],
-                          )
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              _crearprovinciacusco(context),
-                              SizedBox(width: 5.0),
-                              _creardistritoscusco(context)
-                            ],
-                          ),
+                    Expanded(flex: 4, child: _crearpuerto(context))
                   ],
                 ),
-                SizedBox(height: 5.0),
-                _crearemail(context),
-                SizedBox(height: 5.0),
-                _crearcordenadas(context),
-                SizedBox(height: 5.0),
-                _crearcajanap(context),
-                SizedBox(height: 5.0),
-                _crearpuerto(context)
               ],
             ),
           ),
@@ -112,33 +121,30 @@ class EditClient extends StatelessWidget {
 
 Widget _crearCedula(BuildContext context) {
   final cedula = context.watch<PopupProvider>().cedula;
-  return SizedBox(
-    width: 140,
-    child: TextFormField(
-      controller: cedula,
-      keyboardType: TextInputType.number,
-      decoration: InputDecoration(
-        labelText: '*dni/ruc/cedula',
-        isDense: true,
-        contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
-        suffixIconConstraints: BoxConstraints(minHeight: 24, minWidth: 24),
-        suffixIcon: GestureDetector(
-            child: Tooltip(
-          message: "Buscar",
-          child: InkWell(
-            child: Icon(Icons.search),
-            onTap: () => context.read<PopupProvider>().getcedula(cedula.text),
-          ),
-        )),
-      ),
-      validator: (value) {
-        if (value.length < 6) {
-          return 'Ingrese número válido, min 6 caract';
-        } else {
-          return null;
-        }
-      },
+  return TextFormField(
+    controller: cedula,
+    keyboardType: TextInputType.number,
+    decoration: InputDecoration(
+      labelText: '*dni/ruc/cedula',
+      isDense: true,
+      contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
+      suffixIconConstraints: BoxConstraints(minHeight: 24, minWidth: 24),
+      suffixIcon: GestureDetector(
+          child: Tooltip(
+        message: "Buscar",
+        child: InkWell(
+          child: Icon(Icons.search),
+          onTap: () => context.read<PopupProvider>().getcedula(cedula.text),
+        ),
+      )),
     ),
+    validator: (value) {
+      if (value.length < 6) {
+        return 'Ingrese número válido, min 6 caract';
+      } else {
+        return null;
+      }
+    },
   );
 }
 
@@ -289,10 +295,19 @@ Widget _crearutp(BuildContext context) {
 }
 
 Widget _creardeco(BuildContext context) {
-  return _crearcampo(
-    context.watch<PopupProvider>().deco,
-    'Decodificador',
-  );
+  return _crearcampoupdown(
+      context.watch<PopupProvider>().deco,
+      'Deco',
+      () => context.read<PopupProvider>().setdeco(1),
+      () => context.read<PopupProvider>().setdeco(-1));
+}
+
+Widget _crearrepe(BuildContext context) {
+  return _crearcampoupdown(
+      context.watch<PopupProvider>().repetidor,
+      'Repe',
+      () => context.read<PopupProvider>().setrepetidor(1),
+      () => context.read<PopupProvider>().setrepetidor(-1));
 }
 
 Widget _creardepartamento(BuildContext context) {
@@ -418,10 +433,11 @@ Widget _crearcajanap(BuildContext context) {
 }
 
 Widget _crearpuerto(BuildContext context) {
-  return _crearcampo(
-    context.watch<PopupProvider>().puerto,
-    'Puerto',
-  );
+  return _crearcampoupdown(
+      context.watch<PopupProvider>().puerto,
+      'Puerto',
+      () => context.read<PopupProvider>().setpuerto(1),
+      () => context.read<PopupProvider>().setpuerto(-1));
 }
 
 Widget _crearGuardar(BuildContext context) {
@@ -447,6 +463,38 @@ Widget _crearcampo(TextEditingController controller, String label) {
     decoration: InputDecoration(
       labelText: label,
       contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
+    ),
+  );
+}
+
+Widget _crearcampoupdown(TextEditingController controller, String label,
+    Function up, Function down) {
+  return TextFormField(
+    controller: controller,
+    keyboardType: TextInputType.number,
+    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+    decoration: InputDecoration(
+      labelText: label,
+      contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
+      suffixIcon: Container(
+        height: 4,
+        child: Column(
+          children: [
+            Expanded(
+                child: InkWell(
+                    child: Icon(
+                      Icons.arrow_drop_up_outlined,
+                    ),
+                    onTap: up)),
+            Expanded(
+                child: InkWell(
+                    child: Icon(
+                      Icons.arrow_drop_down_outlined,
+                    ),
+                    onTap: down)),
+          ],
+        ),
+      ),
     ),
   );
 }
