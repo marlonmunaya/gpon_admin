@@ -88,43 +88,78 @@ Widget circlebutton({IconData icon, String color, Function onTap}) {
   );
 }
 
-Widget numberpicker() {
-  return Card(
-    child: Container(
-        padding: EdgeInsets.fromLTRB(4, 2, 2, 2),
-        // height: 10,
-        // width: 40,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              "0",
-              style: TextStyle(fontSize: 16),
-            ),
-            Column(
-              children: [
-                Expanded(
-                  child: InkWell(
-                    child: Icon(
-                      Icons.arrow_drop_up_outlined,
-                      color: Colors.black,
-                    ),
-                    onTap: () {},
-                  ),
-                ),
-                Expanded(
-                  child: InkWell(
-                    child: Icon(
-                      Icons.arrow_drop_down_outlined,
-                      color: Colors.black,
-                    ),
-                    onTap: () {},
-                  ),
-                ),
-              ],
-            ),
-          ],
-        )),
+Widget appbar(BuildContext context) {
+  return AppBar(
+    title: Text("Administrador"),
+    actions: [
+      IconButton(
+        icon: Icon(Icons.search),
+        onPressed: () {
+          showSearch(
+            context: context,
+            delegate: CustomSearchDelegate(),
+          );
+        },
+      ),
+    ],
   );
+}
+
+class CustomSearchDelegate extends SearchDelegate {
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    // TODO: implement buildActions
+    return [
+      IconButton(
+        icon: Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    // TODO: implement buildLeading
+    return IconButton(
+      icon: Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    if (query.length < 3) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Center(
+            child: Text(
+              "Search term must be longer than two letters.",
+            ),
+          )
+        ],
+      );
+    }
+
+    //Add the search term to the searchBloc.
+    //The B
+
+    return Container(
+      height: 100,
+      width: 100,
+      child: Card(
+        color: Colors.red,
+      ),
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    // TODO: implement buildSuggestions
+    return Column();
+  }
 }

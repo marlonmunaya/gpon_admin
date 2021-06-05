@@ -13,7 +13,7 @@ class Loginprovider with ChangeNotifier {
   get formKeysign => _formKeysign;
 
   //// Estado de Autenticación///
-  bool _loggedIn = false; //colocar en false
+  bool _loggedIn = true; //colocar en false
   bool _loading = false;
   User _user;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -27,7 +27,6 @@ class Loginprovider with ChangeNotifier {
   Future<void> login(BuildContext context) async {
     if (!formKeysign.currentState.validate()) return;
     formKeysign.currentState.save();
-
     _loading = true;
 
     try {

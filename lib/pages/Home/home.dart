@@ -20,10 +20,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
         backgroundColor: Colors.blueGrey[50],
         key: globalScaffoldKey,
-        appBar: AppBar(
-          title: Text("Administrador"),
-          actions: [],
-        ),
+        appBar: appbar(context),
         drawer: drawer(context),
         body: ResponsiveWidget(
           smallScreen: Column(children: [
