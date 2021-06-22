@@ -15,8 +15,9 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     context.read<HomeProvider>().globalkey(globalScaffoldKey);
     context.read<PopupProvider>().globalkey(globalScaffoldKey);
-
+    context.read<PopupProvider>().getutils();
     var _screensize = MediaQuery.of(context).size;
+
     return Scaffold(
         backgroundColor: Colors.blueGrey[50],
         key: globalScaffoldKey,

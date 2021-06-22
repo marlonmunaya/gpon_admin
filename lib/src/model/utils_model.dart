@@ -32,7 +32,6 @@ class UtilsModel {
       : vendedores = List.from(data['vendedor']);
 
   UtilsModel.fromMapseguimiento(Map<dynamic, dynamic> data)
-      // : seguimiento = List.from(data['seguimiento']);
       : seguimiento = data['seguimiento'];
 }
 
@@ -44,17 +43,3 @@ class Seguimiento {
       : color = data['color'],
         etiqueta = data['etiqueta'];
 }
-// UtilsModel.fromMapDep(Map<dynamic, dynamic> data)
-//     : departamentos = List.from(data['departamentos']);
-
-// UtilsModel.fromMapprovlima(Map<dynamic, dynamic> data)
-//     : limaprovincias = List.from(data['provincias-Lima']);
-
-// UtilsModel.fromMapprovcusco(Map<dynamic, dynamic> data)
-//     : cuscoprovincias = List.from(data['provincias-Cusco']);
-
-// UtilsModel.fromMapdislima(Map<dynamic, dynamic> data)
-//     : limadistritos = List.from(data['distritos-Lima']);
-
-// UtilsModel.fromMapdiscusco(Map<dynamic, dynamic> data)
-//     : cuscodistritos = List.from(data['distritos-Cusco']);

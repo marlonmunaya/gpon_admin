@@ -231,7 +231,7 @@ class PopupProvider with ChangeNotifier {
   }
 
   void getutils() async {
-    print('obteniento planes');
+    print('obteniento utils');
     final snapplan = await Backend().utils.doc("plan").get();
     _planes = UtilsModel.fromMapPlan(snapplan.data());
     final snapplat = await Backend().utils.doc("plataforma").get();
@@ -325,12 +325,13 @@ class PopupProvider with ChangeNotifier {
 
   void setfechainstalacion() {
     _fechainstalaciond = DateTime.now();
+    _fechainstalacion.text =
+        '${_fechainstalaciond.day}-${_fechainstalaciond.month}-${_fechainstalaciond.year}' +
+            ' ${00}:${00}';
     notifyListeners();
   }
 
   void setdepartamento(String data) {
-    _provincia.text = "Provin";
-    _distrito.text = "Distrito";
     _departamento.text = data;
     notifyListeners();
   }
@@ -345,8 +346,8 @@ class PopupProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setvendedor(String data1) {
-    _vendedor.text = data1;
+  void setvendedor(String data) {
+    _vendedor.text = data;
     notifyListeners();
   }
 

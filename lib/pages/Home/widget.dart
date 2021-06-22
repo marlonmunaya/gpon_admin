@@ -19,9 +19,9 @@ Widget floatactionbutton(BuildContext context) {
         Tooltip(message: "Agregar un cliente", child: Icon(Icons.person_add)),
     onPressed: () async {
       await context.read<PopupProvider>().clearclient();
-      context.read<PopupProvider>().setplan("RL-120");
+      context.read<PopupProvider>().setplan("Plan");
       context.read<PopupProvider>().setplataforma("Recomendado");
-      context.read<PopupProvider>().setdepartamento("Lima");
+      context.read<PopupProvider>().setdepartamento("Depart");
       context.read<PopupProvider>().setprovincia("Provin");
       context.read<PopupProvider>().setdistrito("Distrito");
       context.read<PopupProvider>().setvendedor("Vendedor");

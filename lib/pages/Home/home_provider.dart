@@ -42,21 +42,14 @@ class HomeProvider with ChangeNotifier {
       // _selectedDay.subtract(Duration(days: 16)): ['Event A3', 'Event B3'],
       // _selectedDay.subtract(Duration(days: 10)): [
       //   'Event A4',
-      //   'Event B4',
-      //   'Event C4'
       // ],
       // _selectedDay.subtract(Duration(days: 4)): [
       //   'Event A5',
-      //   'Event B5',
-      //   'Event C5'
       // ],
       // _selectedDay.subtract(Duration(days: 2)): ['Event A6', 'Event B6'],
       _selectedDay: ['Event A7', 'Event B7', 'Event C7'],
       // _selectedDay.add(Duration(days: 1)): [
       //   'Event A8',
-      //   'Event B8',
-      //   'Event C8',
-      //   'Event D8'
       // ],
     };
 

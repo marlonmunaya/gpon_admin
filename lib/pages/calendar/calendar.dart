@@ -23,7 +23,7 @@ class _CalendarComponentState extends State<CalendarComponent>
     final provider = Provider.of<HomeProvider>(context, listen: false);
     print("conseguiendo");
     provider.setdate();
-    context.read<PopupProvider>().getutils();
+
     context.read<HomeProvider>().getclient();
     _events = provider.eventos;
     _calendarController = CalendarController();

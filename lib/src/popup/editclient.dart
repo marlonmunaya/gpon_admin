@@ -81,8 +81,8 @@ class EditClient extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _crearFechainstalacion(context),
-                    SizedBox(width: 5.0),
+                    Expanded(child: _crearFechainstalacion(context)),
+                    SizedBox(width: 15.0),
                     _crearplan(context),
                   ],
                 ),
@@ -220,36 +220,30 @@ Widget _crearplan(BuildContext context) {
 }
 
 Widget _crearFechainstalacion(BuildContext context) {
-  return SizedBox(
-    width: 150,
-    child: TextFormField(
-      controller: context.watch<PopupProvider>().fechainstalacion,
-      readOnly: true,
-      decoration: InputDecoration(
-        labelText: '*Fecha',
-        isDense: true,
-        contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
-        suffixIconConstraints: BoxConstraints(minHeight: 24, minWidth: 24),
-        suffixIcon: GestureDetector(
-          child: Tooltip(
-            message: "Fecha",
-            child: InkWell(
-              child: Icon(Icons.calendar_today),
-              onTap: () =>
-                  context.read<PopupProvider>().pickDateDialog(context),
-            ),
-          ),
+  return TextFormField(
+    controller: context.watch<PopupProvider>().fechainstalacion,
+    readOnly: true,
+    decoration: InputDecoration(
+      labelText: '*Fecha',
+      isDense: true,
+      contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
+      suffixIconConstraints: BoxConstraints(minHeight: 24, minWidth: 24),
+      suffixIcon: Tooltip(
+        message: "Fecha",
+        child: InkWell(
+          child: Icon(Icons.calendar_today),
+          onTap: () => context.read<PopupProvider>().pickDateDialog(context),
         ),
       ),
-      onSaved: (value) {},
-      validator: (value) {
-        if (value.length < 9) {
-          return 'Ingrese una Fecha válida';
-        } else {
-          return null;
-        }
-      },
     ),
+    onSaved: (value) {},
+    validator: (value) {
+      if (value.length < 9) {
+        return 'Ingrese una Fecha válida';
+      } else {
+        return null;
+      }
+    },
   );
 }
 
@@ -257,7 +251,7 @@ Widget _creardireccion(BuildContext context) {
   return TextFormField(
     controller: context.watch<PopupProvider>().direccion,
     decoration: InputDecoration(
-      labelText: 'Direccion',
+      labelText: 'Dirección',
       contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
     ),
   );
