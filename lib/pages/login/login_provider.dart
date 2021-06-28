@@ -13,7 +13,7 @@ class Loginprovider with ChangeNotifier {
   get formKeysign => _formKeysign;
 
   //// Estado de Autenticación///
-  bool _loggedIn = true; //colocar en false
+  bool _loggedIn = false; //colocar en false
   bool _loading = false;
   User _user;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -59,13 +59,6 @@ class Loginprovider with ChangeNotifier {
     _loading = false;
     if (_user.email != null && _auth.currentUser != null) {
       _loggedIn = true;
-      await Navigator.push(
-          context,
-          MaterialPageRoute<String>(
-            builder: (BuildContext context) => HomePage(),
-            fullscreenDialog: true,
-          ));
-      notifyListeners();
     } else {
       _loggedIn = false;
       notifyListeners();
@@ -75,6 +68,8 @@ class Loginprovider with ChangeNotifier {
   Future<void> logout() async {
     await _auth.signOut();
     _loggedIn = false;
+    _emailController.text = "";
+    _passwdController.text = "";
     notifyListeners();
     print("Log out");
     print(_loggedIn.toString());

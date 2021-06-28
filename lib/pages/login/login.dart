@@ -1,9 +1,8 @@
+import 'package:gpon_admin/pages/Home/home_provider.dart';
 import 'package:gpon_admin/pages/login/login_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:gpon_admin/pages/login/login_provider.dart';
-
-import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -167,6 +166,12 @@ class LoginPage extends StatelessWidget {
           ),
         ),
         onPressed: () async {
+          var data = Provider.of<Loginprovider>(context, listen: false)
+              .emailController
+              .text;
+          final String operador = data.split("@")[0];
+          print("operador: $operador");
+          context.read<HomeProvider>().selectoperadorhome(operador);
           await context.read<Loginprovider>().login(context);
         });
   }

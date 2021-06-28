@@ -1,35 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:gpon_admin/pages/Home/home_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:material_floating_search_bar/material_floating_search_bar.dart';
+import 'package:gpon_admin/src/model/model.dart';
 import 'package:gpon_admin/pages/login/login_provider.dart';
 import 'package:gpon_admin/src/popup/popup_provider.dart';
-import 'package:provider/provider.dart';
-import 'package:gpon_admin/src/popup/editclient.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 Widget buildHolidaysMarker() {
   return Icon(
     Icons.star_border,
     size: 20.0,
     color: Colors.blueGrey[800],
-  );
-}
-
-Widget floatactionbutton(BuildContext context) {
-  return FloatingActionButton(
-    child:
-        Tooltip(message: "Agregar un cliente", child: Icon(Icons.person_add)),
-    onPressed: () async {
-      await context.read<PopupProvider>().clearclient();
-      context.read<PopupProvider>().setplan("Plan");
-      context.read<PopupProvider>().setplataforma("Recomendado");
-      context.read<PopupProvider>().setdepartamento("Depart");
-      context.read<PopupProvider>().setprovincia("Provin");
-      context.read<PopupProvider>().setdistrito("Distrito");
-      context.read<PopupProvider>().setvendedor("Vendedor");
-      context.read<PopupProvider>().setfechainstalacion();
-      context.read<PopupProvider>().setupdateguardar(false);
-      await showDialog(
-          context: context, builder: (BuildContext context) => EditClient());
-    },
   );
 }
 
@@ -42,14 +24,14 @@ Widget drawer(BuildContext context) {
             children: [
               UserAccountsDrawerHeader(
                   accountName: Text(
-                    'Cliente Monitor',
+                    'Operador',
                     style: TextStyle(color: Colors.white),
                   ),
                   accountEmail: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        user == null ? 'Default' : '${user.email}',
+                        user == null ? 'None' : '${user.email}',
                         style: TextStyle(color: Colors.white),
                       ),
                       SizedBox(
@@ -92,15 +74,15 @@ Widget appbar(BuildContext context) {
   return AppBar(
     title: Text("Administrador"),
     actions: [
-      IconButton(
-        icon: Icon(Icons.search),
-        onPressed: () {
-          showSearch(
-            context: context,
-            delegate: CustomSearchDelegate(),
-          );
-        },
-      ),
+      // IconButton(
+      //   icon: Icon(Icons.search),
+      //   onPressed: () {
+      //     showSearch(
+      //       context: context,
+      //       delegate: CustomSearchDelegate(),
+      //     );
+      //   },
+      // ),
     ],
   );
 }
@@ -162,4 +144,72 @@ class CustomSearchDelegate extends SearchDelegate {
     // TODO: implement buildSuggestions
     return Column();
   }
+}
+
+Widget buildFloatingSearchBar(BuildContext context) {
+  List<ClientModel> model = [];
+
+  return FloatingSearchBar(
+    hint: 'Buscar...',
+    scrollPadding: const EdgeInsets.only(top: 16, bottom: 56),
+    transitionDuration: const Duration(milliseconds: 400),
+    transitionCurve: Curves.easeInOut,
+    physics: const BouncingScrollPhysics(),
+    axisAlignment: 1.0,
+    openAxisAlignment: 1.0,
+    width: 400,
+    debounceDelay: const Duration(milliseconds: 500),
+    onQueryChanged: (query) async {
+      await context.read<HomeProvider>().getsearch(query);
+    },
+    transition: CircularFloatingSearchBarTransition(),
+    automaticallyImplyDrawerHamburger: false,
+    actions: [
+      FloatingSearchBarAction(
+        showIfOpened: true,
+        child: CircularButton(
+          icon: Icon(Icons.clear),
+          onPressed: () {
+            context.read<HomeProvider>().clear();
+          },
+        ),
+      ),
+    ],
+    builder: (context, transition) {
+      final formato = context.watch<PopupProvider>().formatocompleto;
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Material(
+          color: Colors.white,
+          elevation: 4.0,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: context.watch<HomeProvider>().searched.map((model) {
+              return ListTile(
+                title: Text(model.nombre),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(model.cedula),
+                    Text(model.celular),
+                  ],
+                ),
+                trailing: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(formato.format(model.fechainstalacion)),
+                    Text(model.departamento),
+                  ],
+                ),
+                onTap: () {
+                  print(model.fechainstalacion.toString());
+                },
+              );
+            }).toList(),
+          ),
+        ),
+      );
+    },
+  );
 }

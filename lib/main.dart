@@ -30,6 +30,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => Loginprovider()),
       ],
       child: Consumer<Loginprovider>(builder: (context, user, _) {
+        context.read<PopupProvider>().getutils();
+        context.read<HomeProvider>().getutilshome();
         return MaterialApp(
           localizationsDelegates: [
             // ... delegado[s] de localización específicos de la app aquí

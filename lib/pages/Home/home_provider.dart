@@ -1,8 +1,11 @@
+// import 'dart:ffi';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:gpon_admin/src/api/data.dart';
 import 'package:gpon_admin/src/model/model.dart';
+import 'package:gpon_admin/src/model/utils_model.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 ///Librerias para la conexion DB
@@ -21,6 +24,8 @@ class HomeProvider with ChangeNotifier {
   Map<DateTime, List> get holidays => _holidays;
   List<ClientModel> _model;
   List<ClientModel> get model => _model;
+  List<ClientModel> _searched = [];
+  List<ClientModel> get searched => _searched;
   GlobalKey<ScaffoldState> globalScaffoldKey;
   TextEditingController _nombregrupo = TextEditingController();
   TextEditingController get nombregrupo => _nombregrupo;
@@ -35,22 +40,19 @@ class HomeProvider with ChangeNotifier {
   List<String> get selectedtec => _selectedtec;
   bool _transicion = false;
   bool get transicion => _transicion;
-
+  String _selecteddepart = 'Lima';
+  String get selecteddepart => _selecteddepart;
+  UtilsModel _ubicaciones;
+  List<dynamic> _listdepart;
+  bool _enabledepart = false;
+  bool get enabledepart => _enabledepart;
   void setdate() {
     _selectedDay = DateTime.now();
     _eventos = {
-      // _selectedDay.subtract(Duration(days: 16)): ['Event A3', 'Event B3'],
-      // _selectedDay.subtract(Duration(days: 10)): [
-      //   'Event A4',
-      // ],
-      // _selectedDay.subtract(Duration(days: 4)): [
-      //   'Event A5',
-      // ],
+      // _selectedDay.subtract(Duration(days: 4)): [ 'Event A5'],
       // _selectedDay.subtract(Duration(days: 2)): ['Event A6', 'Event B6'],
       _selectedDay: ['Event A7', 'Event B7', 'Event C7'],
-      // _selectedDay.add(Duration(days: 1)): [
-      //   'Event A8',
-      // ],
+      // _selectedDay.add(Duration(days: 1)): [  'Event A8'],
     };
 
     _holidays = {
@@ -88,7 +90,7 @@ class HomeProvider with ChangeNotifier {
         ? print("vacio")
         : _listgroup.add(Listagrupo(_nuevogrupo.text, [], []));
     print("Grupo agregado");
-    // getlist();
+
     notifyListeners();
   }
 
@@ -129,6 +131,7 @@ class HomeProvider with ChangeNotifier {
     print('obteniento datos');
     final snapshot = await Backend()
         .usersv1
+        .where('departamento', isEqualTo: _selecteddepart)
         .where('fechainstalacion', isGreaterThanOrEqualTo: _start)
         .where('fechainstalacion', isLessThanOrEqualTo: _end)
         .get();
@@ -137,6 +140,31 @@ class HomeProvider with ChangeNotifier {
     await getgroup();
     await getlist();
     notifyListeners();
+  }
+
+  Future getutilshome() async {
+    final snapubicaciones = await Backend().utils.doc("ubicaciones").get();
+    _ubicaciones = UtilsModel.fromMapubicaciones(snapubicaciones.data());
+    listdepartamentohome();
+  }
+
+  void listdepartamentohome() {
+    _listdepart = _ubicaciones.ubicaciones.entries.map((e) => e.key).toList();
+    _listdepart.remove('Depart');
+  }
+
+  void selectoperadorhome(String operador) {
+    _listdepart.forEach((e) {
+      final List<dynamic> operadores =
+          _ubicaciones.ubicaciones[e]["operadores"];
+      if (operadores.contains(operador)) {
+        print(e + " - " + operador);
+        _selecteddepart = e;
+        _enabledepart = e == 'Lima' ? true : false;
+      } else {
+        print(e + " - no");
+      }
+    });
   }
 
   Future<void> tomodel(QuerySnapshot snapshot) {
@@ -244,6 +272,15 @@ class HomeProvider with ChangeNotifier {
     globalScaffoldKey = data;
   }
 
+  ////Filtros
+  void filterdepartamento(String value) {
+    _selecteddepart = value;
+    getclient();
+    print(_selecteddepart);
+    notifyListeners();
+  }
+  ////Drag List
+
   void onItemReorder(int oldItemIndex, int oldListIndex, int newItemIndex,
       int newListIndex) async {
     final i = _listgroup[oldListIndex].lista[oldItemIndex].reference.id;
@@ -259,5 +296,57 @@ class HomeProvider with ChangeNotifier {
   void onListReorder(int oldListIndex, int newListIndex) {
     // var movedList = _contents.removeAt(oldListIndex);
     // _contents.insert(newListIndex, movedList);
+  }
+
+  Future getsearch(String query) async {
+    print(query);
+    _searched = [];
+    final List<ClientModel> searchedcedula = [];
+    final List<ClientModel> searchedcelular = [];
+    final List<ClientModel> searchednombre = [];
+    if (query.isNotEmpty) {
+      final snapshotcedula = await Backend()
+          .usersv1
+          .orderBy('cedula')
+          .startAt([query])
+          .endAt([query + '\uf8ff'])
+          .limit(5)
+          .get();
+
+      final snapshotcelular = await Backend()
+          .usersv1
+          .orderBy('celular')
+          .startAt([query])
+          .endAt([query + '\uf8ff'])
+          .limit(5)
+          .get();
+
+      final snapshotnombre = await Backend()
+          .usersv1
+          .orderBy('nombre')
+          .startAt([query.toUpperCase()])
+          .endAt([query.toUpperCase() + '\uf8ff'])
+          .limit(5)
+          .get();
+
+      searchedcedula.addAll(
+          snapshotcedula.docs.map((e) => ClientModel.fromSnapshot(e)).toList());
+      searchedcelular.addAll(snapshotcelular.docs
+          .map((e) => ClientModel.fromSnapshot(e))
+          .toList());
+      searchednombre.addAll(
+          snapshotnombre.docs.map((e) => ClientModel.fromSnapshot(e)).toList());
+    }
+    _searched.addAll(searchedcedula);
+    _searched.addAll(searchedcelular);
+    _searched.addAll(searchednombre);
+
+    print(_searched.toString());
+    notifyListeners();
+  }
+
+  void clear() {
+    _searched = [];
+    notifyListeners();
   }
 }

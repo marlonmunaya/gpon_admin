@@ -129,7 +129,10 @@ Widget addtecnicos(BuildContext context, Listagrupo e) {
 }
 
 Widget tecnicos(BuildContext context, nombre) {
-  List<String> tec = context.watch<PopupProvider>().personal.tecnicos;
+  var provider = context.watch<PopupProvider>();
+  List<dynamic> tec = provider.ubicaciones
+      .ubicaciones[context.watch<HomeProvider>().selecteddepart]["tecnicos"];
+
   List<String> selectedtec = context.watch<HomeProvider>().selectedtec;
   return AlertDialog(
     title: Column(
@@ -138,7 +141,7 @@ Widget tecnicos(BuildContext context, nombre) {
     content: Wrap(
       spacing: 5.0,
       runSpacing: 3.0,
-      children: tec.map<FilterChip>((String a) {
+      children: tec.map<FilterChip>((dynamic a) {
         bool contain = selectedtec.contains(a);
         return FilterChip(
           selected: contain,

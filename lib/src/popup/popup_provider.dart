@@ -1,6 +1,4 @@
 import 'dart:async';
-// import 'dart:html';
-// import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gpon_admin/src/api/data.dart';
@@ -64,6 +62,8 @@ class PopupProvider with ChangeNotifier {
   TextEditingController get repetidor => _repetidor;
   String _color;
   String get color => _color;
+  String _operador;
+  String get operador => _operador;
   UtilsModel _planes;
   UtilsModel get planes => _planes;
   UtilsModel _plataformas;
@@ -102,6 +102,8 @@ class PopupProvider with ChangeNotifier {
   OverlayState get overlayState => _overlayState;
   bool _buttonState = true;
   bool get buttonState => _buttonState;
+  List<dynamic> _listdepart;
+  List<dynamic> get listdepart => _listdepart;
 
   void removeoverlay() {
     _overlayEntry.remove();
@@ -174,6 +176,7 @@ class PopupProvider with ChangeNotifier {
           'servicios': _servicios.text,
           'fechainstalacion': _fechainstalaciond,
           'fechacaptacion': DateTime.now(),
+          'operador': _operador,
           'departamento': _departamento.text,
           'provincia': _provincia.text,
           'distrito': _distrito.text,
@@ -234,18 +237,37 @@ class PopupProvider with ChangeNotifier {
     print('obteniento utils');
     final snapplan = await Backend().utils.doc("plan").get();
     _planes = UtilsModel.fromMapPlan(snapplan.data());
+
     final snapplat = await Backend().utils.doc("plataforma").get();
     _plataformas = UtilsModel.fromMapPlat(snapplat.data());
+
     final snapubicaciones = await Backend().utils.doc("ubicaciones").get();
     _ubicaciones = UtilsModel.fromMapubicaciones(snapubicaciones.data());
-    final snapvendedor = await Backend().utils.doc("vendedor").get();
-    _vendedores = UtilsModel.fromMapVendedor(snapvendedor.data());
+
     final snappersonal = await Backend().utils.doc("grupos").get();
     _personal = UtilsModel.fromMappersonal(snappersonal.data());
+
     final snapseguimiento = await Backend().utils.doc("seguimiento").get();
     _seguimiento = UtilsModel.fromMapseguimiento(snapseguimiento.data());
     print("Utilidades obtenidos");
-    print(_seguimiento.seguimiento);
+    notifyListeners();
+    listdepartamento();
+  }
+
+  void listdepartamento() {
+    _listdepart = _ubicaciones.ubicaciones.entries.map((e) => e.key).toList();
+    _listdepart.remove('Depart');
+    notifyListeners();
+  }
+
+  void listvendedor(data) {
+    List<dynamic> rutavendedor =
+        _ubicaciones.ubicaciones[_departamento.text]['vendedores'];
+    List<dynamic> vendedores = rutavendedor;
+    Set<dynamic> ven = vendedores.toSet();
+    ven.add(data);
+    List<dynamic> ven1 = ven.toList();
+    _ubicaciones.ubicaciones[_departamento.text]['vendedores'] = ven1;
     notifyListeners();
   }
 
@@ -255,7 +277,6 @@ class PopupProvider with ChangeNotifier {
     _updateguardar = true;
     final snapshot = await Backend().usersv1.doc(refer).get();
     final ide = ClientModel.fromSnapshot(snapshot);
-    _vendedor.text = ide.vendedor;
     _cedula.text = ide.cedula;
     _plan = ide.plan;
     _nombre.text = ide.nombre;
@@ -280,6 +301,8 @@ class PopupProvider with ChangeNotifier {
     _puerto.text = ide.puerto;
     _color = ide.color;
     _grupo.text = ide.grupo;
+    listvendedor(ide.vendedor);
+    _vendedor.text = ide.vendedor;
     // showsnackbar("cliente para actualizar");
   }
 
@@ -292,7 +315,7 @@ class PopupProvider with ChangeNotifier {
     _fijo.text = "";
     _plataforma = "";
     _servicios.text = "";
-    _fechainstalacion.text = "";
+    // _fechainstalacion.text = "";
     _deco.text = "0";
     _repetidor.text = "0";
     _cableadoutp.text = "";
@@ -323,12 +346,15 @@ class PopupProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setfechainstalacion() {
-    _fechainstalaciond = DateTime.now();
+  Future setfechainstalacion(DateTime now) async {
+    final DateTime date = DateTime(now.year, now.month, now.day, 00, 00);
+    print(date);
+    _fechainstalaciond = date;
     _fechainstalacion.text =
         '${_fechainstalaciond.day}-${_fechainstalaciond.month}-${_fechainstalaciond.year}' +
             ' ${00}:${00}';
-    notifyListeners();
+    // notifyListeners();
+    print(_fechainstalacion.text);
   }
 
   void setdepartamento(String data) {
@@ -349,6 +375,10 @@ class PopupProvider with ChangeNotifier {
   void setvendedor(String data) {
     _vendedor.text = data;
     notifyListeners();
+  }
+
+  void setoperador(String data) {
+    _operador = data.split("@")[0];
   }
 
   void setgrupo(String data) {
@@ -490,17 +520,5 @@ class PopupProvider with ChangeNotifier {
       "fecha_instalacion": "2020-12-20 10:30:35"
     };
     var client = http.Client();
-
-    // String jsonBody = json.encode(body);
-    // var response = await http.post(Uri.parse(url),
-    //     headers: {
-    //       "Access-Control-Allow-Origin":
-    //           "*", // Required for CORS support to work
-    //       "Content-Type": "application/json",
-    //       "Access-Control-Allow-Methods": "POST, OPTIONS"
-    //     },
-    //     body: jsonBody,
-    //     encoding: Encoding.getByName("utf-8"));
-    // print(response.body.toString());
   }
 }

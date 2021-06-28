@@ -37,21 +37,9 @@ class EditClient extends StatelessWidget {
                   children: [
                     _creardepartamento(context),
                     SizedBox(width: 5.0),
-                    Row(
-                      children:
-                          context.watch<PopupProvider>().departamento.text ==
-                                  "Lima"
-                              ? [
-                                  _crearprovincialima(context),
-                                  SizedBox(width: 5.0),
-                                  _creardistritoslima(context)
-                                ]
-                              : [
-                                  _crearprovinciacusco(context),
-                                  SizedBox(width: 5.0),
-                                  _creardistritoscusco(context)
-                                ],
-                    ),
+                    _crearprovincia(context),
+                    SizedBox(width: 5.0),
+                    _creardistrito(context)
                   ],
                 ),
                 _crearemail(context),
@@ -203,14 +191,13 @@ Widget _crearCelular(BuildContext context) {
 }
 
 Widget _crearplan(BuildContext context) {
+  final provider = context.watch<PopupProvider>();
   return DropdownButton<String>(
     value: context.watch<PopupProvider>().plan,
     onChanged: (String value) => context.read<PopupProvider>().setplan(value),
-    items: context
-        .watch<PopupProvider>()
-        .planes
-        .planes
-        .map<DropdownMenuItem<String>>((String value) {
+    items: provider
+        .ubicaciones?.ubicaciones[provider.departamento.text]['planes']
+        .map<DropdownMenuItem<String>>((dynamic value) {
       return DropdownMenuItem<String>(
         value: value,
         child: Text(value),
@@ -305,33 +292,37 @@ Widget _crearrepe(BuildContext context) {
 }
 
 Widget _creardepartamento(BuildContext context) {
+  final provider = context.watch<PopupProvider>();
+  final providerread = context.read<PopupProvider>();
   return DropdownButton<String>(
-    value: context.watch<PopupProvider>().departamento.text,
-    onChanged: (String value) =>
-        context.read<PopupProvider>().setdepartamento(value),
-    items: context
-        .watch<PopupProvider>()
-        .ubicaciones
-        .departamentos
-        .map<DropdownMenuItem<String>>((String value) {
+    value: provider.departamento.text,
+    onChanged: context.watch<HomeProvider>().enabledepart
+        ? (String value) {
+            providerread.setdepartamento(value);
+            providerread.setprovincia("Provin");
+            providerread.setdistrito("Distrito");
+            providerread.setvendedor("Vendedor");
+          }
+        : null,
+    items: provider.ubicaciones.ubicaciones.entries
+        .map<DropdownMenuItem<String>>((value) {
       return DropdownMenuItem<String>(
-        value: value,
-        child: Text(value),
+        value: value.key,
+        child: Text(value.key),
       );
     }).toList(),
   );
 }
 
-Widget _crearprovincialima(BuildContext context) {
+Widget _crearprovincia(BuildContext context) {
+  final provider = context.watch<PopupProvider>();
   return DropdownButton<String>(
-    value: context.watch<PopupProvider>().provincia.text,
+    value: provider.provincia.text,
     onChanged: (String value) =>
         context.read<PopupProvider>().setprovincia(value),
-    items: context
-        .watch<PopupProvider>()
-        .ubicaciones
-        .limaprovincias
-        .map<DropdownMenuItem<String>>((String value) {
+    items: provider
+        .ubicaciones?.ubicaciones[provider.departamento.text]['provincias']
+        .map<DropdownMenuItem<String>>((dynamic value) {
       return DropdownMenuItem<String>(
         value: value,
         child: Text(value),
@@ -340,52 +331,15 @@ Widget _crearprovincialima(BuildContext context) {
   );
 }
 
-Widget _crearprovinciacusco(BuildContext context) {
+Widget _creardistrito(BuildContext context) {
+  final provider = context.watch<PopupProvider>();
   return DropdownButton<String>(
-    value: context.watch<PopupProvider>().provincia.text,
-    onChanged: (String value) =>
-        context.read<PopupProvider>().setprovincia(value),
-    items: context
-        .watch<PopupProvider>()
-        .ubicaciones
-        .cuscoprovincias
-        .map<DropdownMenuItem<String>>((String value) {
-      return DropdownMenuItem<String>(
-        value: value,
-        child: Text(value),
-      );
-    }).toList(),
-  );
-}
-
-Widget _creardistritoslima(BuildContext context) {
-  return DropdownButton<String>(
-    value: context.watch<PopupProvider>().distrito.text,
+    value: provider.distrito.text,
     onChanged: (String value) =>
         context.read<PopupProvider>().setdistrito(value),
-    items: context
-        .watch<PopupProvider>()
-        .ubicaciones
-        .limadistritos
-        .map<DropdownMenuItem<String>>((String value) {
-      return DropdownMenuItem<String>(
-        value: value,
-        child: Text(value),
-      );
-    }).toList(),
-  );
-}
-
-Widget _creardistritoscusco(BuildContext context) {
-  return DropdownButton<String>(
-    value: context.watch<PopupProvider>().distrito.text,
-    onChanged: (String value) =>
-        context.read<PopupProvider>().setdistrito(value),
-    items: context
-        .watch<PopupProvider>()
-        .ubicaciones
-        .cuscodistritos
-        .map<DropdownMenuItem<String>>((String value) {
+    items: provider
+        .ubicaciones?.ubicaciones[provider.departamento.text]['distritos']
+        .map<DropdownMenuItem<String>>((dynamic value) {
       return DropdownMenuItem<String>(
         value: value,
         child: Text(value),
@@ -395,15 +349,14 @@ Widget _creardistritoscusco(BuildContext context) {
 }
 
 Widget _crearvendedor(BuildContext context) {
+  final provider = context.watch<PopupProvider>();
   return DropdownButton<String>(
-    value: context.watch<PopupProvider>().vendedor.text,
+    value: provider.vendedor.text,
     onChanged: (String value) =>
         context.read<PopupProvider>().setvendedor(value),
-    items: context
-        .watch<PopupProvider>()
-        .vendedores
-        .vendedores
-        .map<DropdownMenuItem<String>>((String value) {
+    items: provider
+        .ubicaciones?.ubicaciones[provider.departamento.text]['vendedores']
+        .map<DropdownMenuItem<String>>((dynamic value) {
       return DropdownMenuItem<String>(
         value: value,
         child: Text(value),

@@ -95,8 +95,11 @@ class BuildPanel extends StatelessWidget {
                         linkstyledrop(Icons.location_on_sharp, i.cordenadas),
                         styledrop(Icons.power_outlined, i.puerto),
                         linkstyledrop(Icons.check_box_outline_blank, i.cajanap),
-                        styledrop(Icons.date_range_rounded,
-                            formato.format(i.fechacaptacion)),
+                        styledrop(
+                            Icons.date_range_rounded,
+                            formato.format(i.fechacaptacion) +
+                                " - " +
+                                i.operador),
                       ],
                     ),
                   ),
@@ -363,7 +366,7 @@ class BuildPanel extends StatelessWidget {
         icon: Icons.settings_ethernet_rounded,
         color: i.color,
         onTap: () async {
-          context.read<PopupProvider>().fetching();
+          // context.read<PopupProvider>().addlist();
         });
   }
 

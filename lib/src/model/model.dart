@@ -27,6 +27,7 @@ class ClientModel {
   final DocumentReference reference;
   final List<String> observaciones;
   final String repetidor;
+  final String operador;
 
   ClientModel.fromMap(Map<String, dynamic> map, {this.reference})
       : nombre = map["nombre"],
@@ -53,7 +54,8 @@ class ClientModel {
         color = map["color"],
         servicios = map["servicios"],
         tecnicos = List.from(map["tecnicos"]),
-        observaciones = List.from(map["observaciones"]);
+        observaciones = List.from(map["observaciones"]),
+        operador = (map["operador"] == null) ? "None" : map["operador"];
 
   ClientModel.fromSnapshot(DocumentSnapshot snapshot)
       : this.fromMap(snapshot.data(), reference: snapshot.reference);
