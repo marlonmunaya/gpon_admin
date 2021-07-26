@@ -31,14 +31,15 @@ class HomePage extends StatelessWidget {
         body: Stack(
           children: [
             ResponsiveWidget(
-              smallScreen: Column(children: [
-                CalendarComponent(),
-                Expanded(
-                    child: Container(
-                  height: _screensize.height,
-                  child: DragHandleList(),
-                )),
-              ]),
+              smallScreen: SingleChildScrollView(
+                child: Column(children: [
+                  CalendarComponent(),
+                  Container(
+                    height: _screensize.height,
+                    child: DragHandleList(),
+                  ),
+                ]),
+              ),
               mediumScreen: Row(
                 children: [
                   Expanded(flex: 3, child: CalendarComponent()),

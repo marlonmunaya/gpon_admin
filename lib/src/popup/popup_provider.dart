@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gpon_admin/src/api/data.dart';
+import 'package:gpon_admin/src/model/model_api_cedula.dart';
 import 'package:gpon_admin/src/model/utils_model.dart';
 import 'package:gpon_admin/src/model/model.dart';
 
@@ -372,6 +373,11 @@ class PopupProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void setservicios(String data) {
+    _servicios.text = data;
+    // notifyListeners();
+  }
+
   void setvendedor(String data) {
     _vendedor.text = data;
     notifyListeners();
@@ -446,79 +452,110 @@ class PopupProvider with ChangeNotifier {
     final apidni = 'https://dniruc.apisperu.com/api/v1/dni/';
     final apiruc = 'https://dniruc.apisperu.com/api/v1/ruc/';
 
-    cedula.length < 11
-        ? await http
-            .get(Uri.parse(apidni + '$cedula' + '?token=$token'))
-            .then((value) {
-            _cliente = jsonDecode(value.body);
-            _nombre.text = _cliente['nombres'] +
-                ' ' +
-                _cliente['apellidoPaterno'] +
-                ' ' +
-                _cliente['apellidoMaterno'];
-          }).catchError((e) {
-            showsnackbar("No encontrado");
-            return null;
-          })
-        : await http
-            .get(Uri.parse(apiruc + '$cedula' + '?token=$token'))
-            .then((value) {
-            _cliente = jsonDecode(value.body);
-            _nombre.text = _cliente['razonSocial'];
-            _direccion.text =
-                _cliente['direccion'] == null ? '' : _cliente['direccion'];
-          }).catchError((e) {
-            showsnackbar("No encontrado");
-          });
-    notifyListeners();
+    if (cedula.length < 11) {
+      oldclient(cedula);
+      await http
+          .get(Uri.parse(apidni + '$cedula' + '?token=$token'))
+          .then((value) {
+        _cliente = jsonDecode(value.body);
+        _nombre.text = _cliente['nombres'] +
+            ' ' +
+            _cliente['apellidoPaterno'] +
+            ' ' +
+            _cliente['apellidoMaterno'];
+      }).catchError((e) {
+        showsnackbar("No encontrado");
+        return null;
+      });
+      notifyListeners();
+    } else {
+      oldclient(cedula);
+      await http
+          .get(Uri.parse(apiruc + '$cedula' + '?token=$token'))
+          .then((value) {
+        _cliente = jsonDecode(value.body);
+        _nombre.text = _cliente['razonSocial'];
+        _direccion.text =
+            _cliente['direccion'] == null ? '' : _cliente['direccion'];
+      }).catchError((e) => showsnackbar("No encontrado"));
+      notifyListeners();
+    }
   }
 
-  Future<http.Response> postRequest() async {
-    var url = 'http://oficina.gpon.pe/api/v1/NewPreRegistro';
+  void newpreregistro(ClientModel i) async {
+    Map<String, dynamic> preregistro;
+    String urlpreregistro = 'https://oficina.gpon.pe/api/v1/NewPreRegistro';
 
-    Map data = {
-      "token": "cFhtUEdjTFlVMWpXY3FXUjR1Rmxzdz09",
-      "cliente": "Carlos miguel perez",
-      "cedula": "45464522",
-      "direccion": "Av luis miguel 3356",
-      "telefono": "5123345",
-      "movil": "9888877665",
-      "email": "correo@gmail.com",
-      "notas": "Hola estoy interesando en el servicio ..",
-      "fecha_instalacion": "2020-12-20 10:30:35"
-    };
-    //encode Map to JSON
-    var body = json.encode(data);
-
-    // var response = await http.post(url,
-    //     headers: {
-    //       "Access-Control-Allow-Origin":
-    //           "*", // Required for CORS support to work
-    //       "Content-Type": "application/json",
-    //       "Access-Control-Allow-Headers":
-    //           "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
-    //       "Access-Control-Allow-Methods": "POST, OPTIONS"
-    //     },
-    //     body: body);
-    // print("${response.statusCode}");
-    // print("${response.body}");
-    // return response;
+    http.Response response = await http
+        .post(Uri.parse(urlpreregistro),
+            headers: <String, String>{
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': "GET,HEAD,OPTIONS,POST,PUT",
+              "Access-Control-Allow-Headers":
+                  "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+            },
+            body: jsonEncode(<String, String>{
+              "token": "cFhtUEdjTFlVMWpXY3FXUjR1Rmxzdz09",
+              "cliente": i.nombre,
+              "cedula": i.cedula,
+              "direccion": i.direccion.toUpperCase(),
+              "telefono": i.fijo,
+              "movil": i.celular,
+              "email": i.email,
+              "fecha_instalacion": i.fechainstalacion.toString(),
+              "vendedor": i.vendedor
+            }))
+        .then((value) {
+      preregistro = jsonDecode(value.body);
+      preregistro["estado"] == "exito"
+          ? showsnackbar("Cliente se registró en Pre-Registro(Instalación)")
+          : showsnackbar("Cliente ya existe");
+    }).catchError((e) {
+      showsnackbar("Falló la operación");
+      print(e.toString());
+    });
   }
 
-  void fetching() async {
-    String url = 'https://demo.mikrosystem.net/api/v1/NewPreRegistro';
+  void oldclient(String cedula) async {
+    Map<String, dynamic> oldclient;
+    String urlcliente = 'https://oficina.gpon.pe/api/v1/GetClientsDetails';
 
-    Map body = {
-      "token": "YjQ4cmZEZHQyNnBNQ2Z5d0R4R1NnUT09",
-      "cliente": "Carlos miguel perez",
-      "cedula": "34464522",
-      "direccion": "Av luis miguel 3356",
-      "telefono": "5123345",
-      "movil": "9888877665",
-      "email": "correo@gmail.com",
-      "notas": "Hola estoy interesando en el servicio ..",
-      "fecha_instalacion": "2020-12-20 10:30:35"
-    };
-    var client = http.Client();
+    http.Response response = await http
+        .post(Uri.parse(urlcliente),
+            headers: <String, String>{
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': "GET,HEAD,OPTIONS,POST,PUT",
+              "Access-Control-Allow-Headers":
+                  "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+            },
+            body: jsonEncode(<String, String>{
+              "token": "cFhtUEdjTFlVMWpXY3FXUjR1Rmxzdz09",
+              "cedula": cedula,
+            }))
+        .then((value) {
+      oldclient = jsonDecode(value.body);
+      if (oldclient["estado"] == "exito") {
+        _nombre.text = oldclient['datos'][0]["nombre"];
+        _cordenadas.text = oldclient['datos'][0]["servicios"][0]["coordenadas"];
+        _direccion.text = oldclient['datos'][0]["servicios"][0]["direccion"];
+        _celular.text = oldclient['datos'][0]["movil"];
+        _cedula.text = oldclient['datos'][0]["cedula"];
+
+        print(oldclient['datos'][0]["nombre"]);
+        print(oldclient['datos'][0]["servicios"][0]["direccion"]);
+        print(oldclient['datos'][0]["movil"]);
+        print(oldclient['datos'][0]["cedula"]);
+        print(oldclient['datos'][0]["servicios"][0]["coordenadas"]);
+        // showsnackbar("Cliente se registró en Pre-Registro(Instalación)");
+      } else {
+        // print(oldclient);
+        showsnackbar("No esta registrado");
+      }
+    }).catchError((e) {
+      showsnackbar("Falló la operación");
+      print(e.toString());
+    });
   }
 }

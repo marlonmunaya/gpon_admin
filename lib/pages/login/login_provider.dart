@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:gpon_admin/pages/Home/home.dart';
 
 class Loginprovider with ChangeNotifier {
   TextEditingController _emailController = TextEditingController();
@@ -13,7 +12,7 @@ class Loginprovider with ChangeNotifier {
   get formKeysign => _formKeysign;
 
   //// Estado de Autenticación///
-  bool _loggedIn = false; //colocar en false
+  bool _loggedIn = true; //colocar en false
   bool _loading = false;
   User _user;
   final FirebaseAuth _auth = FirebaseAuth.instance;

@@ -3,6 +3,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import 'package:excel/excel.dart';
+
 import 'package:gpon_admin/src/api/data.dart';
 import 'package:gpon_admin/src/model/model.dart';
 import 'package:gpon_admin/src/model/utils_model.dart';
@@ -296,6 +298,22 @@ class HomeProvider with ChangeNotifier {
   void onListReorder(int oldListIndex, int newListIndex) {
     // var movedList = _contents.removeAt(oldListIndex);
     // _contents.insert(newListIndex, movedList);
+  }
+
+  void downloaddata() {
+    print('obtenido data to excel');
+
+    var excel = Excel.createExcel();
+    excel.rename('Sheet1', 'newSheetName');
+    Sheet sheetObject = excel['newSheetName'];
+
+    excel.updateCell(
+        'newSheetName', CellIndex.indexByString("A1"), "Here value",
+        cellStyle: CellStyle(
+            backgroundColorHex: "#1AFF1A",
+            horizontalAlign: HorizontalAlign.Right));
+
+    var fileBytes = excel.save(fileName: "My_Excel.xlsx");
   }
 
   Future getsearch(String query) async {

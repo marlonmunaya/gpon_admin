@@ -42,24 +42,25 @@ class BuildPanel extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          styledropbold(Icons.miscellaneous_services_rounded,
-                              i.servicios),
-                          styledropbold(Icons.account_circle, i.nombre),
-                          styledrop(Icons.location_city,
-                              "${i.direccion} - ${i.distrito} - ${i.provincia}"),
                           Wrap(
                             alignment: WrapAlignment.spaceBetween,
                             crossAxisAlignment: WrapCrossAlignment.center,
                             runAlignment: WrapAlignment.spaceBetween,
                             spacing: 10,
                             children: [
-                              styledropbold(
+                              styledropwhite(
+                                  Icons.miscellaneous_services_rounded,
+                                  i.servicios.toUpperCase()),
+                              styledropwhite(
                                   Icons.request_quote_outlined, i.plan),
-                              styledrop(Icons.live_tv_rounded, i.deco),
-                              styledrop(Icons.wifi_rounded, i.repetidor),
-                              styledrop(Icons.account_tree, i.cableadoutp),
+                              styledropwhite(Icons.live_tv_rounded, i.deco),
+                              styledropwhite(Icons.wifi_rounded, i.repetidor),
+                              styledropwhite(Icons.account_tree, i.cableadoutp),
                             ],
-                          )
+                          ),
+                          styledropbold(Icons.account_circle, i.nombre),
+                          styledropbold(Icons.location_city,
+                              "${i.direccion} - ${i.distrito} - ${i.provincia}"),
                         ],
                       ),
                     ),
@@ -203,6 +204,25 @@ class BuildPanel extends StatelessWidget {
     );
   }
 
+  Widget styledropwhite(IconData icon, String data) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 2),
+      color: Colors.black54,
+      child: Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: Text.rich(
+          TextSpan(children: [
+            WidgetSpan(child: Icon(icon, size: 14, color: Colors.white)),
+            WidgetSpan(
+              child: SelectableText(' ' + data,
+                  style: TextStyle(color: Colors.white)),
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+
   Widget linkstyledrop(IconData icon, String link) {
     return Text.rich(TextSpan(children: [
       WidgetSpan(child: Icon(icon, size: 14)),
@@ -244,10 +264,13 @@ class BuildPanel extends StatelessWidget {
   Widget setting(
       BuildContext context, ClientModel i, OverlayEntry overlayEntry) {
     return GestureDetector(
-      child: circlebutton(
-        icon: Icons.more_vert_outlined,
-        color: i.color,
-        onTap: () {},
+      child: Tooltip(
+        message: "Opciones",
+        child: circlebutton(
+          icon: Icons.more_vert_outlined,
+          color: i.color,
+          onTap: () {},
+        ),
       ),
       onTapDown: (TapDownDetails details) {
         context.read<PopupProvider>().buttonState
@@ -273,7 +296,7 @@ class BuildPanel extends StatelessWidget {
                   edit(context),
                   selectcolor(context),
                   copy(context),
-                  createAlbum(context)
+                  newpreregistro(context)
                 ],
               ),
             ));
@@ -296,78 +319,91 @@ class BuildPanel extends StatelessWidget {
 
   Widget copy(BuildContext context) {
     final formato = context.watch<PopupProvider>().formatocompleto;
-    return circlebutton(
-      icon: Icons.copy_rounded,
-      color: i.color,
-      onTap: () {
-        context.read<PopupProvider>().removeoverlay();
-        final String obs = i.observaciones.isEmpty ? "" : i.observaciones.last;
-        Clipboard.setData(ClipboardData(
-            text:
-                "*----  HORARIO: ${formato.format(i.fechainstalacion)}  ----*\n" +
-                    "*SERVICIO: ${i.servicios}*\n" +
-                    "*NOMBRE:* ${i.nombre}\n" +
-                    "*DNI:* ${i.cedula}\n" +
-                    "*CELULAR:* ${i.celular}\n" +
-                    "*PLAN:* ${i.plan}\n" +
-                    "*DIRECCION:* ${i.direccion} - ${i.distrito}\n" +
-                    "*GPS:* https://maps.google.com/?q=${i.cordenadas}\n" +
-                    "*DECOFICADOR:* ${i.deco}\n" +
-                    "*UTP:* ${i.cableadoutp}\n" +
-                    "*CAJA NAP:* https://maps.google.com/?q=${i.cajanap}\n" +
-                    "*PUERTO:* ${i.puerto}\n" +
-                    "*OBSERVACION:* $obs\n"));
-      },
+    return Tooltip(
+      message: "Copiar",
+      child: circlebutton(
+        icon: Icons.copy_rounded,
+        color: i.color,
+        onTap: () {
+          context.read<PopupProvider>().removeoverlay();
+          final String obs =
+              i.observaciones.isEmpty ? "" : i.observaciones.last;
+          Clipboard.setData(ClipboardData(
+              text:
+                  "*----  HORARIO: ${formato.format(i.fechainstalacion)}  ----*\n" +
+                      "*SERVICIO: ${i.servicios}*\n" +
+                      "*NOMBRE:* ${i.nombre}\n" +
+                      "*DNI:* ${i.cedula}\n" +
+                      "*CELULAR:* ${i.celular}\n" +
+                      "*PLAN:* ${i.plan}\n" +
+                      "*DIRECCION:* ${i.direccion} - ${i.distrito}\n" +
+                      "*GPS:* https://maps.google.com/?q=${i.cordenadas}\n" +
+                      "*DECOFICADOR:* ${i.deco}\n" +
+                      "*UTP:* ${i.cableadoutp}\n" +
+                      "*CAJA NAP:* https://maps.google.com/?q=${i.cajanap}\n" +
+                      "*PUERTO:* ${i.puerto}\n" +
+                      "*OBSERVACION:* $obs\n"));
+        },
+      ),
     );
   }
 
   Widget selectcolor(BuildContext context) {
-    return circlebutton(
-        icon: Icons.color_lens_outlined,
-        color: i.color,
-        onTap: () {
-          showDialog<void>(
-              context: context,
-              builder: (contextdialog) => AlertDialog(
-                    content: OColorPicker(
-                      spacing: 3,
-                      boxBorder:
-                          OColorBoxBorder(color: Colors.black12, width: 1),
-                      selectedColor: currentColor,
-                      colors: primaryColorsPalette,
-                      onColorChange: (color) {
-                        contextdialog.read<HomeProvider>().updatecolor(
-                            i.reference.id, color.value.toString());
-                        Navigator.of(contextdialog).pop();
-                      },
-                    ),
-                  ));
-          context.read<PopupProvider>().removeoverlay();
-        });
+    return Tooltip(
+      message: "Color",
+      child: circlebutton(
+          icon: Icons.color_lens_outlined,
+          color: i.color,
+          onTap: () {
+            showDialog<void>(
+                context: context,
+                builder: (contextdialog) => AlertDialog(
+                      content: OColorPicker(
+                        spacing: 3,
+                        boxBorder:
+                            OColorBoxBorder(color: Colors.black12, width: 1),
+                        selectedColor: currentColor,
+                        colors: primaryColorsPalette,
+                        onColorChange: (color) {
+                          contextdialog.read<HomeProvider>().updatecolor(
+                              i.reference.id, color.value.toString());
+                          Navigator.of(contextdialog).pop();
+                        },
+                      ),
+                    ));
+            context.read<PopupProvider>().removeoverlay();
+          }),
+    );
   }
 
   Widget edit(BuildContext context) {
-    return circlebutton(
-        icon: Icons.edit,
-        color: i.color,
-        onTap: () async {
-          await context
-              .read<PopupProvider>()
-              .getoneclient(context, i.reference.id);
-          context.read<PopupProvider>().removeoverlay();
-          await showDialog(
-              context: context,
-              builder: (BuildContext context1) => EditClient());
-        });
+    return Tooltip(
+      message: "Editar",
+      child: circlebutton(
+          icon: Icons.edit,
+          color: i.color,
+          onTap: () async {
+            await context
+                .read<PopupProvider>()
+                .getoneclient(context, i.reference.id);
+            context.read<PopupProvider>().removeoverlay();
+            await showDialog(
+                context: context,
+                builder: (BuildContext context1) => EditClient());
+          }),
+    );
   }
 
-  Widget createAlbum(BuildContext context) {
-    return circlebutton(
-        icon: Icons.settings_ethernet_rounded,
-        color: i.color,
-        onTap: () async {
-          // context.read<PopupProvider>().addlist();
-        });
+  Widget newpreregistro(BuildContext context) {
+    return Tooltip(
+      message: "Registrar",
+      child: circlebutton(
+          icon: Icons.settings_ethernet_rounded,
+          color: i.color,
+          onTap: () async {
+            context.read<PopupProvider>().newpreregistro(i);
+          }),
+    );
   }
 
   Widget saveobs(

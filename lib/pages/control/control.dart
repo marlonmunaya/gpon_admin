@@ -11,37 +11,40 @@ class ControlPage extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        SizedBox(width: 8.0),
+        SizedBox(height: 8.0),
         seguimiento(context),
-        SizedBox(width: 8.0),
-        filterdepart(context)
+        SizedBox(height: 8.0),
+        filterdepart(context),
+        SizedBox(height: 8.0),
+        descargar(context)
       ],
     );
   }
 
   Widget seguimiento(BuildContext context) {
     var seguimiento = context.watch<PopupProvider>().seguimiento?.seguimiento;
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 5),
-      child: Wrap(
-        spacing: 5.0,
-        runSpacing: 5.0,
-        children: seguimiento == null
-            ? [
-                Center(
-                  child: CircularProgressIndicator(),
-                )
-              ]
-            : seguimiento.entries.map<Chip>((a) {
-                return Chip(
-                  label: Text(
-                    a.value["etiqueta"],
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  backgroundColor:
-                      Color(int.parse(a.value["color"], radix: 16)),
-                );
-              }).toList(),
+    return Container(
+      width: double.maxFinite,
+      child: Card(
+        child: Wrap(
+          spacing: 2.5,
+          runSpacing: 2.5,
+          children: seguimiento == null
+              ? [Center(child: CircularProgressIndicator())]
+              : seguimiento.entries.map<Padding>((a) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2.5),
+                    child: Chip(
+                      label: Text(
+                        a.value["etiqueta"],
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      backgroundColor:
+                          Color(int.parse(a.value["color"], radix: 16)),
+                    ),
+                  );
+                }).toList(),
+        ),
       ),
     );
   }
@@ -50,37 +53,49 @@ class ControlPage extends StatelessWidget {
     List<dynamic> listdepart = context.watch<PopupProvider>().listdepart;
     var provider = context.watch<HomeProvider>();
     return Card(
-      child: listdepart == null
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : Wrap(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 8, 0, 4),
-                  child: Text(
-                    'Seleccionar Departamento:',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: listdepart.length,
-                    itemBuilder: (context, int index) {
-                      return RadioListTile<String>(
-                          title: Text(listdepart[index]),
-                          value: listdepart[index],
-                          groupValue: provider.selecteddepart,
-                          onChanged: provider.enabledepart
-                              ? (v) {
-                                  context
-                                      .read<HomeProvider>()
-                                      .filterdepartamento(v);
-                                }
-                              : null);
-                    }),
-              ],
-            ),
+        child: listdepart == null
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : ExpansionPanelList.radio(
+                expandedHeaderPadding: EdgeInsets.zero,
+                elevation: 0,
+                children: [
+                    ExpansionPanelRadio(
+                      value: "321654",
+                      headerBuilder: (BuildContext context, bool isExpanded) {
+                        return Text(
+                          'SELECIONAR DEPARTAMENTO:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        );
+                      },
+                      body: ListView.builder(
+                          padding: EdgeInsets.all(0),
+                          shrinkWrap: true,
+                          itemCount: listdepart.length,
+                          itemBuilder: (context, int index) {
+                            return RadioListTile<String>(
+                                contentPadding: EdgeInsets.all(0),
+                                title: Text(listdepart[index]),
+                                value: listdepart[index],
+                                groupValue: provider.selecteddepart,
+                                onChanged: provider.enabledepart
+                                    ? (v) {
+                                        context
+                                            .read<HomeProvider>()
+                                            .filterdepartamento(v);
+                                      }
+                                    : null);
+                          }),
+                    ),
+                  ]));
+  }
+
+  Widget descargar(BuildContext context) {
+    return ElevatedButton(
+      child: Icon(Icons.download_rounded),
+      onPressed: () =>
+          Provider.of<HomeProvider>(context, listen: false).downloaddata(),
     );
   }
 }

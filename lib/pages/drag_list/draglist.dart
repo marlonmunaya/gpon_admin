@@ -78,7 +78,7 @@ class DragHandleList extends StatelessWidget {
       onListReorder: (oldListIndex, newListIndex) => context
           .read<HomeProvider>()
           .onListReorder(oldListIndex, newListIndex),
-      listPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+      listPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
       itemDivider:
           Divider(thickness: 2, height: 2, color: Colors.blueGrey[100]),
       itemDecorationWhileDragging: BoxDecoration(
@@ -92,7 +92,7 @@ class DragHandleList extends StatelessWidget {
         ],
       ),
       lastItemTargetHeight: 80,
-      lastListTargetSize: 10,
+      lastListTargetSize: 0,
       itemDragHandle: DragHandle(
         child: Padding(
           padding: EdgeInsets.only(right: 5),

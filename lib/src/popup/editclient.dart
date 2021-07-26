@@ -1,9 +1,10 @@
-// import 'dart:js';
+import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:gpon_admin/pages/Home/home_provider.dart';
 import 'package:provider/provider.dart';
 import 'popup_provider.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class EditClient extends StatelessWidget {
   const EditClient({Key key}) : super(key: key);
@@ -255,9 +256,33 @@ Widget _crearemail(BuildContext context) {
 }
 
 Widget _crearservicios(BuildContext context) {
-  return _crearcampo(
-    context.watch<PopupProvider>().servicios,
-    'Servicios',
+  List<String> listaString = [];
+  final provider = context.watch<PopupProvider>();
+  final List<dynamic> lista = provider
+      .ubicaciones?.ubicaciones[provider.departamento.text]['servicios'];
+  listaString = lista.cast<String>();
+
+  return TypeAheadField(
+    textFieldConfiguration: TextFieldConfiguration(
+      controller: provider.servicios,
+      decoration: InputDecoration(
+        labelText: 'Servicios',
+        contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 5),
+      ),
+    ),
+    suggestionsCallback: (pattern) {
+      if (pattern == '') {
+        return [];
+      }
+      return listaString.where((option) {
+        return option.toLowerCase().contains(pattern.toLowerCase());
+      });
+    },
+    noItemsFoundBuilder: (context) => null,
+    itemBuilder: (context, suggestion) => ListTile(title: Text(suggestion)),
+    onSuggestionSelected: (suggestion) {
+      context.read<PopupProvider>().setservicios(suggestion);
+    },
   );
 }
 
@@ -276,19 +301,21 @@ Widget _crearutp(BuildContext context) {
 }
 
 Widget _creardeco(BuildContext context) {
+  final provivder = context.read<PopupProvider>();
   return _crearcampoupdown(
-      context.watch<PopupProvider>().deco,
-      'Deco',
-      () => context.read<PopupProvider>().setdeco(1),
-      () => context.read<PopupProvider>().setdeco(-1));
+      controller: context.watch<PopupProvider>().deco,
+      label: 'Deco',
+      up: () => provivder.setdeco(1),
+      down: () => provivder.setdeco(-1));
 }
 
 Widget _crearrepe(BuildContext context) {
+  final provivder = context.read<PopupProvider>();
   return _crearcampoupdown(
-      context.watch<PopupProvider>().repetidor,
-      'Repe',
-      () => context.read<PopupProvider>().setrepetidor(1),
-      () => context.read<PopupProvider>().setrepetidor(-1));
+      controller: context.watch<PopupProvider>().repetidor,
+      label: 'Repe',
+      up: () => provivder.setrepetidor(1),
+      down: () => provivder.setrepetidor(-1));
 }
 
 Widget _creardepartamento(BuildContext context) {
@@ -380,11 +407,13 @@ Widget _crearcajanap(BuildContext context) {
 }
 
 Widget _crearpuerto(BuildContext context) {
+  final provivder = context.read<PopupProvider>();
   return _crearcampoupdown(
-      context.watch<PopupProvider>().puerto,
-      'Puerto',
-      () => context.read<PopupProvider>().setpuerto(1),
-      () => context.read<PopupProvider>().setpuerto(-1));
+    controller: context.watch<PopupProvider>().puerto,
+    label: 'Puerto',
+    up: () => provivder.setpuerto(1),
+    down: () => provivder.setpuerto(-1),
+  );
 }
 
 Widget _crearGuardar(BuildContext context) {
@@ -398,10 +427,9 @@ Widget _crearGuardar(BuildContext context) {
 
 Widget _cancelar(context) {
   return ElevatedButton(
-      child: Text('Cancelar'),
-      onPressed: () async {
-        Navigator.of(context).pop();
-      });
+    child: Text('Cancelar'),
+    onPressed: () => Navigator.of(context).pop(),
+  );
 }
 
 Widget _crearcampo(TextEditingController controller, String label) {
@@ -414,8 +442,11 @@ Widget _crearcampo(TextEditingController controller, String label) {
   );
 }
 
-Widget _crearcampoupdown(TextEditingController controller, String label,
-    Function up, Function down) {
+Widget _crearcampoupdown(
+    {TextEditingController controller,
+    String label,
+    Function up,
+    Function down}) {
   return TextFormField(
     controller: controller,
     keyboardType: TextInputType.number,
@@ -429,16 +460,10 @@ Widget _crearcampoupdown(TextEditingController controller, String label,
           children: [
             Expanded(
                 child: InkWell(
-                    child: Icon(
-                      Icons.arrow_drop_up_outlined,
-                    ),
-                    onTap: up)),
+                    child: Icon(Icons.arrow_drop_up_outlined), onTap: up)),
             Expanded(
                 child: InkWell(
-                    child: Icon(
-                      Icons.arrow_drop_down_outlined,
-                    ),
-                    onTap: down)),
+                    child: Icon(Icons.arrow_drop_down_outlined), onTap: down)),
           ],
         ),
       ),

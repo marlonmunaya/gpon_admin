@@ -52,7 +52,14 @@ Widget drawer(BuildContext context) {
                       fit: BoxFit.fitWidth,
                     ),
                   )),
-              Text("1.2.1"),
+              Text("1.2.4"),
+              ElevatedButton(
+                onPressed: () {
+                  // Navigator.of(context).push(
+                  // MaterialPageRoute(builder: (context) => TermPage()));
+                },
+                child: Text("Terminal"),
+              )
             ],
           )));
 }
@@ -87,90 +94,34 @@ Widget appbar(BuildContext context) {
   );
 }
 
-class CustomSearchDelegate extends SearchDelegate {
-  @override
-  List<Widget> buildActions(BuildContext context) {
-    // TODO: implement buildActions
-    return [
-      IconButton(
-        icon: Icon(Icons.clear),
-        onPressed: () {
-          query = '';
-        },
-      ),
-    ];
-  }
-
-  @override
-  Widget buildLeading(BuildContext context) {
-    // TODO: implement buildLeading
-    return IconButton(
-      icon: Icon(Icons.arrow_back),
-      onPressed: () {
-        close(context, null);
-      },
-    );
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    if (query.length < 3) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Center(
-            child: Text(
-              "Search term must be longer than two letters.",
-            ),
-          )
-        ],
-      );
-    }
-
-    //Add the search term to the searchBloc.
-    //The B
-
-    return Container(
-      height: 100,
-      width: 100,
-      child: Card(
-        color: Colors.red,
-      ),
-    );
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    // TODO: implement buildSuggestions
-    return Column();
-  }
-}
-
 Widget buildFloatingSearchBar(BuildContext context) {
   List<ClientModel> model = [];
-
+  FloatingSearchBarController barcontroller = FloatingSearchBarController();
   return FloatingSearchBar(
     hint: 'Buscar...',
     scrollPadding: const EdgeInsets.only(top: 16, bottom: 56),
-    transitionDuration: const Duration(milliseconds: 400),
+    transitionDuration: const Duration(milliseconds: 300),
     transitionCurve: Curves.easeInOut,
     physics: const BouncingScrollPhysics(),
     axisAlignment: 1.0,
     openAxisAlignment: 1.0,
     width: 400,
-    debounceDelay: const Duration(milliseconds: 500),
+    debounceDelay: const Duration(milliseconds: 300),
     onQueryChanged: (query) async {
       await context.read<HomeProvider>().getsearch(query);
     },
+    controller: barcontroller,
     transition: CircularFloatingSearchBarTransition(),
     automaticallyImplyDrawerHamburger: false,
     actions: [
       FloatingSearchBarAction(
         showIfOpened: true,
+        showIfClosed: false,
         child: CircularButton(
           icon: Icon(Icons.clear),
           onPressed: () {
             context.read<HomeProvider>().clear();
+            barcontroller.close();
           },
         ),
       ),
@@ -203,7 +154,10 @@ Widget buildFloatingSearchBar(BuildContext context) {
                   ],
                 ),
                 onTap: () {
-                  print(model.fechainstalacion.toString());
+                  context
+                      .read<HomeProvider>()
+                      .onDaySelected(model.fechainstalacion, [], []);
+                  barcontroller.close();
                 },
               );
             }).toList(),
