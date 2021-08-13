@@ -14,7 +14,7 @@ class ControlPage extends StatelessWidget {
         SizedBox(height: 8.0),
         seguimiento(context),
         SizedBox(height: 8.0),
-        filterdepart(context),
+        filter(context),
         SizedBox(height: 8.0),
         descargar(context)
       ],
@@ -26,76 +26,106 @@ class ControlPage extends StatelessWidget {
     return Container(
       width: double.maxFinite,
       child: Card(
-        child: Wrap(
-          spacing: 2.5,
-          runSpacing: 2.5,
-          children: seguimiento == null
-              ? [Center(child: CircularProgressIndicator())]
-              : seguimiento.entries.map<Padding>((a) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2.5),
-                    child: Chip(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Wrap(
+            spacing: 4,
+            runSpacing: 4,
+            children: seguimiento == null
+                ? [Center(child: CircularProgressIndicator())]
+                : seguimiento.entries.map<Chip>((a) {
+                    return Chip(
                       label: Text(
                         a.value["etiqueta"],
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
+                      elevation: 3,
                       backgroundColor:
                           Color(int.parse(a.value["color"], radix: 16)),
-                    ),
-                  );
-                }).toList(),
+                    );
+                  }).toList(),
+          ),
         ),
       ),
     );
   }
 
-  Widget filterdepart(BuildContext context) {
+  Widget filter(BuildContext context) {
     List<dynamic> listdepart = context.watch<PopupProvider>().listdepart;
-    var provider = context.watch<HomeProvider>();
     return Card(
         child: listdepart == null
             ? Center(
                 child: CircularProgressIndicator(),
               )
             : ExpansionPanelList.radio(
-                expandedHeaderPadding: EdgeInsets.zero,
+                expandedHeaderPadding: EdgeInsets.all(0),
                 elevation: 0,
                 children: [
-                    ExpansionPanelRadio(
-                      value: "321654",
-                      headerBuilder: (BuildContext context, bool isExpanded) {
-                        return Text(
-                          'SELECIONAR DEPARTAMENTO:',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        );
-                      },
-                      body: ListView.builder(
-                          padding: EdgeInsets.all(0),
-                          shrinkWrap: true,
-                          itemCount: listdepart.length,
-                          itemBuilder: (context, int index) {
-                            return RadioListTile<String>(
-                                contentPadding: EdgeInsets.all(0),
-                                title: Text(listdepart[index]),
-                                value: listdepart[index],
-                                groupValue: provider.selecteddepart,
-                                onChanged: provider.enabledepart
-                                    ? (v) {
-                                        context
-                                            .read<HomeProvider>()
-                                            .filterdepartamento(v);
-                                      }
-                                    : null);
-                          }),
-                    ),
+                    depart(context, listdepart),
+                    area(context),
                   ]));
   }
 
+  ExpansionPanelRadio depart(BuildContext context, List<dynamic> listdepart) {
+    var provider = context.watch<HomeProvider>();
+
+    return ExpansionPanelRadio(
+      value: "321654",
+      headerBuilder: (BuildContext context, bool isExpanded) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text('SELECIONAR DEPARTAMENTO:'),
+            ),
+          ],
+        );
+      },
+      body: ListView.builder(
+          shrinkWrap: true,
+          itemCount: listdepart.length,
+          itemBuilder: (context, int index) {
+            return RadioListTile<String>(
+                dense: true,
+                title: Text(listdepart[index]),
+                value: listdepart[index],
+                groupValue: provider.selecteddepart,
+                onChanged: provider.enabledepart
+                    ? (v) {
+                        context.read<HomeProvider>().filterdepartamento(v);
+                      }
+                    : null);
+          }),
+    );
+  }
+
+  ExpansionPanelRadio area(context) {
+    return ExpansionPanelRadio(
+        value: "11111",
+        headerBuilder: (BuildContext context, bool isExpanded) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Text('SELECIONAR ÁREA:'),
+              ),
+            ],
+          );
+        },
+        body: Column(
+          children: [Text("data")],
+        ));
+  }
+
   Widget descargar(BuildContext context) {
+    var provider = Provider.of<HomeProvider>(context, listen: false);
     return ElevatedButton(
       child: Icon(Icons.download_rounded),
-      onPressed: () =>
-          Provider.of<HomeProvider>(context, listen: false).downloaddata(),
+      onPressed: () => provider.downloaddata(),
     );
   }
 }

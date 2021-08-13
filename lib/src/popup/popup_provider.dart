@@ -105,7 +105,10 @@ class PopupProvider with ChangeNotifier {
   bool get buttonState => _buttonState;
   List<dynamic> _listdepart;
   List<dynamic> get listdepart => _listdepart;
+  int _seguimientoIndex = 0;
+  int get seguimientoIndex => _seguimientoIndex;
 
+  //Opcion flotante
   void removeoverlay() {
     _overlayEntry.remove();
     _buttonState = true;
@@ -118,6 +121,7 @@ class PopupProvider with ChangeNotifier {
     print("ingresado");
   }
 
+  //Funcion guardar del Popup Edit
   Future<void> guardar(BuildContext context) async {
     // showsnackbar("Validando");
     print("Validando");
@@ -128,6 +132,7 @@ class PopupProvider with ChangeNotifier {
     Navigator.of(_globalScaffoldKey.currentContext).pop();
   }
 
+  //Muestra showsnackbar
   void showsnackbar(String data) async {
     final context = globalScaffoldKey.currentContext;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -183,6 +188,7 @@ class PopupProvider with ChangeNotifier {
           'distrito': _distrito.text,
           'cajanap': _cajanap.text,
           'puerto': _puerto.text,
+          'seguimiento': "Pendiente",
           'grupo': "Vacío",
           'tecnicos': [],
           'observaciones': [""],
@@ -383,6 +389,11 @@ class PopupProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void setseguimientoindex(int index) {
+    _seguimientoIndex = index;
+    notifyListeners();
+  }
+
   void setoperador(String data) {
     _operador = data.split("@")[0];
   }
@@ -433,11 +444,6 @@ class PopupProvider with ChangeNotifier {
 
   void setupdateguardar(bool data) {
     _updateguardar = data;
-    notifyListeners();
-  }
-
-  void setcolor(String data) {
-    _color = data;
     notifyListeners();
   }
 

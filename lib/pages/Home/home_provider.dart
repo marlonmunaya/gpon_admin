@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:excel/excel.dart';
+import 'package:flutter/services.dart';
 
 import 'package:gpon_admin/src/api/data.dart';
 import 'package:gpon_admin/src/model/model.dart';
@@ -211,13 +212,13 @@ class HomeProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future updatecolor(String refer, String color) async {
+  Future updatecolor(String refer, String color, String seg) async {
     final users = Backend().usersv1;
     await users
         .doc("$refer")
-        .update({'color': color})
+        .update({'color': color, 'seguimiento': seg})
         .then((value) => print("Client color actualizado"))
-        .catchError((error) => print("Failes to ass user: $error"));
+        .catchError((error) => print("Failes to add user: $error"));
     showsnackbar("Color actualizado");
     getclient();
   }
@@ -302,16 +303,71 @@ class HomeProvider with ChangeNotifier {
 
   void downloaddata() {
     print('obtenido data to excel');
-
+    int index = 0;
     var excel = Excel.createExcel();
-    excel.rename('Sheet1', 'newSheetName');
-    Sheet sheetObject = excel['newSheetName'];
+    String pagina = 'clientes';
+    excel.rename('Sheet1', pagina);
 
-    excel.updateCell(
-        'newSheetName', CellIndex.indexByString("A1"), "Here value",
-        cellStyle: CellStyle(
-            backgroundColorHex: "#1AFF1A",
-            horizontalAlign: HorizontalAlign.Right));
+    Sheet sheetObject = excel[pagina];
+    List<String> encabezado = [
+      'NOMBRE',
+      'CEDULA',
+      'CELULAR',
+      'FIJO',
+      'DIRECCION',
+      'DISTRITO',
+      'PROVINCIA',
+      'DEPARTAMENTO',
+      'CORDENADAS',
+      'EMAIL',
+      'PLATAFORMA',
+      'SEGUIMIENTO',
+      'VENDEDOR',
+      'SERVICIOS',
+      'PLAN',
+      'FECHA DE CAPTACIÓN',
+      'FECHA DE INSTALACIÓN',
+      'DECODIFICADOR',
+      'REPETIDOR',
+      'CABLEADO UTP',
+      'CAJA NAP',
+      'PUERTO',
+      'OBERSVACIONES',
+      'TECNICOS',
+      'GRUPO'
+    ];
+    sheetObject.insertRowIterables(encabezado, 0);
+    _model.forEach((e) {
+      index = index + 1;
+      List<String> dataList = [
+        e.nombre,
+        e.cedula,
+        e.celular,
+        e.fijo,
+        e.direccion,
+        e.distrito,
+        e.provincia,
+        e.departamento,
+        e.cordenadas,
+        e.email,
+        e.plataforma,
+        e.seguimiento,
+        e.vendedor,
+        e.servicios,
+        e.plan,
+        e.fechacaptacion.toString(),
+        e.fechainstalacion.toString(),
+        e.deco,
+        e.repetidor,
+        e.cableadoutp,
+        e.cajanap,
+        e.puerto,
+        e.observaciones.toString(),
+        e.tecnicos.toString(),
+        e.grupo,
+      ];
+      sheetObject.insertRowIterables(dataList, index);
+    });
 
     var fileBytes = excel.save(fileName: "My_Excel.xlsx");
   }

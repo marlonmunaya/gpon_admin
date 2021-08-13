@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gpon_admin/pages/Home/widget.dart';
+import 'package:gpon_admin/src/popup/seguimiento.dart';
 import 'package:provider/provider.dart';
 import 'package:o_color_picker/o_color_picker.dart';
 
@@ -348,30 +349,45 @@ class BuildPanel extends StatelessWidget {
     );
   }
 
+  // Widget selectcolor(BuildContext context) {
+  //   return Tooltip(
+  //     message: "Color",
+  //     child: circlebutton(
+  //         icon: Icons.color_lens_outlined,
+  //         color: i.color,
+  //         onTap: () {
+  //           showDialog<void>(
+  //               context: context,
+  //               builder: (contextdialog) => AlertDialog(
+  //                     content: OColorPicker(
+  //                       spacing: 3,
+  //                       boxBorder:
+  //                           OColorBoxBorder(color: Colors.black12, width: 1),
+  //                       selectedColor: currentColor,
+  //                       colors: primaryColorsPalette,
+  //                       onColorChange: (color) {
+  //                         contextdialog.read<HomeProvider>().updatecolor(
+  //                             i.reference.id, color.value.toString());
+  //                         Navigator.of(contextdialog).pop();
+  //                       },
+  //                     ),
+  //                   ));
+  //           context.read<PopupProvider>().removeoverlay();
+  //         }),
+  //   );
+  // }
+
   Widget selectcolor(BuildContext context) {
     return Tooltip(
       message: "Color",
       child: circlebutton(
           icon: Icons.color_lens_outlined,
           color: i.color,
-          onTap: () {
-            showDialog<void>(
+          onTap: () async {
+            await showDialog(
                 context: context,
-                builder: (contextdialog) => AlertDialog(
-                      content: OColorPicker(
-                        spacing: 3,
-                        boxBorder:
-                            OColorBoxBorder(color: Colors.black12, width: 1),
-                        selectedColor: currentColor,
-                        colors: primaryColorsPalette,
-                        onColorChange: (color) {
-                          contextdialog.read<HomeProvider>().updatecolor(
-                              i.reference.id, color.value.toString());
-                          Navigator.of(contextdialog).pop();
-                        },
-                      ),
-                    ));
-            context.read<PopupProvider>().removeoverlay();
+                builder: (BuildContext context1) =>
+                    SeguimientoPage(id: i.reference.id));
           }),
     );
   }
