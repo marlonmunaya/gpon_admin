@@ -62,7 +62,7 @@ class ControlPage extends StatelessWidget {
                 elevation: 0,
                 children: [
                     depart(context, listdepart),
-                    area(context),
+                    area(context, listdepart),
                   ]));
   }
 
@@ -101,24 +101,39 @@ class ControlPage extends StatelessWidget {
     );
   }
 
-  ExpansionPanelRadio area(context) {
+  ExpansionPanelRadio area(BuildContext context, List<dynamic> listdepart) {
+    var provider = context.watch<HomeProvider>();
+
     return ExpansionPanelRadio(
-        value: "11111",
-        headerBuilder: (BuildContext context, bool isExpanded) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Text('SELECIONAR ÁREA:'),
-              ),
-            ],
-          );
-        },
-        body: Column(
-          children: [Text("data")],
-        ));
+      value: "32165",
+      headerBuilder: (BuildContext context, bool isExpanded) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text('SELECIONAR ÁREA:'),
+            ),
+          ],
+        );
+      },
+      body: ListView.builder(
+          shrinkWrap: true,
+          itemCount: listdepart.length,
+          itemBuilder: (context, int index) {
+            return RadioListTile<String>(
+                dense: true,
+                title: Text(listdepart[index]),
+                value: listdepart[index],
+                groupValue: provider.selecteddepart,
+                onChanged: provider.enabledepart
+                    ? (v) {
+                        context.read<HomeProvider>().filterdepartamento(v);
+                      }
+                    : null);
+          }),
+    );
   }
 
   Widget descargar(BuildContext context) {

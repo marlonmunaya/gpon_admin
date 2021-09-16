@@ -36,7 +36,7 @@ class LoginPage extends StatelessWidget {
     ));
   }
 
-  _crearfondo(context) {
+  Widget _crearfondo(context) {
     final size = MediaQuery.of(context).size;
     return Stack(
       children: <Widget>[
@@ -61,7 +61,7 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  _loginform(BuildContext context) {
+  Widget _loginform(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return SingleChildScrollView(
@@ -92,9 +92,6 @@ class LoginPage extends StatelessWidget {
               key: context.watch<Loginprovider>().formKeysign,
               child: Column(
                 children: <Widget>[
-                  SizedBox(height: 1.0),
-                  // Text('Iniciar Sesión',
-                  //  style:Theme.of(context).textTheme.subtitle,),
                   SizedBox(height: 30.0),
                   _crearEmail(context),
                   SizedBox(height: 30.0),
@@ -155,7 +152,7 @@ class LoginPage extends StatelessWidget {
             }));
   }
 
-  _crearboton(BuildContext context) {
+  Widget _crearboton(BuildContext context) {
     return ElevatedButton(
         child: Container(
           width: 250,

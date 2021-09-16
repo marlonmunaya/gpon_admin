@@ -73,8 +73,6 @@ class PopupProvider with ChangeNotifier {
   UtilsModel get ubicaciones => _ubicaciones;
   UtilsModel _vendedores;
   UtilsModel get vendedores => _vendedores;
-  UtilsModel _personal;
-  UtilsModel get personal => _personal;
   UtilsModel _seguimiento;
   UtilsModel get seguimiento => _seguimiento;
   String _planselected;
@@ -250,9 +248,6 @@ class PopupProvider with ChangeNotifier {
 
     final snapubicaciones = await Backend().utils.doc("ubicaciones").get();
     _ubicaciones = UtilsModel.fromMapubicaciones(snapubicaciones.data());
-
-    final snappersonal = await Backend().utils.doc("grupos").get();
-    _personal = UtilsModel.fromMappersonal(snappersonal.data());
 
     final snapseguimiento = await Backend().utils.doc("seguimiento").get();
     _seguimiento = UtilsModel.fromMapseguimiento(snapseguimiento.data());

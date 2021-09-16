@@ -12,22 +12,21 @@ class Loginprovider with ChangeNotifier {
   get formKeysign => _formKeysign;
 
   //// Estado de Autenticación///
-  bool _loggedIn = true; //colocar en false
-  bool _loading = false;
-  User _user;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
   //// Autenticacion via email////
+  bool _loggedIn = true; //colocar en false
   bool get isLoggedIn => _loggedIn;
+  bool _loading = false;
   bool get isLoading => _loading;
+  User _user;
   User get currentUser => _user;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   ////////User Login ///////////
   Future<void> login(BuildContext context) async {
     if (!formKeysign.currentState.validate()) return;
-    formKeysign.currentState.save();
-    _loading = true;
-
+    formKeysign.currentState.save(); //validar campos
+    _loading = true; //cargando
+    /// intenta logearse con email y pass
     try {
       _user = (await _auth.signInWithEmailAndPassword(
         email: _emailController.text,
@@ -36,6 +35,7 @@ class Loginprovider with ChangeNotifier {
           .user;
       notifyListeners();
     } catch (e) {
+      ///muestra popup, mensaje de error.
       showDialog(
           context: context,
           builder: (BuildContext context) {

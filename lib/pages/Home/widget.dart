@@ -52,7 +52,7 @@ Widget drawer(BuildContext context) {
                       fit: BoxFit.fitWidth,
                     ),
                   )),
-              Text("1.2.4"),
+              Text("1.2.5"),
               ElevatedButton(
                 onPressed: () {
                   // Navigator.of(context).push(
