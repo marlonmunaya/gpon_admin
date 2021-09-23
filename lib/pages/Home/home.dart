@@ -60,7 +60,9 @@ class HomePage extends StatelessWidget {
   }
 
   Widget floatactionbutton(BuildContext context, String operador) {
-    String depart = context.watch<HomeProvider>().selecteddepart;
+    String depart = context.watch<HomeProvider>().selecteddepart.isEmpty
+        ? "Depart"
+        : context.watch<HomeProvider>().selecteddepart;
     return FloatingActionButton(
       child:
           Tooltip(message: "Agregar un cliente", child: Icon(Icons.person_add)),

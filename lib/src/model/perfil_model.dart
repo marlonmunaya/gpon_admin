@@ -7,6 +7,7 @@ class Profile {
   final String email;
   final List<String> role;
   final List<String> departamento;
+  final List<String> area;
   DocumentReference reference;
 
   Profile(
@@ -15,6 +16,7 @@ class Profile {
       this.celular,
       this.email,
       this.role,
+      this.area,
       this.departamento});
 
   Profile.fromSnapshot(DocumentSnapshot snapshot)
@@ -26,6 +28,7 @@ class Profile {
         celular = map['celular'],
         email = map['email'],
         departamento = List.from(map['departamento']),
+        area = List.from(map['area']),
         role = List.from(map['role']);
 
   Map<String, dynamic> toJson() {
@@ -35,8 +38,21 @@ class Profile {
       'phone': celular,
       'email': email,
       'role': role,
+      'area': area,
       'departamento': departamento
     };
+  }
+
+  Profile userdefault() {
+    return Profile(
+      usuario: "default",
+      nombre: "Default",
+      celular: "963963963",
+      email: "default@gpon.pe",
+      departamento: [""],
+      role: [""],
+      area: [""],
+    );
   }
 
   String fullname() => nombre;

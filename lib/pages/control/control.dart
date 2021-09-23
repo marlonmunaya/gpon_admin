@@ -68,6 +68,7 @@ class ControlPage extends StatelessWidget {
 
   ExpansionPanelRadio depart(BuildContext context, List<dynamic> listdepart) {
     var provider = context.watch<HomeProvider>();
+    List<String> profiledepart = provider.profilescurrent.departamento;
 
     return ExpansionPanelRadio(
       value: "321654",
@@ -85,25 +86,22 @@ class ControlPage extends StatelessWidget {
       },
       body: ListView.builder(
           shrinkWrap: true,
-          itemCount: listdepart.length,
+          itemCount: profiledepart.length,
           itemBuilder: (context, int index) {
             return RadioListTile<String>(
                 dense: true,
-                title: Text(listdepart[index]),
-                value: listdepart[index],
+                title: Text(profiledepart[index]),
+                value: profiledepart[index],
                 groupValue: provider.selecteddepart,
-                onChanged: provider.enabledepart
-                    ? (v) {
-                        context.read<HomeProvider>().filterdepartamento(v);
-                      }
-                    : null);
+                onChanged: (v) =>
+                    context.read<HomeProvider>().filterdepartamento(v));
           }),
     );
   }
 
   ExpansionPanelRadio area(BuildContext context, List<dynamic> listdepart) {
     var provider = context.watch<HomeProvider>();
-
+    List<String> profilearea = provider.profilescurrent.area;
     return ExpansionPanelRadio(
       value: "32165",
       headerBuilder: (BuildContext context, bool isExpanded) {
@@ -120,18 +118,15 @@ class ControlPage extends StatelessWidget {
       },
       body: ListView.builder(
           shrinkWrap: true,
-          itemCount: listdepart.length,
+          itemCount: profilearea.length,
           itemBuilder: (context, int index) {
             return RadioListTile<String>(
-                dense: true,
-                title: Text(listdepart[index]),
-                value: listdepart[index],
-                groupValue: provider.selecteddepart,
-                onChanged: provider.enabledepart
-                    ? (v) {
-                        context.read<HomeProvider>().filterdepartamento(v);
-                      }
-                    : null);
+              dense: true,
+              title: Text(profilearea[index]),
+              value: profilearea[index],
+              groupValue: provider.selectedarea,
+              onChanged: (v) => context.read<HomeProvider>().filterarea(v),
+            );
           }),
     );
   }

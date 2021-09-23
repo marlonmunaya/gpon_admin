@@ -4,4 +4,6 @@ class Backend {
   CollectionReference users = FirebaseFirestore.instance.collection('user');
   CollectionReference usersv1 = FirebaseFirestore.instance.collection('userv1');
   CollectionReference utils = FirebaseFirestore.instance.collection('utils');
+  CollectionReference profile =
+      FirebaseFirestore.instance.collection('profile');
 }

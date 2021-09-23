@@ -13,7 +13,7 @@ class Loginprovider with ChangeNotifier {
 
   //// Estado de Autenticación///
   //// Autenticacion via email////
-  bool _loggedIn = true; //colocar en false
+  bool _loggedIn = false; //colocar en false para producción.
   bool get isLoggedIn => _loggedIn;
   bool _loading = false;
   bool get isLoading => _loading;
@@ -35,7 +35,7 @@ class Loginprovider with ChangeNotifier {
           .user;
       notifyListeners();
     } catch (e) {
-      ///muestra popup, mensaje de error.
+      ///muestra popup con mensaje de error.
       showDialog(
           context: context,
           builder: (BuildContext context) {

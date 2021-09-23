@@ -8,6 +8,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    context.read<HomeProvider>().getprofile();
     return Scaffold(
         body: Container(
       child: Consumer<Loginprovider>(
@@ -63,7 +64,6 @@ class LoginPage extends StatelessWidget {
 
   Widget _loginform(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
@@ -163,11 +163,10 @@ class LoginPage extends StatelessWidget {
           ),
         ),
         onPressed: () async {
-          var data = Provider.of<Loginprovider>(context, listen: false)
-              .emailController
-              .text;
-          final String operador = data.split("@")[0];
-          print("operador: $operador");
+          final String operador =
+              Provider.of<Loginprovider>(context, listen: false)
+                  .emailController
+                  .text;
           context.read<HomeProvider>().selectoperadorhome(operador);
           await context.read<Loginprovider>().login(context);
         });

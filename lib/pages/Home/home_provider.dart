@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 
 import 'package:gpon_admin/src/api/data.dart';
 import 'package:gpon_admin/src/model/model.dart';
+import 'package:gpon_admin/src/model/perfil_model.dart';
 import 'package:gpon_admin/src/model/utils_model.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -27,6 +28,10 @@ class HomeProvider with ChangeNotifier {
   Map<DateTime, List> get holidays => _holidays;
   List<ClientModel> _model;
   List<ClientModel> get model => _model;
+  List<Profile> _profiles;
+  List<Profile> get profiles => _profiles;
+  Profile _profilescurrent = Profile().userdefault();
+  Profile get profilescurrent => _profilescurrent;
   List<ClientModel> _searched = [];
   List<ClientModel> get searched => _searched;
   GlobalKey<ScaffoldState> globalScaffoldKey;
@@ -45,10 +50,11 @@ class HomeProvider with ChangeNotifier {
   bool get transicion => _transicion;
   String _selecteddepart = 'Lima';
   String get selecteddepart => _selecteddepart;
+  String _selectedarea = 'Instalaciones';
+  String get selectedarea => _selectedarea;
   UtilsModel _ubicaciones;
   List<dynamic> _listdepart;
-  bool _enabledepart = false;
-  bool get enabledepart => _enabledepart;
+
   void setdate() {
     _selectedDay = DateTime.now();
     _eventos = {
@@ -145,6 +151,18 @@ class HomeProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> tomodel(QuerySnapshot snapshot) {
+    _model = snapshot.docs.map((e) => ClientModel.fromSnapshot(e)).toList();
+  }
+
+  Future getprofile() async {
+    print('obteniento perfiles');
+    final snapshot = await Backend().profile.get();
+    _profiles = snapshot.docs.map((e) => Profile.fromSnapshot(e)).toList();
+
+    notifyListeners();
+  }
+
   Future getutilshome() async {
     final snapubicaciones = await Backend().utils.doc("ubicaciones").get();
     _ubicaciones = UtilsModel.fromMapubicaciones(snapubicaciones.data());
@@ -157,21 +175,16 @@ class HomeProvider with ChangeNotifier {
   }
 
   void selectoperadorhome(String operador) {
-    _listdepart.forEach((e) {
-      final List<dynamic> operadores =
-          _ubicaciones.ubicaciones[e]["operadores"];
-      if (operadores.contains(operador)) {
-        print(e + " - " + operador);
-        _selecteddepart = e;
-        _enabledepart = e == 'Lima' ? true : false;
-      } else {
-        print(e + " - no");
-      }
-    });
-  }
+    _profiles.forEach((e) {
+      if (e.email == operador) {
+        _profilescurrent = e; //asigar al reciente operador
+        _selecteddepart = _profilescurrent.departamento.isEmpty
+            ? ""
+            : _profilescurrent.departamento.first;
 
-  Future<void> tomodel(QuerySnapshot snapshot) {
-    _model = snapshot.docs.map((e) => ClientModel.fromSnapshot(e)).toList();
+        notifyListeners();
+      } else {}
+    });
   }
 
   //Función para actualizar el grupo a los clientes seleccionados
@@ -194,17 +207,54 @@ class HomeProvider with ChangeNotifier {
   }
 
   Future<void> getlist() async {
+    _listgroup = [];
     await Future(() {
-      _listgroup = [];
-      _group.forEach((e) {
-        List<ClientModel> lis = _model.where((i) => i.grupo == e).toList();
-        List<String> listtecnicos = lis[0].tecnicos;
-        _listgroup.add(Listagrupo(e, lis, listtecnicos));
-        // print(lis);
-      });
+      if (_selectedarea == "Instalaciones") {
+        _group.forEach((e) {
+          final List<ClientModel> lis =
+              _model.where((i) => i.grupo == e).toList();
+          lis.removeWhere((e) => e.servicios == "SOPORTE TECNICO");
+          if (lis.isNotEmpty) {
+            List<String> listtecnicos = lis[0].tecnicos;
+            _listgroup.add(Listagrupo(e, lis, listtecnicos));
+          }
+        });
+      } else if (_selectedarea == "Soporte") {
+        _group.forEach((e) {
+          List<ClientModel> lis = _model
+              .where((i) =>
+                  i.servicios.contains("SOPORTE TECNICO") && i.grupo == e)
+              .toList();
+          print(lis);
+          if (lis.isNotEmpty) {
+            List<String> listtecnicos = lis[0].tecnicos;
+            _listgroup.add(Listagrupo(e, lis, listtecnicos));
+          } else {}
+        });
+      }
     });
     notifyListeners();
   }
+  //    await Future(() {
+  //     if(_selectedarea =="Instalaciones"){
+
+  //     } if {
+
+  //     } else {
+  //     }
+  //     final area =
+  //         _model.where((e) => e.servicios== _selectedarea);
+
+  //     _listgroup = [];
+  //     _group.forEach((e) {
+  //       List<ClientModel> lis = _model.where((i) => i.grupo == e).toList();
+  //       List<String> listtecnicos = lis[0].tecnicos;
+  //       _listgroup.add(Listagrupo(e, lis, listtecnicos));
+  //       // print(lis);
+  //     });
+  //   });
+  //   notifyListeners();
+  // }
 
   Future deleteclient(reference) async {
     final snapshot =
@@ -280,6 +330,13 @@ class HomeProvider with ChangeNotifier {
     _selecteddepart = value;
     getclient();
     print(_selecteddepart);
+    notifyListeners();
+  }
+
+  void filterarea(String value) {
+    _selectedarea = value;
+    getclient();
+    print(_selectedarea);
     notifyListeners();
   }
   ////Drag List

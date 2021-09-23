@@ -323,14 +323,12 @@ Widget _creardepartamento(BuildContext context) {
   final providerread = context.read<PopupProvider>();
   return DropdownButton<String>(
     value: provider.departamento.text,
-    onChanged: context.watch<HomeProvider>().enabledepart
-        ? (String value) {
-            providerread.setdepartamento(value);
-            providerread.setprovincia("Provin");
-            providerread.setdistrito("Distrito");
-            providerread.setvendedor("Vendedor");
-          }
-        : null,
+    onChanged: (String value) {
+      providerread.setdepartamento(value);
+      providerread.setprovincia("Provin");
+      providerread.setdistrito("Distrito");
+      providerread.setvendedor("Vendedor");
+    },
     items: provider.ubicaciones.ubicaciones.entries
         .map<DropdownMenuItem<String>>((value) {
       return DropdownMenuItem<String>(
